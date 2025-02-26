@@ -12,7 +12,7 @@ for file in *.txt; do
     filename=$(basename "$file")
     
     # Skip the first line and add the filename as a new column
-    tail -n +2 "$file" | awk -v fname="$filename" '{print $0 "\t" fname}' >> "$output_file"
+    tail -n +2 "$file" | awk -v fname="Peru_${filename}" '{print $0 "\t" fname}' >> "$output_file"
 done
 
 echo "Concatenation complete. Output saved to $output_file."
