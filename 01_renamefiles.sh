@@ -1,10 +1,10 @@
 #!/bin/bash
 
 for file in *.txt; do
-    # Remove everything after the first underscore, remove "clonality_", remove "rmdup", and remove leading digits with an underscore
-    new_name=$(echo "$file" | sed -E 's/clonality_//; s/_rmdup//; s/^[0-9]_//').txt
+    # Remove "clonality_", "_rmdup", and leading digits with an underscore
+    new_name=$(echo "$file" | sed -E 's/clonality_.*//; s/_rmdup.*//; s/^[0-9]_//').txt
     
-    # Rename the file (skip if the new name is the same as the old name)
+    # Rename the file only if the new name is different
     if [[ "$file" != "$new_name" ]]; then
         mv "$file" "$new_name"
     fi
