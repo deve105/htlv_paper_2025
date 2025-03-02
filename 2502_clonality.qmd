@@ -1,1 +1,38 @@
 Notes: IRID011 and IRID038 were excluded (no HTLV-1 clones detected)
+
+```{r}
+pacman::p_load(tidyverse, ineq, tidyplots)
+
+gini_index <- function(counts) {
+  n <- length(counts)
+  mean_count <- mean(counts)
+  sum_abs_diff <- sum(sapply(counts, function(x) sum(abs(x - counts))))
+  gini <- sum_abs_diff / (2 * n^2 * mean_count)
+  return(gini)
+}
+
+htlv_is = read_tsv("concatenated_output.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+result <- htlv_is |>
+  group_by(sample) |>
+  summarise(gini = Gini(freq), .groups = 'drop') |>
+  filter(gini>0.4)
+
+result <- htlv_is |>
+  group_by(sample) |>
+  group_split() |>
+  map_dfr(~ tibble(sample = .x$sample[1], gini = Gini(.x$freq))) |>
+  filter(gini<.2)
+
+result <- htlv_is |>
+  group_by(sample) |>
+  group_split() |>
+  map_dfr(~ tibble(sample = .x$sample[1], 
+            gini = gini_index(.x$freq),
+            sum_freq = sum(.x$freq))) |>
+  tidyplot(x=gini, y=sum_freq) |>
+  add_data_points()
+
+print(result)
+show(result)
+
+```
