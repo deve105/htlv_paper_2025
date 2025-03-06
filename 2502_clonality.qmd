@@ -1,7 +1,7 @@
 Notes: IRID011 and IRID038 were excluded (no HTLV-1 clones detected)
 
 ```{r}
-pacman::p_load(tidyverse, ineq, tidyplots)
+pacman::p_load(tidyverse, ineq, tidyplots,datatable)
 
 gini_index <- function(counts) {
   n <- length(counts)
@@ -12,6 +12,7 @@ gini_index <- function(counts) {
 }
 
 htlv_is = read_tsv("concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+htlv_is
 # Option A for gini index
 result <- htlv_is |>
   group_by(sample) |>
@@ -40,7 +41,6 @@ save_plot("output/oci.png",
   unit="cm")
 
 
-print(result)
-show(result)
+datatable(result)
 
 ```
