@@ -36,3 +36,6 @@ print(result)
 show(result)
 
 ```
+https://github.com/cancerit/dockstore-cgpmap/wiki/1.-Reference-files
+
+ftp://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/bwa_idx_GRCh38_hla_decoy_ebv_bwamem2.tar.gz
