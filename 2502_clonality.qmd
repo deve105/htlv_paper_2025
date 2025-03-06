@@ -11,26 +11,34 @@ gini_index <- function(counts) {
   return(gini)
 }
 
-htlv_is = read_tsv("concatenated_output.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+htlv_is = read_tsv("concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+# Option A for gini index
 result <- htlv_is |>
   group_by(sample) |>
   summarise(gini = Gini(freq), .groups = 'drop') |>
-  filter(gini>0.4)
+  filter(gini>0.4) # filtering those with high oligoclonality
 
-result <- htlv_is |>
-  group_by(sample) |>
-  group_split() |>
-  map_dfr(~ tibble(sample = .x$sample[1], gini = Gini(.x$freq))) |>
-  filter(gini<.2)
-
+# Option B
 result <- htlv_is |>
   group_by(sample) |>
   group_split() |>
   map_dfr(~ tibble(sample = .x$sample[1], 
-            gini = gini_index(.x$freq),
-            sum_freq = sum(.x$freq))) |>
-  tidyplot(x=gini, y=sum_freq) |>
-  add_data_points()
+    gini = Gini(.x$freq),
+    sum_freq = sum(.x$freq))) 
+
+# Plotting
+result |>
+tidyplot(x=gini, y=sum_freq) |>
+add_data_points(alpha=0.8) |>
+adjust_x_axis(title = "Oligoclonality Index (OCI)") |>
+adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+save_plot("output/oci.png", 
+  view_plot = TRUE,
+  bg = "transparent",
+  width = 7,
+  height = 7, 
+  unit="cm")
+
 
 print(result)
 show(result)
