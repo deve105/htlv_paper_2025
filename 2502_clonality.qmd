@@ -1,7 +1,13 @@
 Notes: IRID011 and IRID038 were excluded (no HTLV-1 clones detected)
+IRID026 no clones detected
+IRID039_S123 and SS04 (are the same)  confirmed
+IRID015 and SS14 (are the same) confirmed
+IRID062 and SS02 (are the same) confirmed
+IRID089 and SS20 (are the same) confirmed
+IRID015 and 032 are siblings
 
 ```{r}
-pacman::p_load(tidyverse, ineq, tidyplots,datatable)
+pacman::p_load(tidyverse, ineq, tidyplots,DT)
 
 gini_index <- function(counts) {
   n <- length(counts)
@@ -47,3 +53,114 @@ datatable(result)
 https://github.com/cancerit/dockstore-cgpmap/wiki/1.-Reference-files
 
 ftp://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/bwa_idx_GRCh38_hla_decoy_ebv_bwamem2.tar.gz
+
+```{r}
+
+pacman::p_load(googlesheets4)
+
+# ----------------------------
+# - Step 0: Adquiring metadata from google and do replacements in the strings
+htlv_metadata = read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=0#gid=0") |>
+  mutate(ID=stringr::str_replace(ID, "^PE_", "")) |>
+  mutate(ID=stringr::str_replace(ID, "_S.*", ""))
+colnames(htlv_metadata)
+# - Step 1: Manipulation 
+htlv_mdata = htlv_metadata |>
+  filter(Complete!="NO_HTLV") |>
+  select(
+    ID, 
+    Status, 
+    Birth_place_DNI, 
+    Sex, 
+    Age, 
+    "PVL1 (copies/10000PMBCs)", 
+    strongy_lifetime, 
+    disease_2) |>
+  dplyr::rename(
+    PVL_home="PVL1 (copies/10000PMBCs)",
+    birthplace=Birth_place_DNI
+  )
+
+datatable(htlv_mdata)
+```
+
+```{r}
+pacman::p_load(tidyverse, midasHLA, styler, lintr, DT)
+
+# Step1: Filtering data, removing those without HTLV-1 clones or reads, and JP cases
+htlv_la = read_tsv("concatenated_HLA.txt", col_names = c("none", "A_1", "A_2", "B_1", "B_2", "C_1", "C_2", "none_reads", "none_obj", "ID"))|>
+  select(-starts_with("none")) |>
+  dplyr::filter(!grepl("ATLSkin|1339|IRID011|IRID038", ID)) |>
+  select(ID, A_1, A_2, B_1, B_2, C_1, C_2) #|>
+  filter(ID%in%c(htlv_clonality$ID)) #Those withoyt transitory PVL
+
+datatable(htlv_la) #visualization
+write_tsv(htlv_la, "2503_filtered_HLA_rearranged.tsv")
+
+# Step2: match duplicates (see text)
+sample = htlv_la |>
+  rowwise() |>
+  mutate(
+    group1 = list(sort(c(A_1, A_2))),  
+    group2 = list(sort(c(B_1, B_2))),  
+    group3 = list(sort(c(C_1, C_2)))   
+  ) |>
+  ungroup() |>
+  mutate(
+    is_duplicate = duplicated(paste(group1, group2, group3)) |  duplicated(paste(group1, group2, group3), fromLast = TRUE)
+  ) |>
+  filter(is_duplicate=="TRUE")
+datatable(sample)
+
+
+htlv_la = htlv_la |>
+  left_join(result[c("sample", "gini", "sum_freq")], by=c("ID"="sample"))
+
+htlv_clonality= htlv_la |>
+  select(ID, gini, sum_freq) |>
+  filter(!is.na(gini))
+
+htlv_clonality
+# Step2: read using midasHLA
+hla_htlv = reduceHlaCalls(htlv_la, resolution=4)
+
+midas <- prepareMiDAS(
+  hla_calls = hla_htlv,
+  colData = htlv_clonality,
+  experiment = "hla_alleles")
+
+freq <- getFrequencies(
+  object = midas,
+  carrier_frequency = FALSE,
+  experiment = "hla_alleles",
+  compare = TRUE
+)
+freq |>
+  filter(Counts>10)
+midas_filtered_freq <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_alleles",
+    lower_frequency_cutoff = 0.01
+    )
+midas_filtered_freq
+
+
+object<-lm(gini~term, data=midas)
+results <-
+  runMiDAS(
+    object = object,
+    experiment = "hla_alleles",
+    inheritance_model = "dominant",
+    conditional = FALSE,
+    omnibus = FALSE,
+    lower_frequency_cutoff = 0.05
+    )
+kableResults(results)
+
+htlv_clonality
+results |>
+  filter(p.value<0.05)
+
+
+```
