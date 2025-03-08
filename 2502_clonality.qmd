@@ -254,7 +254,7 @@ fig_B35 = htlv_hla |>
     B35= ifelse(grepl("B\\*35", A_1) | grepl("B\\*35", A_2), "B*35(+)", "B*35(-)")) |>
     tidyplot(x=B35, y=gini) |>
     add_data_points_jitter(alpha=0.95) |>
-    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) #|>
     add_test_pvalue() |>
     adjust_y_axis(title = "Oligoclonality Index(OCI)") |>
     adjust_x_axis(title = NULL) #|>
@@ -265,7 +265,7 @@ fig_B35 = htlv_hla |>
     height = 8, 
     unit="cm") 
 
-fig_B35
+show(fig_B35)
 
 # Step2: read using midasHLA
 pacman::p_load(midasHLA)
