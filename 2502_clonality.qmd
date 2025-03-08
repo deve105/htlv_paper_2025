@@ -7,96 +7,9 @@ Notes:
 - IRID089 and SS20 (are the same) confirmed
 - IRID015 and 032 are siblings
 
-to check SS27, SS01-10, SS025
+to check SS27, SS01, IRID2,3,5-10, SS27
 
 IRID025_S236 was eliminated
-
-
-
-```{r}
-pacman::p_load(tidyverse, ineq, tidyplots,DT)
-
-#------------------
-# Gini's index formula based on tags
-gini_index <- function(counts) {
-  n <- length(counts)
-  mean_count <- mean(counts)
-  sum_abs_diff <- sum(sapply(counts, function(x) sum(abs(x - counts))))
-  gini <- sum_abs_diff / (2 * n^2 * mean_count)
-  return(gini)
-}
-
-# Step 1 - Loading clonality total file
-htlv_is = read_tsv("concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
-
-# Option A for gini index
-result <- htlv_is |>
-  group_by(sample) |>
-  summarise(gini = Gini(freq), .groups = 'drop') |>
-  filter(gini>0.4) # filtering those with high oligoclonality
-
-# Option B - Official, using ineq and join
-result <- htlv_is |>
-group_by(sample) |>
-group_split() |>
-map_dfr(~tibble(
-  sample = .x$sample[1], 
-  gini = Gini(.x$freq),
-  sum_freq = sum(.x$freq)
-  )) |>
-  mutate(
-    sample=stringr::str_replace(sample, "^Peru_", "")) |>
-    dplyr::right_join(htlv_mdata, by=c("sample"="ID")) |>
-    filter(sum_freq>0) 
-
-datatable(result)
-
-# 1-----Plotting OCI vs Abundance
-result |>
-tidyplot(x=gini, y=sum_freq, color=disease_2) |>
-add_data_points(alpha=0.95) |>
-adjust_x_axis(title = "Oligoclonality Index (OCI)", limits=c(0,1.1)) |>
-adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance", limits=c(0,800)) |>
-adjust_legend_title("Disease") |>
-adjust_colors(new_colors = c("#3B78B0", "#E64B35B2","#7E6148B2")) |>
-save_plot("output/oci.png", 
-  view_plot = TRUE,
-  bg = "transparent",
-  width = 10,
-  height = 7, 
-  unit="cm")
-
-datatable(result)
-# 2-----Plotting OCI vs Strongy
-result |>
-tidyplot(x=strongy_lifetime, y=gini) |>
-add_data_points_jitter(alpha=0.95) |>
-add_violin(draw_quantiles = 0.5, alpha=0.2) |>
-add_test_pvalue() |>
-adjust_y_axis(title = "Oligoclonality Index (OCI)", limits=c(-0.1,1.1)) |>
-adjust_x_axis(title = NULL) |>
-save_plot("output/S1_Strongi_vs_OCI.png", 
-  view_plot = TRUE,
-  bg = "transparent",
-  width = 7,
-  height = 8, 
-  unit="cm") 
-
-# 3-----Plotting OCI vs NGS reads
-result |>
-tidyplot(x=strongy_lifetime, y=sum_freq) |>
-add_data_points_jitter(alpha=0.95) |>
-add_violin(draw_quantiles = 0.5, alpha=0.2) |>
-add_test_pvalue() |>
-adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
-adjust_x_axis(title = NULL) |>
-save_plot("output/S1_Strongi_vs_NGSreads.png", 
-  view_plot = TRUE,
-  bg = "transparent",
-  width = 7,
-  height = 8, 
-  unit="cm") 
-```
 
 
 ```{r}
@@ -170,50 +83,221 @@ table1 = htlv_mdata |>
   modify_header(label="**Variable**", all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p, digits=1)}%)") |>
   bold_labels() %>%
   as_gt()
-
+table1
 gtsave(table1, filename = "2503_Table1.docx", path="./output")
 ```
 
 ```{r}
+pacman::p_load(tidyverse, ineq, tidyplots,DT)
+
+#------------------
+# Gini's index formula based on tags
+gini_index <- function(counts) {
+  n <- length(counts)
+  mean_count <- mean(counts)
+  sum_abs_diff <- sum(sapply(counts, function(x) sum(abs(x - counts))))
+  gini <- sum_abs_diff / (2 * n^2 * mean_count)
+  return(gini)
+}
+
+# Step 1 - Loading clonality total file
+htlv_is = read_tsv("concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+
+# Option A for gini index
+result <- htlv_is |>
+  group_by(sample) |>
+  summarise(gini = Gini(freq), .groups = 'drop') |>
+  filter(gini0.4) # filtering those with high oligoclonality
+
+# Option B - Official, using ineq and join
+result <- htlv_is |>
+group_by(sample) |>
+group_split() |>
+map_dfr(~tibble(
+  sample = .x$sample[1], 
+  gini = Gini(.x$freq),
+  sum_freq = sum(.x$freq)
+  )) |>
+  mutate(
+    sample=stringr::str_replace(sample, "^Peru_", "")) 
+
+datatable(result)
+
+# 1-----Plotting OCI vs Abundance (pearson)
+result |>
+    dplyr::right_join(htlv_mdata, by=c("sample"="ID")) |>
+tidyplot(x=gini, y=sum_freq, color=disease_2) |>
+add_data_points(alpha=0.95) |>
+adjust_x_axis(title = "Oligoclonality Index (OCI)", limits=c(0,1.1)) |>
+adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance", limits=c(0,800)) |>
+adjust_legend_title("Disease") |>
+adjust_colors(new_colors = c("#3B78B0", "#E64B35B2","#7E6148B2")) |>
+add_annotation_text(paste0("r = ", corr), x=0.25, y=700, fontsize = 7) |>
+save_plot("output/oci.png", 
+  view_plot = TRUE,
+  bg = "transparent",
+  width = 10,
+  height = 7, 
+  unit="cm")
+
+corr=round(cor(result$gini, result$sum_freq, method = c("pearson")), 4)
+
+datatable(result)
+# 2-----Plotting OCI vs Strongy
+result |>
+ dplyr::right_join(htlv_mdata, by=c("sample"="ID")) |>
+tidyplot(x=strongy_lifetime, y=gini) |>
+add_data_points_jitter(alpha=0.95) |>
+add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+adjust_y_axis(title = "Oligoclonality Index (OCI)", limits=c(-0.1,1.1)) |>
+adjust_x_axis(title = NULL) |>
+save_plot("output/S1_Strongi_vs_OCI.png", 
+  view_plot = TRUE,
+  bg = "transparent",
+  width = 7,
+  height = 8, 
+  unit="cm") 
+
+# 3-----Plotting OCI vs NGS reads
+result |>
+ dplyr::right_join(htlv_mdata, by=c("sample"="ID")) |>
+tidyplot(x=strongy_lifetime, y=sum_freq) |>
+add_data_points_jitter(alpha=0.95) |>
+add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+adjust_x_axis(title = NULL) |>
+save_plot("output/S1_Strongi_vs_NGSreads.png", 
+  view_plot = TRUE,
+  bg = "transparent",
+  width = 7,
+  height = 8, 
+  unit="cm")
+```
+
+
+```{r}
+"""
+- IRID011, IRID026 and IRID038 were excluded (no HTLV-1 clones detected)
+IRID025_S236 was eliminated
+to check SS27, SS01, IRID2,3,5-10
+
+- IRID039_S123 and SS04 (are the same)  confirmed
+- IRID015 and SS14 (are the same) confirmed
+- IRID062 and SS02 (are the same) confirmed
+- IRID089 and SS20 (are the same) confirmed
+- IRID015 and 032 are siblings
+"""
 pacman::p_load(tidyverse, midasHLA, styler, lintr, DT)
+badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
 
 # Step1: Filtering data, removing those without HTLV-1 clones or reads, and JP cases
-htlv_la = read_tsv("concatenated_HLA.txt", col_names = c("none", "A_1", "A_2", "B_1", "B_2", "C_1", "C_2", "none_reads", "none_obj", "ID"))|>
+htlv_la = read_tsv("concatenated_HLA.txt", col_names = c("none", "A_1", "A_2", "B_1", "B_2", "C_1", "C_2", "none_reads", "none_obj", "ID"))
+
+htlv_hla = htlv_la|>
   select(-starts_with("none")) |>
-  dplyr::filter(!grepl("ATLSkin|1339|IRID011|IRID038", ID)) |>
-  select(ID, A_1, A_2, B_1, B_2, C_1, C_2) #|>
-  filter(ID%in%c(htlv_clonality$ID)) #Those withoyt transitory PVL
-
-datatable(htlv_la) #visualization
-write_tsv(htlv_la, "2503_filtered_HLA_rearranged.tsv")
-
-# Step2: match duplicates (see text)
-sample = htlv_la |>
-  rowwise() |>
+  dplyr::filter(!grepl("ATLSkin|1339", ID)) |>
+  dplyr::filter(!grepl(badquality, ID)) |>
   mutate(
-    group1 = list(sort(c(A_1, A_2))),  
-    group2 = list(sort(c(B_1, B_2))),  
-    group3 = list(sort(c(C_1, C_2)))   
-  ) |>
-  ungroup() |>
+    ID=stringr::str_replace(ID, "^Peru_", "")
+    ) |>
+    left_join(htlv_mdata, by=("ID")) |>
+    left_join(result, by=c("ID"="sample"))
+
+datatable(htlv_hla) #visualization
+write_tsv(htlv_hla, "2503_filtered_HLA_rearranged.tsv")
+
+# Step2: figures by 
+A24A2 = htlv_hla |>
   mutate(
-    is_duplicate = duplicated(paste(group1, group2, group3)) |  duplicated(paste(group1, group2, group3), fromLast = TRUE)
-  ) |>
-  filter(is_duplicate=="TRUE")
-datatable(sample)
+    A0201 = ifelse(grepl("A\\*02:01", A_1) | grepl("A\\*02:01", A_2), "A*02:01(+)", "A*02:01(-)"),
+    A2402 = ifelse(grepl("A\\*24:02", A_1) | grepl("A\\*24:02", A_2),  "A*24:02(+)", "A*24:02(-)")) |>
+    pivot_longer(cols=c(A0201, A2402), names_to="HLA", values_to="haplotype")|>
+    mutate(HLA=recode(HLA, A0201 = "HLA-A*02:01", A2402="HLA-A*24:02"))
 
+# comparison of IS by A24 and A02
+A24A2|>
+    tidyplot(x=haplotype, y=sum_freq) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+    adjust_x_axis(title = NULL) |>
+    split_plot(by=HLA, tag_level=NULL) |>
+    save_plot("output/S2_A_1_vs_NGSreads.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
 
-htlv_la = htlv_la |>
-  left_join(result[c("sample", "gini", "sum_freq")], by=c("ID"="sample"))
+    
+# comparison of OCI by A24 and A02
+A24A2|>
+    tidyplot(x=haplotype, y=gini) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Oligoclonality Index(OCI)") |>
+    adjust_x_axis(title = NULL) |>
+    split_plot(by=HLA, tag_level=NULL) |>
+    save_plot("output/S2_A_2_vs_OCI.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
 
-htlv_clonality= htlv_la |>
-  select(ID, gini, sum_freq) |>
-  filter(!is.na(gini))
-
-htlv_clonality
 # Step2: read using midasHLA
-hla_htlv = reduceHlaCalls(htlv_la, resolution=4)
+pacman::p_load(midasHLA)
 
+# Subsetting 
+datatable(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)])
+
+# Calling HLA and reducing it
+hla_htlv = reduceHlaCalls(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)], resolution=4)
+
+# Calculate HLA allele frequencies
+getHlaFrequencies(
+  hla_htlv,
+  compare=TRUE,
+  ref_pop=htlvpops,
+  ref = allele_frequencies) |>
+dplyr::filter(Freq > 0.05)
+htlvpops[htlvpops %in% allele_frequencies$pop]
+allele_frequencies$pop
+htlvpops = c("Japan Okinawa Ryukyuan",
+"Japan Central",
+"USA NMDP Hispanic South or Central American",
+"USA NMDP Japanese")
+"Australia Yuendumu Aborigine",
+"Papua New Guinea Wosera Abelam",
+"Papua New Guinea Madang",
+"Japan Okinawa Ryukyuan",
+"Japan Central",
+"China Zhejiang Han",
+"Argentina Chiriguano",
+"Peru Quechua",
+"Peru Arequipa Mestizo",
+"Gabon Haut-Ogooue Dienga",
+"Brazil REDOME Bahia"
+)
+"Australia Yuendumu Aborigine" Indigenous Australian residents of central Australia 
+
+"Papua New Guinea Wosera Abelam"
+"Papua New Guinea Madang"
+Japan pop 15
+China Zhejiang Han
+Argentina Chiriguano
+Peru Quechua
+Peru Arequipa Mestizo
+Gabon Haut-Ogooue Dienga
+Brazil REDOME Bahia
+
+"Japan Okinawa Ryukyuan"
+"Japan Central"
+"USA NMDP Hispanic South or Central American"
+"USA NMDP Japanese"
+hla_htlv 
 midas <- prepareMiDAS(
   hla_calls = hla_htlv,
   colData = htlv_clonality,
