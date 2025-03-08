@@ -247,6 +247,26 @@ A24A2|>
     height = 8, 
     unit="cm") 
 
+
+# B35
+fig_B35 = htlv_hla |>
+  mutate(
+    B35= ifelse(grepl("B\\*35", A_1) | grepl("B\\*35", A_2), "B*35(+)", "B*35(-)")) |>
+    tidyplot(x=B35, y=gini) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue() |>
+    adjust_y_axis(title = "Oligoclonality Index(OCI)") |>
+    adjust_x_axis(title = NULL) #|>
+    split_plot(by=HLA, tag_level=NULL) |>
+    save_plot("output/S2_A_2_vs_OCI.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
+
+fig_B35
+
 # Step2: read using midasHLA
 pacman::p_load(midasHLA)
 
