@@ -467,7 +467,7 @@ result
 
 ```{r}
 # FOR IS PVL 
-custom_midas_pvl <- function(hla_df, pheno_df, exp, inheritance,outcome){ #, conditional) #omnibus, additional){
+custom_midas_pvl <- function(hla_df, pheno_df, exp, inheritance,outcome,omnibus){ #, conditional) #omnibus, additional){
   # Prepare midasHLA
   HLA <- prepareMiDAS(
     hla_calls = hla_df,
@@ -493,7 +493,7 @@ custom_midas_pvl <- function(hla_df, pheno_df, exp, inheritance,outcome){ #, con
     correction = "bonferroni", 
     exponentiate = TRUE,
     #conditional=conditional,
-    #omnibus=omnibus,
+    omnibus=omnibus,
     #omnibus_groups_filter=additional
 )
   return(HLA_results)
@@ -520,8 +520,8 @@ hla_df2 = htlv_hla |>
   as.data.frame()
 library(MASS)
 models <- c("dominant", "recessive", "overdominant", "additive")
-custom_midas_pvl(hla_df=hla_df2, pheno_df=colhtlv2, exp="hla_alleles", inheritance="dominant",outcome="sum_freq")
-
+resultx = custom_midas_pvl(hla_df=hla_df2, pheno_df=colhtlv2, exp="hla_aa", inheritance="additive",outcome="sum_freq", omnibus=TRUE)
+datatable(resultx)
 ```
 ```{r}
 ### ANALYSIS ASSOCIATION
