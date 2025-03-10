@@ -1,0 +1,49 @@
+
+```{r}
+pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA)
+htlv_hla_la <- read_tsv("250304_HLAI/hla-la/hla_la_concatenated_output.txt") |>
+    dplyr::filter(Q1 > .8)
+
+# Ploting coverage
+tidyplot(x = Locus, y = AverageCoverage, data = htlv_hla_la) |>
+    adjust_x_axis(rotate_labels = TRUE) |>
+    add_data_points_beeswarm(white_border = FALSE, size = 0.4, alpha = 0.4) |>
+    adjust_y_axis_title("NGS Average Coverage") |>
+    save_plot("output/S3_HLA_NGS_coverage.png",
+        view_plot = TRUE,
+        bg = "transparent",
+        width = 8,
+        height = 8,
+        unit = "cm"
+    )
+
+datatable(htlv_hla_la)
+
+# Wide format of HLA
+htlv_hla <- htlv_hla_la |>
+    select(1:3, 13) |>
+    mutate(allele = paste0(Locus, "_", Chromosome)) |>
+    dplyr::rename(ID = Sample) |>
+    select(ID, allele, Allele) |>
+    mutate(Allele=gsub("G$|N$", "", Allele)) |>
+    pivot_wider(
+        names_from = allele,
+        id_cols = ID,
+        values_from = Allele
+    ) |>
+    filter(!grepl("ATL|IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20", ID))
+
+datatable(htlv_hla)
+
+# HLA frequency calling
+
+hla_htlv_call <- reduceHlaCalls(htlv_hla, resolution = 4)
+
+getHlaFrequencies(
+    hla_htlv_call,
+    compare = TRUE,
+    ref = allele_frequencies
+) |>
+    dplyr::filter(Freq > 0.01) 
+
+```

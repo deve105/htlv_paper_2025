@@ -7,7 +7,7 @@ Notes:
 - IRID089 and SS20 (are the same) confirmed
 - IRID015 and 032 are siblings
 
-to check SS27, SS01, IRID2,3,5-10, SS27
+to check SS27, SS01, IRID2,3,5-10
 
 IRID025_S236 was eliminated
 
