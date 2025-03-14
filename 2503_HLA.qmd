@@ -47,3 +47,33 @@ getHlaFrequencies(
     dplyr::filter(Freq > 0.01) 
 
 ```
+
+
+```{r}
+library(tidyplots, DT, ggplot2)
+
+plot_OR <- read_tsv("./output/2503_HLAanalysis_bydeath.tsv") |>
+    dplyr::filter(p.value < 0.05) |>
+    rename("CI_lower" = "conf.low", "CI_upper" = "conf.high") #|>
+
+plot1 =plot_OR |>
+    tidyplot(x = estimate, y = allele) |>
+    add_data_points() |>
+    add(ggplot2::geom_errorbar(aes(xmin = CI_lower, xmax = CI_upper), width = .3, position = position_dodge(.9))) |>
+    adjust_x_axis(
+        title = "OR-adjusted to colinearity-LD",
+        # limits=c(-5, 8)
+    ) |>
+adjust_y_axis(title = "Alleles with p<0.05") |>
+    add_annotation_line(x = 1, xend = 1.1, y = 0, yend = Inf, color = "grey") |>
+    remove_legend() #|>
+
+save_plot(plot1, 
+    filename = "./output/ORdeath.png",
+    width = NA,
+    height = NA,
+    bg = "transparent"
+)
+
+datatable(plot_OR)
+```

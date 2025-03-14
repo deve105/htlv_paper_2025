@@ -84,7 +84,7 @@ table1 = htlv_mdata |>
   bold_labels() %>%
   as_gt()
 table1
-gtsave(table1, filename = "2503_Table1.docx", path="./output")
+gtsave(table1, filename = "2503_Table1.png", path="./output")
 ```
 
 ```{r}
