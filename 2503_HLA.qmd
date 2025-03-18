@@ -186,29 +186,6 @@ python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_l
 
 
 ```{r}
-read_tsv("data/2503_hla_la_hed.txt") |>
-    mutate(country = ifelse(grepl("ATLSkin", Sample), "Japan", "Peru")) |>
-    tidyplot(x = country, y = Mean_HE) |>
-    add_boxplot() |>
-    add_violin() |>
-    add_test_pvalue()
-
-wide_data <- read_tsv("data/2503_hla_la_paired.txt") |>
-    pivot_wider(names_from = "Allele2", values_from = "HED")
-
-wide_data
-matrix_data_sorted <- wide_data |>
-    arrange(Allele1) |>
-    select(Allele1, sort(colnames(wide_data)[-1])) |>
-    column_to_rownames("Allele1") |>
-    as.matrix()
-
-# Convert to a phylogenetic tree
-library(ape)
-tree <- njs(matrix_data_sorted) # Neighbor-joining tree
-plot(tree)
-matrix_data_sorted
-
 # Heatmap
 pairs1 <- read_tsv("data/2503_hla_la_paired.txt") |>
     mutate(
@@ -240,7 +217,6 @@ reverse_pairs
 
 # Combine original data and reverse pairs
 complete_data <- bind_rows(pairs1, reverse_pairs) |>
-    arrange(desc(Allele1), Allele2) |>
     mutate(
         A1 = str_trunc(Allele1, width = 1, "right", ellipsis = ""),
         A2 = str_trunc(Allele2, width = 1, "right", ellipsis = "")
@@ -256,20 +232,22 @@ complete_data <- bind_rows(pairs1, reverse_pairs) |>
             "B" = "HLA-B",
             "C" = "HLA-C"
         )
-    )
-
+    ) |>
+    arrange(Allele1, Allele2)
 
 complete_data |>
     tidyplot(x = Allele1, y = Allele2, color = HED) |>
     add_heatmap() |>
-    adjust_colors(colors_continuous_plasma) |>
+    adjust_colors(colors_diverging_spectral) |>
     add(ggplot2::facet_grid(rows = vars(A2), cols = vars(A1), scales = "free", space = "free", margins = FALSE, switch = "both")) |>
+    reverse_y_axis_labels() |>
     remove_x_axis_labels() |>
     remove_y_axis_labels() |>
     remove_x_axis_title() |>
     remove_y_axis_title() |>
     remove_x_axis_ticks() |>
     remove_y_axis_ticks() |>
+    add(theme(panel.spacing = unit(0.05, "lines"))) |>
     save_plot(
         filename = "./output/2503_heatmap_hla.png",
         width = NA,
@@ -277,9 +255,25 @@ complete_data |>
         bg = "transparent"
     )
 
-
 ```
 
+```{r}
+hed <- read_tsv("data/2503_hla_la_hed.txt") |>
+    mutate(country = ifelse(grepl("ATLSkin", Sample), "Japan", "Peru")) |>
+    filter(country == "Peru")
+
+metadata <- read_tsv("2503_filtered_HLA_rearranged.tsv") |>
+    select(-c(1:6)) |>
+    left_join(hed, by = c("ID" = "Sample"))
+
+cor.test(metadata$sum_freq, metadata$Mean_HE, method = "spearman")
+metadata |>
+    tidyplot(x = disease_2, y = HED_A) |>
+    add_violin() |>
+    add_test_pvalue()
+
+metadata
+```
 
 https://github.com/aiminy/IS-Seq-python3
 
@@ -327,3 +321,5 @@ https://github.com/rbentham/HLAdivR/tree/48b2058f383ea75dad6e3c0f63bb1623ef5f065
 https://github.com/Genentech/midasHLA/blob/1a5bebfa67dd0f710a5ae5d4668fde9d3044e68a/NEWS.md?plain=1#L77
 
 https://www.nature.com/articles/s41409-024-02341-z
+
+https://jokergoo.github.io/ComplexHeatmap-reference/book/index.html
