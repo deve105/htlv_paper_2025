@@ -285,27 +285,7 @@ show(fig_B35)
 # Step2: read using midasHLA
 pacman::p_load(midasHLA, tidyverse)
 
-htlv_hla = read_tsv("2503_filtered_HLA_rearranged.tsv")
 
-hla_call = reduceHlaCalls(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)], resolution=4)
-
-hla_call |>
-  rename("Sample"="ID",
-  "A1"="A_1",
-  "A2"="A_2",
-  "B1"="B_1",
-  "B2"="B_2",
-  "C1"="C_1",
-  "C2"="C_2") |>
-  write_tsv("2503_hla4dig.tsv")
-
-hed=read_tsv("test.txt") 
-hed
-hed |>
-left_join(htlv_hla, by=c("Sample"="ID")) |>
-  tidyplots::tidyplot(y=HED_A, x=gini, color=disease_2) |>
-  tidyplots::add_data_points()
-fig
 gra = hlaCallsGranthamDistance(
   hla_call,
   genes = "A",
