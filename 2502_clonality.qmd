@@ -11,7 +11,6 @@ to check SS27, SS01, IRID2,3,5-10
 
 IRID025_S236 was eliminated
 
-
 ```{r}
 
 pacman::p_load(googlesheets4, tidyverse, DT,lubridate, gtsummary, gt, rmarkdown)
@@ -75,8 +74,8 @@ table1 = htlv_mdata |>
       Sex ~ "Sex",
       Age ~ "Age(years)",
       id_birth ~ "Birthplace",
-      disease_2 ~ "Disease",
-      Status ~ "Mortality rate at 5 years"),
+      disease_2 ~ "Disease outcome",
+      Status ~ "5-year mortality rate"),
     ) |>
   gtsummary::add_overall(last=FALSE, col_label="**Total**") |>
   gtsummary::add_p() |>
@@ -284,8 +283,15 @@ fig_B35 = htlv_hla |>
 show(fig_B35)
 
 # Step2: read using midasHLA
-pacman::p_load(midasHLA)
+pacman::p_load(midasHLA, tidyverse)
 
+
+gra = hlaCallsGranthamDistance(
+  hla_call,
+  genes = "A",
+  aa_selection = "binding_groove"
+)
+class(hla_call)
 # Step3: Subsetting 
 datatable(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)])
 

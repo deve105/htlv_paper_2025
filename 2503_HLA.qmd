@@ -1,4 +1,8 @@
+Hypothesis: High sequence divergence between the alleles' peptide-binding domain strongly affects the combined peptide-binding properties.
 
+Evolutionary divergence of the human leucocyte antigen class I (HLA-I) genes was evaluated using the Grantham distance at HLA-A, HLA-B, and HLA-C. Grantham distance takes into account composition, polarity, and volume.
+HLA-B > HLA-A or HLA-C
+Hierarchical clustering
 ```{r}
 pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA)
 htlv_hla_la <- read_tsv("250304_HLAI/hla-la/hla_la_concatenated_output.txt") |>
@@ -25,7 +29,7 @@ htlv_hla <- htlv_hla_la |>
     mutate(allele = paste0(Locus, "_", Chromosome)) |>
     dplyr::rename(ID = Sample) |>
     select(ID, allele, Allele) |>
-    mutate(Allele=gsub("G$|N$", "", Allele)) |>
+    mutate(Allele = gsub("G$|N$", "", Allele)) |>
     pivot_wider(
         names_from = allele,
         id_cols = ID,
@@ -44,6 +48,278 @@ getHlaFrequencies(
     compare = TRUE,
     ref = allele_frequencies
 ) |>
-    dplyr::filter(Freq > 0.01) 
+    dplyr::filter(Freq > 0.01)
 
 ```
+
+
+```{r}
+library(tidyplots, DT, ggplot2)
+
+plot_OR <- read_tsv("./output/2503_HLAanalysis_bydeath.tsv") |>
+    dplyr::filter(p.value < 0.05) |>
+    rename("CI_lower" = "conf.low", "CI_upper" = "conf.high") #|>
+
+plot1 <- plot_OR |>
+    tidyplot(x = estimate, y = allele) |>
+    add_data_points() |>
+    add(ggplot2::geom_errorbar(aes(xmin = CI_lower, xmax = CI_upper), width = .3, position = position_dodge(.9))) |>
+    adjust_x_axis(
+        title = "OR-adjusted to colinearity-LD",
+        # limits=c(-5, 8)
+    ) |>
+    adjust_y_axis(title = "Alleles with p<0.05") |>
+    add_annotation_line(x = 1, xend = 1.1, y = 0, yend = Inf, color = "grey") |>
+    remove_legend() #|>
+
+save_plot(plot1,
+    filename = "./output/ORdeath.png",
+    width = NA,
+    height = NA,
+    bg = "transparent"
+)
+
+datatable(plot_OR)
+```
+
+
+```{r}
+## Evolutionary divergence for HLA 4 digits analysis
+## -------------------------------------------------
+pacman::p_load(tidyverse, tidyplots, DT, stringr, forcats)
+### Loading data from optitype
+
+htlv_hla <- read_tsv("2503_filtered_HLA_rearranged.tsv")
+
+hla_call <- reduceHlaCalls(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)], resolution = 4)
+
+# renaming for the HED in python
+hla_call |>
+    rename(
+        "Sample" = "ID",
+        "A1" = "A_1",
+        "A2" = "A_2",
+        "B1" = "B_1",
+        "B2" = "B_2",
+        "C1" = "C_1",
+        "C2" = "C_2"
+    ) |>
+    write_tsv("2503_hla4dig.tsv")
+
+# Loading HED distances
+hed <- read_tsv("test.txt")
+hed |>
+    pivot_longer(-Sample, names_to = "HLA1", values_to = "HED") |>
+    mutate(
+        HLA1 = recode_factor(
+            as.factor(HLA1),
+            "HED_A" = "HLA-A",
+            "HED_B" = "HLA-B",
+            "HED_C" = "HLA-C",
+            "Mean_HE" = "Mean HED",
+            .ordered = TRUE
+        )
+    ) |>
+    tidyplot(x = HLA1, y = HED, color = HLA1) |>
+    add_violin() |>
+    add_boxplot() |>
+    adjust_x_axis_title("") |>
+    remove_legend() |>
+    add_test_asterisks()
+
+
+# Heatmap of HLA-I
+hed |>
+    pivot_longer(-Sample, names_to = "HLA1", values_to = "HED") |>
+    mutate(
+        HLA1 = recode_factor(
+            as.factor(HLA1),
+            "HED_A" = "HLA-A",
+            "HED_B" = "HLA-B",
+            "HED_C" = "HLA-C",
+            "Mean_HE" = "Mean HED",
+            .ordered = TRUE
+        )
+    ) |>
+    tidyplot(x = Sample, y = Sample, color = HED) |>
+    add_heatmap()
+
+datatable(hed)
+hed
+mean(hed$HED_C)
+hed |>
+    left_join(htlv_hla, by = c("Sample" = "ID")) |>
+    tidyplots::tidyplot(y = Mean_HE, x = gini, color = disease_2) |>
+    tidyplots::add_data_points()
+fig
+```
+
+Using optitype, pairwise divergences of HLA-A, HLA-B, and HLA-C were similar
+
+
+## Using HLA-LA files
+```{r}
+hlala_htlv <- read_tsv("250304_HLAI/hla-la/hla_la_concatenated_output.txt")
+
+hlala_dataset <- hlala_htlv |>
+    filter(Locus %in% c("A", "B", "C")) |>
+    select(Locus, Chromosome, Allele, Sample) |>
+    mutate(Allele = stringr::str_replace(Allele, "G", "")) |>
+    mutate(Allele = str_trunc(Allele, width = 7, "right", ellipsis = "")) |>
+    mutate(Alleles = paste0(Locus, Chromosome)) |>
+    pivot_wider(values_from = "Allele", names_from = "Alleles", id_cols = "Sample") |>
+    write_tsv("data/2503_hla_la_htlv.tsv")
+
+datatable(hlala_dataset)
+```
+
+S20 seems to have a lower Quality for B
+
+https://github.com/sunhuaibo/HLA-HED
+```{python}
+## hed to execute in the terminal
+python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_la_htlv.tsv -o data/2503_hla_la_hed.txt
+
+## paired to execute in the terminal
+python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_la_htlv.tsv -p -o data/2503_hla_la_paired.txt
+```
+
+
+```{r}
+# Heatmap
+pairs1 <- read_tsv("data/2503_hla_la_paired.txt") |>
+    mutate(
+        A1 = str_trunc(Allele1, width = 1, "right", ellipsis = ""),
+        A2 = str_trunc(Allele2, width = 1, "right", ellipsis = "")
+    ) |>
+    mutate(
+        A1 = recode(A1,
+            "A" = "HLA-A",
+            "B" = "HLA-B",
+            "C" = "HLA-C"
+        ),
+        A2 = recode(A2,
+            "A" = "HLA-A",
+            "B" = "HLA-B",
+            "C" = "HLA-C"
+        )
+    )
+pairs1
+
+# Create reverse pairs
+reverse_pairs <- pairs1 |>
+    mutate(Allele1A = Allele2, Allele2A = Allele1) |>
+    filter(!paste(Allele1A, Allele2A) %in% paste(pairs1$Allele1, pairs1$Allele2)) |>
+    mutate(Allele1 = Allele1A, Allele2 = Allele2A) |>
+    select(-Allele1A, -Allele2A)
+
+reverse_pairs
+
+# Combine original data and reverse pairs
+complete_data <- bind_rows(pairs1, reverse_pairs) |>
+    mutate(
+        A1 = str_trunc(Allele1, width = 1, "right", ellipsis = ""),
+        A2 = str_trunc(Allele2, width = 1, "right", ellipsis = "")
+    ) |>
+    mutate(
+        A1 = recode(A1,
+            "A" = "HLA-A",
+            "B" = "HLA-B",
+            "C" = "HLA-C"
+        ),
+        A2 = recode(A2,
+            "A" = "HLA-A",
+            "B" = "HLA-B",
+            "C" = "HLA-C"
+        )
+    ) |>
+    arrange(Allele1, Allele2)
+
+complete_data |>
+    tidyplot(x = Allele1, y = Allele2, color = HED) |>
+    add_heatmap() |>
+    adjust_colors(colors_diverging_spectral) |>
+    add(ggplot2::facet_grid(rows = vars(A2), cols = vars(A1), scales = "free", space = "free", margins = FALSE, switch = "both")) |>
+    reverse_y_axis_labels() |>
+    remove_x_axis_labels() |>
+    remove_y_axis_labels() |>
+    remove_x_axis_title() |>
+    remove_y_axis_title() |>
+    remove_x_axis_ticks() |>
+    remove_y_axis_ticks() |>
+    add(theme(panel.spacing = unit(0.05, "lines"))) |>
+    save_plot(
+        filename = "./output/2503_heatmap_hla.png",
+        width = NA,
+        height = NA,
+        bg = "transparent"
+    )
+
+```
+
+```{r}
+hed <- read_tsv("data/2503_hla_la_hed.txt") |>
+    mutate(country = ifelse(grepl("ATLSkin", Sample), "Japan", "Peru")) |>
+    filter(country == "Peru")
+
+metadata <- read_tsv("2503_filtered_HLA_rearranged.tsv") |>
+    select(-c(1:6)) |>
+    left_join(hed, by = c("ID" = "Sample"))
+
+cor.test(metadata$sum_freq, metadata$Mean_HE, method = "spearman")
+metadata |>
+    tidyplot(x = disease_2, y = HED_A) |>
+    add_violin() |>
+    add_test_pvalue()
+
+metadata
+```
+
+https://github.com/aiminy/IS-Seq-python3
+
+https://github.com/nf-core/viralrecon
+
+https://github.com/erickcastelli/HLA_genotyping
+
+https://github.com/yshen25/HLA-Clus
+
+https://www.youtube.com/watch?v=NNOEqMe4n74
+
+https://grunwaldlab.github.io/Population_Genetics_in_R/
+
+https://grunwaldlab.github.io/Population_Genetics_in_R/Data_Preparation.html
+
+https://github.com/PapenfussLab/gridss
+
+https://github.com/ICBI/viGEN
+
+https://github.com/ClinicalGenomicsGBG/Viral_Integration_Pipeline
+
+https://github.com/rosericazondekon/virusSeqPipeline
+
+https://academic.oup.com/bioinformaticsadvances/article/4/1/vbae150/7815721
+
+https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2020.587306/full
+
+https://github.com/GIGA-AnimalGenomics-BLV/Public/tree/master/PIC
+
+https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-6647-4
+
+https://github.com/ding-lab/VirusIntegrate
+https://github.com/SannaAb/Viral_Integration_Pipe
+
+https://github.com/sara-javadzadeh/FastViFi
+
+https://github.com/aehrc/isling
+
+https://github.com/nf-core/viralintegration/blob/0.1.1/README.md
+
+https://github.com/slowkow/hlabud
+
+https://github.com/rbentham/HLAdivR/tree/48b2058f383ea75dad6e3c0f63bb1623ef5f0650
+
+https://github.com/Genentech/midasHLA/blob/1a5bebfa67dd0f710a5ae5d4668fde9d3044e68a/NEWS.md?plain=1#L77
+
+https://www.nature.com/articles/s41409-024-02341-z
+
+https://jokergoo.github.io/ComplexHeatmap-reference/book/index.html
