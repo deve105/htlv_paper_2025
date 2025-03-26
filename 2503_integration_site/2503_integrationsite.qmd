@@ -26,6 +26,16 @@ Facts:
 
     -   50k reads to 10% HTLV-1
 
--   DNA-probe-seq: NGS paired end, 76x76bp: biotinylated probe and streptavidin bead
+-   DNA-probe-seq: NGS paired end, 76x76bp: biotinylated probe and streptavidin bead.
+
+    -   random ligation between virus-host during DNA library preparation.
+
+    -   The number of unique IS per 100k htlv-1 reads correlated with PVL.
+
+    -   Clonal abundance ATL \> HAM/TSP \> AC
+
+        -   clonal abundance of each clone = \# final virus-host reads x 10000 x PVL% / \# total HTLV-1 mapped reads
+
+    -   Negative correlation between PVL and the number of unique ISs.
 
 ![](images/paste-1.png)
