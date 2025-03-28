@@ -52,6 +52,75 @@ getHlaFrequencies(
 
 ```
 
+### Subanalysis: including all HLA-LA from Japan
+
+```{r}
+#---packages
+pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA, stringr)
+
+#---data loading
+htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
+    dplyr::filter(Q1 > .8)
+#---data wrangling
+hlala_dataset <- htlv_hla_la |>
+    filter(Locus %in% c("A", "B", "C")) |>
+    select(Locus, Chromosome, Allele, Sample) |>
+    mutate(Allele = stringr::str_replace(Allele, "G", "")) |>
+    mutate(Allele = str_trunc(Allele, width = 7, "right", ellipsis = "")) |>
+    mutate(Alleles = paste0(Locus, Chromosome)) |>
+    pivot_wider(values_from = "Allele", names_from = "Alleles", id_cols = "Sample") |>
+    write_tsv("data/2503_hla_la_htlv_peru_and_japan.tsv")
+
+#===After reading the file with hla_hed.py
+#---reading the output
+hla_hed = read_tsv("data/2503_hla_total_hed.tsv")
+#---data wrangling to make a new variable for countries
+hla_hed = hla_hed |>
+    mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) 
+#---plotting
+hla_hed |>
+    pivot_longer(
+        -c(country, Sample), 
+        names_to="HLAHED", 
+        values_to="HED"
+        ) |>
+    mutate(
+        HLAHED=fct_recode(
+            HLAHED,
+            "HLA-A"="HED_A",
+            "HLA-B"="HED_B",
+            "HLA-C"="HED_C",
+            "Mean HLA-I"="Mean_HE")
+        ) |>
+    tidyplot(x=country, 
+        y=HED, 
+        color=country) |>
+    add_data_points_jitter() |>
+    add_test_pvalue(
+        hide_info = TRUE,
+        label.size = 6/ggplot2::.pt
+        ) |>
+    add_violin() |>
+    remove_legend() |>
+    adjust_x_axis(
+        title=""
+        ) |>
+    adjust_y_axis(limits = c(0,NA), padding = c(0.1, NA)) |>
+    adjust_title(face="bold") |>
+    split_plot(
+        by = HLAHED, 
+        ncol = 4, 
+        nrow = 1,
+        guides="keep") |>
+    save_plot(
+        filename = "./output/2503_hla_la_japan_vs_peru.png",
+        width = NA,
+        height = NA,
+        bg = "transparent"
+    )
+
+
+```
 
 ```{r}
 library(tidyplots, DT, ggplot2)
@@ -83,95 +152,7 @@ datatable(plot_OR)
 ```
 
 
-```{r}
-## Evolutionary divergence for HLA 4 digits analysis
-## -------------------------------------------------
-pacman::p_load(tidyverse, tidyplots, DT, stringr, forcats)
-### Loading data from optitype
-
-htlv_hla <- read_tsv("2503_filtered_HLA_rearranged.tsv")
-
-hla_call <- reduceHlaCalls(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)], resolution = 4)
-
-# renaming for the HED in python
-hla_call |>
-    rename(
-        "Sample" = "ID",
-        "A1" = "A_1",
-        "A2" = "A_2",
-        "B1" = "B_1",
-        "B2" = "B_2",
-        "C1" = "C_1",
-        "C2" = "C_2"
-    ) |>
-    write_tsv("2503_hla4dig.tsv")
-
-# Loading HED distances
-hed <- read_tsv("test.txt")
-hed |>
-    pivot_longer(-Sample, names_to = "HLA1", values_to = "HED") |>
-    mutate(
-        HLA1 = recode_factor(
-            as.factor(HLA1),
-            "HED_A" = "HLA-A",
-            "HED_B" = "HLA-B",
-            "HED_C" = "HLA-C",
-            "Mean_HE" = "Mean HED",
-            .ordered = TRUE
-        )
-    ) |>
-    tidyplot(x = HLA1, y = HED, color = HLA1) |>
-    add_violin() |>
-    add_boxplot() |>
-    adjust_x_axis_title("") |>
-    remove_legend() |>
-    add_test_asterisks()
-
-
-# Heatmap of HLA-I
-hed |>
-    pivot_longer(-Sample, names_to = "HLA1", values_to = "HED") |>
-    mutate(
-        HLA1 = recode_factor(
-            as.factor(HLA1),
-            "HED_A" = "HLA-A",
-            "HED_B" = "HLA-B",
-            "HED_C" = "HLA-C",
-            "Mean_HE" = "Mean HED",
-            .ordered = TRUE
-        )
-    ) |>
-    tidyplot(x = Sample, y = Sample, color = HED) |>
-    add_heatmap()
-
-datatable(hed)
-hed
-mean(hed$HED_C)
-hed |>
-    left_join(htlv_hla, by = c("Sample" = "ID")) |>
-    tidyplots::tidyplot(y = Mean_HE, x = gini, color = disease_2) |>
-    tidyplots::add_data_points()
-fig
-```
-
 Using optitype, pairwise divergences of HLA-A, HLA-B, and HLA-C were similar
-
-
-## Using HLA-LA files
-```{r}
-hlala_htlv <- read_tsv("250304_HLAI/hla-la/hla_la_concatenated_output.txt")
-
-hlala_dataset <- hlala_htlv |>
-    filter(Locus %in% c("A", "B", "C")) |>
-    select(Locus, Chromosome, Allele, Sample) |>
-    mutate(Allele = stringr::str_replace(Allele, "G", "")) |>
-    mutate(Allele = str_trunc(Allele, width = 7, "right", ellipsis = "")) |>
-    mutate(Alleles = paste0(Locus, Chromosome)) |>
-    pivot_wider(values_from = "Allele", names_from = "Alleles", id_cols = "Sample") |>
-    write_tsv("data/2503_hla_la_htlv.tsv")
-
-datatable(hlala_dataset)
-```
 
 S20 seems to have a lower Quality for B
 
@@ -258,21 +239,8 @@ complete_data |>
 ```
 
 ```{r}
-hed <- read_tsv("data/2503_hla_la_hed.txt") |>
-    mutate(country = ifelse(grepl("ATLSkin", Sample), "Japan", "Peru")) |>
-    filter(country == "Peru")
 
-metadata <- read_tsv("2503_filtered_HLA_rearranged.tsv") |>
-    select(-c(1:6)) |>
-    left_join(hed, by = c("ID" = "Sample"))
 
-cor.test(metadata$sum_freq, metadata$Mean_HE, method = "spearman")
-metadata |>
-    tidyplot(x = disease_2, y = HED_A) |>
-    add_violin() |>
-    add_test_pvalue()
-
-metadata
 ```
 
 https://github.com/aiminy/IS-Seq-python3
