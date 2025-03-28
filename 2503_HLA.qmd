@@ -1,56 +1,660 @@
-Hypothesis: High sequence divergence between the alleles' peptide-binding domain strongly affects the combined peptide-binding properties.
 
+## Methods
+
+Following reads extraction from the chromosome 6, coverage and quality score analyses were performed for all HLA regions. High-resolution HLA typing was carried out using OptiType (4-field resolution for HLA-I) and HLA-LA (6-field resolution for HLA-I/II). Allotypes failing quality thresholds (score <0.8 or average coverage <20) were discarded. Results from both bioinformatics tools were pairwise compared, and considering the average coverage for HLA-II, only HLA-I was considered to further analysis.
+
+HLA class I allele frequencies were calculated after reduction to 4-field resolution using the *reduceHlaCalls* function from the R package midasHLA, frequencies for the Peruvian population were obtained using the function *getHlaFrequencies* and compared to the USA National Marrow Donor Program (NMDP) populations that were obtained from Allele Frequency Net Database (http://www.allelefrequencies.net/).
+
+
+
+# Results
+
+HLA-I allele frequencies 
+
+The Peruvian HTLV-1 cohort displayed distinct HLA-I allele distribution patterns, with A02:01 being the most frequent allele at the HLA-A locus (44%), followed by A24:02 (17%) and A68:01 (7%). The HLA-B locus showed equal frequencies for B35:01 and B35:05 (12% each), with B48:01 appearing at 11%. At the HLA-C locus, C04:01 predominated (29%), followed by C01:02 (18%) and C*07:02 (13%). Comparative analysis with the NMDP database (Figure A) and an independent HTLV-1 cohort from Miyazaki, Japan (Figures B) revealed population-specific variations in HLA distribution. Additional distribution frequencies for HLA-I and HLA-II are presented in Supplementary table 1. 
+
+These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population.
+
+Suplementary Figure 1: NGS average coverage of HLA locus from the Peruvian HTLV-1 cohort and the Miyazaki-Japan HTLV-1 cohort.
+
+Figure 1: Haplotype frequency for HLA-I alleles greater than 5% in the Peruvian HTLV-1 cohort compared to a) relevant populations from the NMDP database and b) the Miyazaki-Japan HTLV-1 cohort.
+
+Pairwise divergence
+
+We aimed to explore HLA evolutionary divergence between Japanese and Peruvian HTLV-1 cases, considering that alleles diversity peptide-binding strongly affects immune response.
+
+was performed using OptiType and HLA-LA
 Evolutionary divergence of the human leucocyte antigen class I (HLA-I) genes was evaluated using the Grantham distance at HLA-A, HLA-B, and HLA-C. Grantham distance takes into account composition, polarity, and volume.
 HLA-B > HLA-A or HLA-C
 Hierarchical clustering
 ```{r}
-pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA)
-htlv_hla_la <- read_tsv("250304_HLAI/hla-la/hla_la_concatenated_output.txt") |>
-    dplyr::filter(Q1 > .8)
+"""
+- IRID011, IRID026 and IRID038 were excluded (no HTLV-1 clones detected)
+IRID025_S236 was eliminated
+to check SS27, SS01, IRID2,3,5-10
 
-# Ploting coverage
-tidyplot(x = Locus, y = AverageCoverage, data = htlv_hla_la) |>
+- IRID039_S123 and SS04 (are the same)  confirmed
+- IRID015 and SS14 (are the same) confirmed
+- IRID062 and SS02 (are the same) confirmed
+- IRID089 and SS20 (are the same) confirmed
+- IRID015 and 032 are siblings
+"""
+####################
+# HLA_S1_Locus average coverage and quality
+####################
+#---Loading packages
+pacman::p_load(tidyverse, DT, tidyplots, languageserver, midasHLA, stringr)
+badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
+
+#---Loading HLA coverage and data
+htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
+    as.data.frame() |>
+    dplyr::filter(Q1 > .8, AverageCoverage>20) |>
+    mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
+    dplyr::filter(!grepl(badquality, Sample))
+
+#---HLA coverage - Ploting coverage
+htlv_hla_la |>
+tidyplot(x = Locus, y = AverageCoverage, color=country) |>
     adjust_x_axis(rotate_labels = TRUE) |>
     add_data_points_beeswarm(white_border = FALSE, size = 0.4, alpha = 0.4) |>
-    adjust_y_axis_title("NGS Average Coverage") |>
+    adjust_y_axis(transform = "log10") |>
+    adjust_y_axis_title("NGS Average Coverage", face="bold") |>
+    add_median_bar(alpha=.3) |>
+    adjust_x_axis_title("HLA Locus", face="bold") |>
+    adjust_title("Average Coverage per HLA Locus", , face="bold") |>
+    adjust_colors(
+        new=c("#E69F00","#C02D45")) |>
+    adjust_legend_title("Country", face="bold") |>
+    adjust_legend_position("right") |>
     save_plot("output/S3_HLA_NGS_coverage.png",
         view_plot = TRUE,
-        bg = "transparent",
-        width = 8,
-        height = 8,
-        unit = "cm"
+        bg = "transparent"
     )
+```
 
-datatable(htlv_hla_la)
-
-# Wide format of HLA
-htlv_hla <- htlv_hla_la |>
-    select(1:3, 13) |>
+```{r}
+####################
+# HLA_Fig1 Allele frequencies
+####################
+pacman::p_load(flextable, officer)
+#---Wide format of HLA
+htlv_hla_la_wide <- htlv_hla_la |>
+    select(1:3, 13, 14) |>
     mutate(allele = paste0(Locus, "_", Chromosome)) |>
     dplyr::rename(ID = Sample) |>
-    select(ID, allele, Allele) |>
+    select(ID, allele, Allele, country) |>
     mutate(Allele = gsub("G$|N$", "", Allele)) |>
     pivot_wider(
         names_from = allele,
-        id_cols = ID,
-        values_from = Allele
-    ) |>
-    filter(!grepl("ATL|IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20", ID))
+        id_cols = c(ID, country),
+        values_from = Allele)
 
-datatable(htlv_hla)
-
-# HLA frequency calling
-
-hla_htlv_call <- reduceHlaCalls(htlv_hla, resolution = 4)
-
-getHlaFrequencies(
-    hla_htlv_call,
-    compare = TRUE,
+#---Peru frequencies   
+peru_hla = htlv_hla_la_wide |>
+    filter(country=="Peru") |>
+    select(-country)
+#---Japan frequencies
+japan_hla = htlv_hla_la_wide |>
+    filter(country=="Japan") |>
+    select(-country)
+japan_hla
+#---frequency calling
+peru_hlacall <- reduceHlaCalls(peru_hla, resolution = 4)
+japan_hlacall <- reduceHlaCalls(japan_hla, resolution = 4)
+#---Japan calling
+japan_hlafreq = getHlaFrequencies(
+    japan_hlacall,
+    compare = FALSE,
     ref = allele_frequencies
 ) |>
-    dplyr::filter(Freq > 0.01)
+    dplyr::rename("Miyazaki - Japan Cohort"="Freq") |>
+    select(-Counts) 
+
+#---Peru calling
+peru_hlafreq = getHlaFrequencies(
+    peru_hlacall,
+    compare = FALSE,
+    ref = allele_frequencies
+    ) |>
+    dplyr::rename("Peru_Cohort"="Freq") |>
+    select(-Counts) |>
+    full_join(japan_hlafreq, by="allele") |>
+    arrange(allele, Peru_Cohort)
+peru_hlafreq
+#---Table for supplementary files
+ft <- flextable(peru_hlafreq) %>%
+  theme_box() %>%                     
+  set_caption(caption = "Allele Frequencies in HTLV-1 from Peru vs Japan") %>%
+  autofit()                           
+#---Save to Word
+doc <- read_docx() %>%                
+  body_add_flextable(ft) %>%          
+  print(target = "output/STable_Allele_Frequencies.docx") 
+
+#---Suplementary Figure 2 - Japan vs Peru allele frequencies more than 5%
+peru_hlafreq |>
+    dplyr::filter(Peru_Cohort> 0.05, grepl("^A|^B|^C", allele)) |>
+    pivot_longer(-allele, names_to="Country", values_to="Frequency") |>
+    mutate(Frequency=ifelse(is.na(Frequency), 0, Frequency),
+        Country=dplyr::recode(Country, "Peru_Cohort"="Peruvian Cohort",
+        "Miyazaki - Japan Cohort"="Miyazaki-Japanese Cohort"
+        )) |>
+    tidyplot(x=Frequency, y=allele, color=Country) |>
+    add_mean_bar(width=.5) |>
+    add_sum_dot() |>
+    adjust_y_axis_title("Alleles HLA-I > 5%", face="bold") |>
+    adjust_x_axis_title("Haplotype Frequency", face="bold") |>
+    adjust_x_axis(labels=scales::percent_format()) |>
+    adjust_title("HLA-I Allele Frequency by Country", , face="bold") |>
+    adjust_colors(
+        new=c("#E69F00","#C02D45")) |>
+    adjust_legend_title("HTLV-1 Cohort", face="bold") |>
+    adjust_legend_position("right") |>
+    save_plot("output/S3_HLAfreq_peru_japan.png", view_plot = TRUE,
+    bg = "transparent")
+
+#---Suplementary Figure 3 - Japan vs Peru allele frequencies more than 5%
+peru_hlafreq_world = getHlaFrequencies(
+    peru_hlacall,
+    compare = TRUE,
+    ref = allele_frequencies
+    )
+#---HLA frequencies compared to other places
+peru_hlafreq_world = peru_hlafreq_world |>
+dplyr::filter(Freq > 0.05) |>
+  select(1,3,7,9,6,8,4) |>
+  dplyr::rename(
+    "Latino NMDP"="USA NMDP Hispanic South or Central American",
+    Amerindian="USA NMDP North American Amerindian",
+    "Japanese NMDP"="USA NMDP Japanese",
+    European="USA NMDP European Caucasian",
+    "African-American NMDP"="USA NMDP African American pop 2"
+    ) |>
+    select(-Amerindian, -European)|>
+    tidyr::pivot_longer(-allele,names_to="Population", values_to="haplotype_freq") |>
+    mutate(Population=ifelse(Population=="Freq", "HTLV-1 Peru", Population)) |>
+    mutate(Population=factor(Population, levels=c("HTLV-1 Peru", "Latino NMDP",  "Japanese NMDP", "African-American NMDP")))
+population_colors=c("#C02D45", "#4FAE62",  "#ffb703", "#219ebc")
+peru_hlafreq_world    |>
+    dplyr::filter(grepl("^A|^B|^C", allele)) |>
+    tidyplot(x=haplotype_freq, y=allele, color=Population) |>
+    add_mean_bar(width=.5) |>
+    add_sum_dot(size=.9) |>
+    adjust_y_axis_title("Alleles HLA-I > 5%", face="bold") |>
+    adjust_x_axis_title("Haplotype Frequency", face="bold") |>
+    adjust_legend_title("Population", face="bold") |>
+    adjust_x_axis(labels=scales::percent_format()) |>
+    adjust_colors(new_colors = population_colors) |>
+    save_plot("output/S3_HLAfreq_by_NMDP.png", view_plot = TRUE,
+    bg = "transparent")
+```
+
+```{r}
+gra = hlaCallsGranthamDistance(
+  hla_call,
+  genes = "A",
+  aa_selection = "binding_groove"
+)
+class(hla_call)
+# Step3: Subsetting 
+datatable(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)])
+
+# Calling HLA and reducing it
+hla_htlv = reduceHlaCalls(htlv_hla[, c(which(colnames(htlv_hla) == "ID"), 1:6)], resolution=4)
+
+
+
 
 ```
+
+
+```{r}
+
+pacman::p_load(tidyverse, midasHLA, styler, lintr, DT)
+badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
+
+# Step1: Filtering data, removing those without HTLV-1 clones or reads, and JP cases
+htlv_la = read_tsv("concatenated_HLA.txt", col_names = c("none", "A_1", "A_2", "B_1", "B_2", "C_1", "C_2", "none_reads", "none_obj", "ID"))
+
+htlv_hla = htlv_la|>
+  select(-starts_with("none")) |>
+  dplyr::filter(!grepl("ATLSkin|1339", ID)) |>
+  dplyr::filter(!grepl(badquality, ID)) |>
+  mutate(
+    ID=stringr::str_replace(ID, "^Peru_", "")
+    ) |>
+    left_join(htlv_mdata, by=("ID")) |>
+    left_join(result, by=c("ID"="sample"))
+
+datatable(htlv_hla) #visualization
+write_tsv(htlv_hla, "2503_filtered_HLA_rearranged.tsv")
+
+# Step2: figures by 
+A24A2 = htlv_hla |>
+  mutate(
+    A0201 = ifelse(grepl("A\\*02:01", A_1) | grepl("A\\*02:01", A_2), "A*02:01(+)", "A*02:01(-)"),
+    A2402 = ifelse(grepl("A\\*24:02", A_1) | grepl("A\\*24:02", A_2),  "A*24:02(+)", "A*24:02(-)")) |>
+    pivot_longer(cols=c(A0201, A2402), names_to="HLA", values_to="haplotype")|>
+    mutate(HLA=recode(HLA, A0201 = "HLA-A*02:01", A2402="HLA-A*24:02"))
+
+# comparison of IS by A24 and A02
+A24A2|>
+    tidyplot(x=haplotype, y=sum_freq) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+    adjust_x_axis(title = NULL) |>
+    split_plot(by=HLA, tag_level=NULL) |>
+    save_plot("output/S2_A_1_vs_NGSreads.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
+
+    
+# comparison of OCI by A24 and A02
+A24A2|>
+    tidyplot(x=haplotype, y=gini) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Oligoclonality Index(OCI)") |>
+    adjust_x_axis(title = NULL) |>
+    split_plot(by=HLA, tag_level=NULL) |>
+    save_plot("output/S2_A_2_vs_OCI.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
+
+
+# B35 and OCI
+fig_B35 = htlv_hla |>
+  mutate(
+    B35= ifelse(grepl("B\\*35", B_1) | grepl("B\\*35", B_2), "B*35(+)", "B*35(-)")) |>
+    tidyplot(x=B35, y=gini) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Oligoclonality Index(OCI)") |>
+    adjust_x_axis(title = NULL) |>
+    save_plot("output/S2_B35_vs_OCI.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
+
+
+# B35 part B
+fig_B35 = htlv_hla |>
+  mutate(
+    B35= ifelse(grepl("B\\*35", B_1) | grepl("B\\*35", B_2), "B*35(+)", "B*35(-)")) |>
+    tidyplot(x=B35, y=sum_freq) |>
+    add_data_points_jitter(alpha=0.95) |>
+    add_violin(draw_quantiles = 0.5, alpha=0.2) |>
+    add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
+    adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+    adjust_x_axis(title = NULL) |>
+    save_plot("output/S2_B35_vs_IS.png", view_plot = TRUE,
+    bg = "transparent",
+    width = 15,
+    height = 8, 
+    unit="cm") 
+
+show(fig_B35)
+
+```
+
+
+### Hardy-Weinberg-Equilibrium (HWE) to filter out alleles that strongly deviate from HWE expectations
+
+The Hardy-Weinberg Equilibrium (HWE) is a fundamental principle in population genetics that describes the expected distribution of allele frequencies in a population under certain conditions (e.g., no mutation, migration, selection, or genetic drift). It states that allele and genotype frequencies in a population will remain constant from generation to generation in the absence of evolutionary influences.
+```{r}
+comparison_hla = getHlaFrequencies(
+  hla_htlv,
+  compare=TRUE,
+  ref = allele_frequencies) |>
+  dplyr::filter(Freq > 0.05) 
+dim(comparison_hla)
+
+custom_midas <- function(hla_df, pheno_df, exp, inheritance,outcome, conditional, omnibus, additional){
+  # Prepare midasHLA
+  HLA <- prepareMiDAS(
+    hla_calls = hla_df,
+    colData = pheno_df,
+    experiment = exp)
+  # Filter deviations from Hardy-Weinberg-Equilibrium (HWE) 
+  HLA <- HWETest(
+    object = HLA,
+    experiment = exp,
+  HWE_cutoff = 0.05 / 14, # p-value 0.05, working with only 14 alleles > 0.5%
+  as.MiDAS = TRUE)
+
+  HLA_model <- glm(
+    formula = as.formula(paste(outcome, "~ term")), # Dynamically create formula
+    data = HLA,
+    family = binomial()
+  )
+  HLA_results <- runMiDAS(
+    object = HLA_model, 
+    experiment = exp, 
+    inheritance_model = inheritance,
+    lower_frequency_cutoff = 0.02, 
+    upper_frequency_cutoff = 0.98, 
+    correction = "bonferroni", 
+    exponentiate = TRUE,
+    conditional=conditional,
+    omnibus=omnibus,
+    omnibus_groups_filter=additional
+)
+  return(HLA_results)
+}
+# metadata
+colhtlv=htlv_hla |>
+  select(ID, disease_2, strongy_lifetime, sum_freq, gini, Status) |>
+  mutate(
+    strongy_lifetime=as.factor(ifelse(strongy_lifetime=="Strongyloides (+)","1", "0")),
+    disease_2=as.factor(ifelse(disease_2=="Asymptomatic carriers", "0", "1")),
+    Status=as.factor(case_when(
+      Status == "Death" ~ "1", 
+      .default= "0"))
+  ) #|>
+  #dplyr::filter(!is.na(gini))
+colhtlv$Status
+# Adjust data if it includes 0s or 1s
+#colhtlv$gini <- (colhtlv$gini * (length(colhtlv$gini) - 1) + 0.5) / length(colhtlv$gini)
+
+hla_df = htlv_hla |>
+  dplyr::filter(!is.na(gini)) |>
+  select(ID, A_1, A_2, B_1, B_2, C_1, C_2) |>
+  as.data.frame()
+
+custom_midas <- function(hla_df, pheno_df, exp, inheritance,outcome)
+
+# Define the models
+models <- c("dominant", "recessive", "overdominant", "additive")
+names(models) <- models  # Assign names to the models
+
+# Initialize an empty list to store results
+results_status <- list()
+# Loop through the models
+for (i in seq_along(models)) {
+  # Apply custom_midas
+  result <- custom_midas(
+    hla_df = hla_df, 
+    pheno_df = colhtlv, 
+    exp = "hla_NK_ligands", 
+    inheritance = models[i], 
+    outcome = "Status",
+    conditional=FALSE, #all results were not independent
+    omnibus=FALSE,
+    additional=NULL
+  )
+  
+  # Add a column with the model name
+  result$model <- names(models)[i]
+  
+  # Store the result in the list
+  results_status[[i]] <- result
+  combined_df <- do.call(rbind, results_status)
+  return(combined_df)
+}
+
+datatable(combined_df)
+write_tsv(combined_df, "output/2503_HLAanalysis_bydisease.tsv")  
+
+
+
+````
+
+```{r}
+custom_midas_het <- function(hla_df, pheno_df, exp, outcome){
+  # Prepare midasHLA
+  HLA <- prepareMiDAS(
+    hla_calls = hla_df,
+    colData = pheno_df,
+    experiment = c("hla_het", "hla_divergence"))
+
+  HLA_model <- glm(
+    formula = as.formula(paste(outcome, "~ term")), # Dynamically create formula
+    data = HLA,
+    family = binomial()
+  )
+  HLA_results <- runMiDAS(
+    object = HLA_model, 
+    experiment = exp, 
+    exponentiate = TRUE
+)
+  return(HLA_results)
+}
+
+result <- custom_midas_het(
+    hla_df = hla_df, 
+    pheno_df = colhtlv,
+    outcome="disease_2",
+    exp = "hla_divergence") 
+result
+
+```
+
+```{r}
+# FOR IS PVL 
+custom_midas_pvl <- function(hla_df, pheno_df, exp, inheritance,outcome,omnibus){ #, conditional) #omnibus, additional){
+  # Prepare midasHLA
+  HLA <- prepareMiDAS(
+    hla_calls = hla_df,
+    colData = pheno_df,
+    experiment = exp)
+  # Filter deviations from Hardy-Weinberg-Equilibrium (HWE) 
+  HLA <- HWETest(
+    object = HLA,
+    experiment = exp,
+    HWE_cutoff = 0.10 / 14, # p-value 0.05, working with only 14 alleles > 0.5%
+    as.MiDAS = TRUE)
+
+  HLA_model <- glm.nb(
+    formula = as.formula(paste(outcome, "~ term")), # Dynamically create formula
+    data = HLA)
+    
+  HLA_results <- runMiDAS(
+    object = HLA_model, 
+    experiment = exp, 
+    inheritance_model = inheritance,
+    lower_frequency_cutoff = 0.02, 
+    upper_frequency_cutoff = 0.98, 
+    correction = "bonferroni", 
+    exponentiate = TRUE,
+    #conditional=conditional,
+    omnibus=omnibus,
+    #omnibus_groups_filter=additional
+)
+  return(HLA_results)
+}
+
+##########
+# data
+# metadata
+colhtlv2=htlv_hla |>
+  select(ID, disease_2, strongy_lifetime, sum_freq, gini, Status) |>
+  mutate(
+    strongy_lifetime=as.factor(ifelse(strongy_lifetime=="Strongyloides (+)","1", "0")),
+    disease_2=as.factor(ifelse(disease_2=="Asymptomatic carriers", "0", "1")),
+    Status=as.factor(case_when(
+      Status == "Death" ~ "1", 
+      .default= "0"))
+  ) |>
+  dplyr::filter(!is.na(sum_freq)) |>
+  mutate(sum_freq=as.numeric(sum_freq))
+
+hla_df2 = htlv_hla |>
+  dplyr::filter(!is.na(sum_freq)) |>
+  select(ID, A_1, A_2, B_1, B_2, C_1, C_2) |>
+  as.data.frame()
+library(MASS)
+models <- c("dominant", "recessive", "overdominant", "additive")
+resultx = custom_midas_pvl(hla_df=hla_df2, pheno_df=colhtlv2, exp="hla_aa", inheritance="additive",outcome="sum_freq", omnibus=TRUE)
+datatable(resultx)
+```
+```{r}
+### ANALYSIS ASSOCIATION
+#-- First, I am exploring the distribution of sum_freq (PVL) or gini index
+#-----------------GINI INDEX (OCI) it is proportion (%)
+htlv_hla <- htlv_hla[!is.na(htlv_hla$gini), ] #removing NAs
+
+# Q-Q plot for normality (continuous data)
+qqnorm(htlv_hla$gini)
+qqline(htlv_hla$gini, col = "red") #it seems that it doesnt follow ND.
+
+# Histogram of the response variable
+hist(htlv_hla$gini, breaks = 30, main = "Distribution of Gini", xlab = "Gini")
+
+"""
+Beta regression model is designed for continuous data between 0 and 1. It uses a logit link function to model the mean of the Beta distribution
+If the data is unimodal and symmetric, a Beta regression might be appropriate.
+If the data is bimodal (peaks at 0 and 1), consider a zero-one-inflated Beta regression.
+"""
+
+# Simulate theoretical quantiles from the Beta distribution
+fit_beta <- betareg(gini ~ 1, data = htlv_hla)
+theoretical_quantiles <- qbeta(ppoints(length(htlv_hla$gini)), 
+                               shape1 = fit_beta$coefficients$mean, 
+                               shape2 = fit_beta$coefficients$precision)
+
+# Create Q-Q plot
+qqplot(theoretical_quantiles, htlv_hla$gini,
+       main = "Q-Q Plot for Beta Distribution",
+       xlab = "Theoretical Quantiles (Beta)",
+       ylab = "Observed Quantiles")
+abline(0, 1, col = "red")
+pacman::p_load(betareg)
+
+# Corrected Q-Q plot for Poisson distribution
+qqplot(qpois(ppoints(length(htlv_hla$gini)), lambda = mean(htlv_hla$gini)), 
+       htlv_hla$gini,
+       main = "Q-Q Plot for Poisson Distribution",
+       xlab = "Theoretical Quantiles (Poisson)",
+       ylab = "Observed Quantiles")
+abline(0, 1, col = "red")
+
+
+
+qqplot(qpois(ppoints(length(htlv_hla$sum_freq), lambda = mean(htlv_hla$sum_freq)), 
+       main = "Q-Q Plot for Poisson Distribution",
+       xlab = "Theoretical Quantiles (Poisson)",
+       ylab = "Observed Quantiles")
+abline(0, 1, col = "red")
+
+
+ HLA = HWETest(
+  object=midas,
+  HWE_cutoff = 0.05 / 53,
+  experiment = "hla_NK_ligands",
+  as.MiDAS=TRUE)
+
+# gini index as outcomd
+colhtlv=htlv_hla |>
+  select(ID, disease_2, strongy_lifetime, sum_freq, gini, Status) |>
+  mutate(
+    strongy_lifetime=as.factor(ifelse(strongy_lifetime=="Strongyloides (+)","1", "0")),
+    disease_2=as.factor(ifelse(disease_2=="Asymptomatic carriers", "0", "1")),
+    Status=as.factor(case_when(
+      Status == "Death" ~ "1", 
+      .default= "0"))
+  ) |>
+  dplyr::filter(!is.na(gini))
+
+# Adjust data if it includes 0s or 1s
+colhtlv$gini <- (colhtlv$gini * (length(colhtlv$gini) - 1) + 0.5) / length(colhtlv$gini)
+
+hla_gini = htlv_hla |>
+  dplyr::filter(!is.na(gini)) |>
+  select(ID, A_1, A_2, B_1, B_2, C_1, C_2) |>
+  as.data.frame()
+
+# HLA divergence
+midas <- prepareMiDAS(
+  hla_calls = hla_gini,
+  colData = colhtlv,
+  experiment = "hla_divergence")
+
+# Linear model
+HLA_model <- lm(gini ~ term, data = midas)
+HLA_results <- runMiDAS(
+  object = HLA_model, 
+  experiment = "hla_divergence", 
+  exponentiate = TRUE
+)
+# Beta reg model 
+HLA_model <- gam(gini ~ term, family = betar(), data = midas)
+HLA_results <- runMiDAS(
+  object = HLA_model, 
+  experiment = "hla_divergence",
+  inheritance_model=""
+)
+
+HLA_results
+
+dispersion <- sum(residuals(HLA_model, type = "pearson")^2) / df.residual(HLA_model)
+dispersion # much greater than 1, the data is overdispersed.
+
+
+
+HLA
+freq |>
+  filter(Counts>10)
+midas_filtered_freq <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_alleles",
+    lower_frequency_cutoff = 0.01
+    )
+midas_filtered_freq
+
+
+object<-lm(gini~term, data=midas)
+results <-
+  runMiDAS(
+    object = object,
+    experiment = "hla_alleles",
+    inheritance_model = "dominant",
+    conditional = FALSE,
+    omnibus = FALSE,
+    lower_frequency_cutoff = 0.05
+    )
+kableResults(results)
+
+htlv_clonality
+results |>
+  filter(p.value<0.05)
+
+htlv_hla
+```
+
+https://github.com/cancerit/dockstore-cgpmap/wiki/1.-Reference-files
+
+ftp://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/bwa_idx_GRCh38_hla_decoy_ebv_bwamem2.tar.gz
+https://genentech.github.io/midasHLA/articles/MiDAS_vignette.html
+
+https://hla.or.jp/med/frequency_search/en/allele/
+
+
+
+## HLA-I or MHC-I
+are divided into:
+- Classical HLA-I: 
+A, B, C. Immunosurveillance and cancer immunotherapy.
+60-90% in cancer are affected. (immunescape)
+a-heavy chain (HLA-A, HLA-B, HLA-C)
+b-2-microglobulin.
+
+After ubiquitinylation, proteins degraded by immunoproteasome.
+Transportation by the transporter associated with antigen processing (TAP1/TAP2) into the ER.
+Tapasin + chaperones (calreticulin, ERp57)
+- Non-classical HLA-I: 
+
+### 
 
 ### Subanalysis: including all HLA-LA from Japan
 
@@ -75,9 +679,12 @@ hlala_dataset <- htlv_hla_la |>
 #---reading the output
 hla_hed = read_tsv("data/2503_hla_total_hed.tsv")
 #---data wrangling to make a new variable for countries
+badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
+
 hla_hed = hla_hed |>
-    mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) 
-#---plotting
+    mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
+    dplyr::filter(!grepl(badquality, Sample))
+
 hla_hed |>
     pivot_longer(
         -c(country, Sample), 
@@ -85,13 +692,19 @@ hla_hed |>
         values_to="HED"
         ) |>
     mutate(
-        HLAHED=fct_recode(
-            HLAHED,
+        HLAHED=HLAHED |> fct_recode(
+            "Mean HLA-I"="Mean_HE",
             "HLA-A"="HED_A",
             "HLA-B"="HED_B",
-            "HLA-C"="HED_C",
-            "Mean HLA-I"="Mean_HE")
-        ) |>
+            "HLA-C"="HED_C"
+            ) |>
+            fct_relevel(
+                "Mean HLA-I",
+                "HLA-A",
+                "HLA-B",
+                "HLA-C"
+            )
+        ) |> 
     tidyplot(x=country, 
         y=HED, 
         color=country) |>
@@ -103,10 +716,14 @@ hla_hed |>
     add_violin() |>
     remove_legend() |>
     adjust_x_axis(
-        title=""
+        title="",
+        labels = function(x) paste0(x, "\n(n = ", table(hla_hed$country)[x], ")")
         ) |>
     adjust_y_axis(limits = c(0,NA), padding = c(0.1, NA)) |>
     adjust_title(face="bold") |>
+        adjust_colors(
+        new=c("#E69F00","#D55E00")
+    ) |>
     split_plot(
         by = HLAHED, 
         ncol = 4, 
@@ -156,7 +773,8 @@ Using optitype, pairwise divergences of HLA-A, HLA-B, and HLA-C were similar
 
 S20 seems to have a lower Quality for B
 
-https://github.com/sunhuaibo/HLA-HED
+HED scores were calculated using a python script implemented in HLA-HED. [https://github.com/sunhuaibo/HLA-HED]
+
 ```{python}
 ## hed to execute in the terminal
 python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_la_htlv.tsv -o data/2503_hla_la_hed.txt
@@ -166,8 +784,15 @@ python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_l
 ```
 
 
+Background 
+The antigen presentation from HLA-I represent the most effective control system to mantain HTLV-1 infection  from HTLV-1 products
+THe spectrum of antigens presented by HLA type 
+## Heatmap of HLA-I evolutionary distances (HED) from Peruvian HTLV-1 cases
+
+The heatmap shows z-score-normalized HED across HLA-I subtypes in HTLV-1 cases from Peru. The blue to red gradient indicates low to high HED between allele pairs, respectively.
+
 ```{r}
-# Heatmap
+#---Supplementary heatmap distances
 pairs1 <- read_tsv("data/2503_hla_la_paired.txt") |>
     mutate(
         A1 = str_trunc(Allele1, width = 1, "right", ellipsis = ""),
@@ -185,18 +810,13 @@ pairs1 <- read_tsv("data/2503_hla_la_paired.txt") |>
             "C" = "HLA-C"
         )
     )
-pairs1
-
-# Create reverse pairs
+#---Create reverse pairs
 reverse_pairs <- pairs1 |>
     mutate(Allele1A = Allele2, Allele2A = Allele1) |>
     filter(!paste(Allele1A, Allele2A) %in% paste(pairs1$Allele1, pairs1$Allele2)) |>
     mutate(Allele1 = Allele1A, Allele2 = Allele2A) |>
     select(-Allele1A, -Allele2A)
-
-reverse_pairs
-
-# Combine original data and reverse pairs
+#---Combine original data and reverse pairs
 complete_data <- bind_rows(pairs1, reverse_pairs) |>
     mutate(
         A1 = str_trunc(Allele1, width = 1, "right", ellipsis = ""),
@@ -215,7 +835,7 @@ complete_data <- bind_rows(pairs1, reverse_pairs) |>
         )
     ) |>
     arrange(Allele1, Allele2)
-
+#---Heatmap for supplementary data
 complete_data |>
     tidyplot(x = Allele1, y = Allele2, color = HED) |>
     add_heatmap() |>
@@ -235,13 +855,8 @@ complete_data |>
         height = NA,
         bg = "transparent"
     )
-
 ```
 
-```{r}
-
-
-```
 
 https://github.com/aiminy/IS-Seq-python3
 
