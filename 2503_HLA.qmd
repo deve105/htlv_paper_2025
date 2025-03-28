@@ -13,7 +13,9 @@ HLA-I allele frequencies
 
 The Peruvian HTLV-1 cohort displayed distinct HLA-I allele distribution patterns, with A02:01 being the most frequent allele at the HLA-A locus (44%), followed by A24:02 (17%) and A68:01 (7%). The HLA-B locus showed equal frequencies for B35:01 and B35:05 (12% each), with B48:01 appearing at 11%. At the HLA-C locus, C04:01 predominated (29%), followed by C01:02 (18%) and C*07:02 (13%). Comparative analysis with the NMDP database (Figure A) and an independent HTLV-1 cohort from Miyazaki, Japan (Figures B) revealed population-specific variations in HLA distribution. Additional distribution frequencies for HLA-I and HLA-II are presented in Supplementary table 1. 
 
-These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population.
+Considering the highNext, we 
+
+These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population. Fewer dominant alleles may constrain immune responses to HTLV-1.
 
 Suplementary Figure 1: NGS average coverage of HLA locus from the Peruvian HTLV-1 cohort and the Miyazaki-Japan HTLV-1 cohort.
 
@@ -188,6 +190,11 @@ peru_hlafreq_world    |>
     adjust_colors(new_colors = population_colors) |>
     save_plot("output/S3_HLAfreq_by_NMDP.png", view_plot = TRUE,
     bg = "transparent")
+```
+
+## Statistics
+
+```{r}
 ```
 
 ```{r}
