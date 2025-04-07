@@ -1,0 +1,57 @@
+---
+bibliography: references.bib
+---
+
+## Introduction
+
+The human T-cell leukemia virus type 1 (HTLV-1) is a neglected oncogenic retrovirus that primarily affects marginalized and isolated populations. Although transmission has been controlled in some developed regions, HTLV-1 remains disattended across much of the global south. @nishijima2019 @martin2018 The virus directly causes an aggressive form of T-cell lymphoma (ATLL, Adult T-cell Leukemia/Lymphoma) and is linked to several autoimmune disorders, particularly HAM/TSP. Even seemingly asymptomatic carriers face a significantly higher risk of death from indirect complications. @schierhout2020 @valcarcel2022
+
+The actual classification for HTLV-1 has mainly and putatively take onlyninto comsideration the highly variable regions LTR and env which may not reflect the actual differences in the HTLV-1 pathogenesis.
+
+ATLL is the most devastating complication which affects less than 5% of carriers after several decades of chronic infection.
+
+ATLL is a centinel event that allows to stimate the actual incidence of HTLV-1 where recently has been demonstrated to be a leading cause of T-cell lymphomas in Peru.
+
+Most genomic descriptions and ATL risk factors have been described ans validated in the Global north, where the risk factors for latino population is still scarcing. Specifically viral subtypes and host related genotypes have been controversially described, we aimed to explore the diversity and using a high throughput approach.peru has a particular interest because it has reported the highest incidence of ATL from the region and is characterized by its high indigenous component from all south american countires.
+
+Htlv affects more rural people that admixed populations, but the effect of this divergence which may be protective is unknown. Differences in Atl
+
+HTLV-1 is an RNA virus responsible of an aggresive subtype of T cell lymphoma (ATLL) and an unclear spectrum of autoimmune disease where HAM/TSP is widely described.neurodegenerative disease. even in asymptomatic is linked to poor outcomes. (\<10% will develop a complication)
+
+the provirus demostrate remarkably stability the coding region of the virus is flanked by two long terminal repeat sequences which are responsible of the diversity. U3 and U5 are the most variable the second most variable region is env (positive selection?) Factors related to outcomes: HLA, virus? HTLV-1 is endemic in south America HTLV-1 is pretty stable.
+
+We aimed to evaluate diversity and phylogenetic of HTLV-1 sing a complete genome approach in South-America. We explored using phylodu\ynamics the demographic history and population dynamic, evolution...
+
+Allmost all reported genomic data came from the north hemisphere
+
+Htlv is one of the most stanle virus
+
+Responsible of ham/tsp and ATL
+
+Most studies came from Japan High throughput sequencing to explore viroly and host immune factors related to htlv-1 infection.
+
+## Methods
+
+Following reads extraction from the chromosome 6, coverage and quality score analyses were performed for all HLA regions. High-resolution HLA typing was carried out using OptiType (2-field resolution for HLA-I) and HLA-LA (3-field resolution for HLA-I/II). Allotypes failing quality thresholds (score \<0.8 or average coverage \<20) were discarded. Results from both bioinformatics tools were pairwise compared, and considering the average coverage for HLA-II, only HLA-I was considered to further analysis. The concordances and Cohen's Kappa between HLA-LA and Optitype were 93%, 85%, and 100% for HLA-A, HLA-B, and HLA-C, respectively. The HLA-LA pipeline was selected for further analyses.Hardy-Weinberg Equilibrium (HWE) was tested for each locus using the exact test implemented on the pegas package with 1000 replicates with a significance threshold of α=0.05. Pairwise F<sub>ST</sub> was estimated using Weir & Cockerham’s (1984) method with 10,000 bootstrap replicates implemented on the package hierfstat. Significant differentiation was inferred when 95% CIs excluded zero.
+
+HLA class I allele frequencies were calculated after reduction to 2-field resolution using the *reduceHlaCalls* function from the package midasHLA. Frequencies for the Peruvian population were obtained using the function *getHlaFrequencies* and compared to the USA National Marrow Donor Program (NMDP) populations that were retrieved from Allele Frequency Net Database (http://www.allelefrequencies.net/).
+
+# Results
+
+HLA-I allele frequencies
+
+The Peruvian HTLV-1 cohort exhibited distinct HLA-I allele distributions, with A*02:01 being the most frequent allele at the HLA-A locus (44%), followed by A*24:02 (17%) and A*68:01 (7%). The HLA-B locus showed equal frequencies for B*35:01 and B*35:05 (12% each), with B*48:01 at 11%, while the HLA-C locus was dominated by C*04:01 (29%), followed by C*01:02 (18%) and C\*07:02 (13%). Comparative analyses with the NMDP database and a Japanese HTLV-1 cohort revealed population-specific variations, with HLA-A and HLA-C conforming to Hardy-Weinberg equilibrium (p=0.06 and p=0.33, respectively), but HLA-B showing significant deviation (p=0.01), likely reflecting its well-documented role in balancing selection or cohort-specific demographic factors. Complete allele frequencies are detailed in Supplementary Table 1. The Peruvian and Japanese cohorts showed significant moderate genetic differentiation (mean F<sub>ST</sub> = 0.047, 95% CI \[0.023, 0.072\]), consistent with population-specific HLA allele frequency distributions.
+
+Considering the highNext, we
+
+These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population. Fewer dominant alleles may constrain immune responses to HTLV-1.
+
+Suplementary Figure 1: NGS average coverage of HLA locus from the Peruvian HTLV-1 cohort and the Miyazaki-Japan HTLV-1 cohort.
+
+Figure 1: Haplotype frequency for HLA-I alleles greater than 5% in the Peruvian HTLV-1 cohort compared to a) relevant populations from the NMDP database and b) the Miyazaki-Japan HTLV-1 cohort.
+
+Pairwise divergence
+
+We aimed to explore HLA evolutionary divergence between Japanese and Peruvian HTLV-1 cases, considering that alleles diversity peptide-binding strongly affects immune response.
+
+was performed using OptiType and HLA-LA Evolutionary divergence of the human leucocyte antigen class I (HLA-I) genes was evaluated using the Grantham distance at HLA-A, HLA-B, and HLA-C. Grantham distance takes into account composition, polarity, and volume. HLA-B \> HLA-A or HLA-C Hierarchical clustering
