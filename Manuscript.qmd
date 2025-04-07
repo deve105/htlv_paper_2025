@@ -4,9 +4,11 @@ bibliography: references.bib
 
 ## Introduction
 
-The human T-cell leukemia virus type 1 (HTLV-1) is a neglected oncogenic retrovirus that primarily affects marginalized and isolated populations. Although transmission has been controlled in some developed regions, HTLV-1 remains disattended across much of the global south. @nishijima2019 @martin2018 The virus directly causes an aggressive form of T-cell lymphoma (ATLL, Adult T-cell Leukemia/Lymphoma) and is linked to several autoimmune disorders, particularly HAM/TSP. Even seemingly asymptomatic carriers face a significantly higher risk of death from indirect complications. @schierhout2020 @valcarcel2022
+The human T-cell leukemia virus type 1 (HTLV-1) is a neglected oncogenic retrovirus that primarily affects marginalized and isolated populations. Although transmission has been controlled in some developed regions, HTLV-1 remains disattended across much of the global south. @nishijima2019 @martin2018 The virus directly causes an aggressive form of T-cell lymphoma (ATLL, Adult T-cell Leukemia/Lymphoma) and is linked to several autoimmune disorders, particularly HAM/TSP. Even seemingly asymptomatic carriers face a significantly higher risk of death from indirect complications. @schierhout2020 @valcarcel2022 Compounding these disparities, HTLV-1 predominantly impacts rural populations with low genetic admixture—yet whether this divergence confers any protective effect remains unclear.
 
 The actual classification for HTLV-1 has mainly and putatively take onlyninto comsideration the highly variable regions LTR and env which may not reflect the actual differences in the HTLV-1 pathogenesis.
+
+Differences in Atl
 
 ATLL is the most devastating complication which affects less than 5% of carriers after several decades of chronic infection.
 
@@ -14,9 +16,7 @@ ATLL is a centinel event that allows to stimate the actual incidence of HTLV-1 w
 
 Most genomic descriptions and ATL risk factors have been described ans validated in the Global north, where the risk factors for latino population is still scarcing. Specifically viral subtypes and host related genotypes have been controversially described, we aimed to explore the diversity and using a high throughput approach.peru has a particular interest because it has reported the highest incidence of ATL from the region and is characterized by its high indigenous component from all south american countires.
 
-Htlv affects more rural people that admixed populations, but the effect of this divergence which may be protective is unknown. Differences in Atl
-
-HTLV-1 is an RNA virus responsible of an aggresive subtype of T cell lymphoma (ATLL) and an unclear spectrum of autoimmune disease where HAM/TSP is widely described.neurodegenerative disease. even in asymptomatic is linked to poor outcomes. (\<10% will develop a complication)
+(\<10% will develop a complication)
 
 the provirus demostrate remarkably stability the coding region of the virus is flanked by two long terminal repeat sequences which are responsible of the diversity. U3 and U5 are the most variable the second most variable region is env (positive selection?) Factors related to outcomes: HLA, virus? HTLV-1 is endemic in south America HTLV-1 is pretty stable.
 
