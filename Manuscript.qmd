@@ -4,21 +4,19 @@ bibliography: references.bib
 
 ## Introduction
 
-The human T-cell leukemia virus type 1 (HTLV-1) is a neglected oncogenic retrovirus that primarily affects marginalized and isolated populations. Although transmission has been controlled in some developed regions, HTLV-1 remains disattended across much of the global south. @nishijima2019 @martin2018 The virus directly causes an aggressive form of T-cell lymphoma (ATLL, Adult T-cell Leukemia/Lymphoma) and is linked to several autoimmune disorders, particularly HAM/TSP. Even seemingly asymptomatic carriers face a significantly higher risk of death from indirect complications. @schierhout2020 @valcarcel2022 Compounding these disparities, HTLV-1 predominantly impacts rural populations with low genetic admixture—yet whether this divergence confers any protective effect remains unclear.
+The human T-cell leukemia virus type 1 (HTLV-1) is a neglected oncogenic retrovirus that primarily affects marginalized and isolated populations. Although transmission has been controlled in some developed regions, HTLV-1 remains disattended across much of the global south. @nishijima2019 @martin2018 The virus directly causes an aggressive form of T-cell lymphoma (ATLL, Adult T-cell Leukemia/Lymphoma) and is linked to several autoimmune disorders, particularly HAM/TSP. Even seemingly asymptomatic carriers face a significantly higher risk of death from indirect complications. @schierhout2020 @valcarcel2022 Compounding these disparities, HTLV-1 predominantly impacts rural populations with low genetic admixture—yet whether this divergence confers any deleterious effect remains unclear.
 
-The actual classification for HTLV-1 has mainly and putatively take onlyninto comsideration the highly variable regions LTR and env which may not reflect the actual differences in the HTLV-1 pathogenesis.
+HTLV-1 exhibits remarkable genetic stability, with its proviral genome flanked by long terminal repeats (LTRs) containing highly variable U3 and U5 regions, followed by the *env* gene as the second most variable region. Current classification relies on *LTR* and *env* diversity, reflecting geographic distribution but not necessarily pathogenicity. Major functional differences have been proposed for Tax region (Tax A or Transcontinental, and Tax B Japanese) , and deffective viruses have been described as scape mechanisms to limit immunological function in the host during progression. While positive selection likely drives variability in these regions, the overall proviral stability suggests that minor genetic differences may still significantly impact viral behavior and disease outcomes. 
+
+The main factors related to ATLL progression have been controversially validated in population from the global north, where some HLA has been demostrated to be protective and specific virus subtypes associated to HAM/TSP or ATLL, however the data is only based mainly in Japanese cohorts.
+
+Factors related to outcomes: HLA, virus? HTLV-1 is endemic in south America HTLV-1 is pretty stable.
 
 Differences in Atl
 
-ATLL is the most devastating complication which affects less than 5% of carriers after several decades of chronic infection.
+ATLL is the most devastating complication which affects less than 5% of carriers after several decades of chronic infection.ATLL is a centinel event that allows to stimate the actual incidence of HTLV-1. Most genomic descriptions and ATL risk factors have been described ans validated in the Global north, where the risk factors for latino population is still scarcing.
 
-ATLL is a centinel event that allows to stimate the actual incidence of HTLV-1 where recently has been demonstrated to be a leading cause of T-cell lymphomas in Peru.
-
-Most genomic descriptions and ATL risk factors have been described ans validated in the Global north, where the risk factors for latino population is still scarcing. Specifically viral subtypes and host related genotypes have been controversially described, we aimed to explore the diversity and using a high throughput approach.peru has a particular interest because it has reported the highest incidence of ATL from the region and is characterized by its high indigenous component from all south american countires.
-
-(\<10% will develop a complication)
-
-the provirus demostrate remarkably stability the coding region of the virus is flanked by two long terminal repeat sequences which are responsible of the diversity. U3 and U5 are the most variable the second most variable region is env (positive selection?) Factors related to outcomes: HLA, virus? HTLV-1 is endemic in south America HTLV-1 is pretty stable.
+Specifically viral subtypes and host related genotypes have been controversially described, we aimed to explore the diversity and using a high throughput approach.Peru has a particular interest because it has reported the highest incidence of ATL from the region and is characterized by its high indigenous component from all south american countires.
 
 We aimed to evaluate diversity and phylogenetic of HTLV-1 sing a complete genome approach in South-America. We explored using phylodu\ynamics the demographic history and population dynamic, evolution...
 
