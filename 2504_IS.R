@@ -28,9 +28,7 @@ overall_cov |>
     upper_ci = mean + qt(0.975, df = n - 1) * se   # 95% CI upper bound
   )
 
-"""
-A total of 71 samples were sequenced. The mean HTLV-1 coverage in the Peruvian cohort was 191× (95% CI: 156–226). Samples with less than 5× coverage—IRID038, IRID011, IRID040, IRID032, IRID006, IRID016, IRID086, and IRID067—were excluded. Among these, four harbored type II (5’LTR-deleted) defective viruses. The global defective virus rate was 6.3%, with no type I defective viruses detected.
-""" 
+
 overall_cov |>
         dplyr::mutate(median=median+1 ) |>
         tidyplots::tidyplot(y=ID, x=median) |>

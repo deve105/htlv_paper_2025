@@ -36,6 +36,12 @@ HLA class I allele frequencies were calculated after reduction to 2-field resolu
 
 # Results
 
+A total of 67 patients with confirmed HTLV-1 infection were included in the study, comprising 10 HAM/TSP patients and 57 asymptomatic carriers (ACs). The lifetime *Strongyloides* infection rate was 56.7% overall and more frequent among males. No association was found between *Strongyloides* infection and HTLV-1-related complications. Demographic and epidemiological characteristics are detailed in **Table 1**. During the 5-year follow-up, the progression rate to ATL among ACs was 5.3% (3 cases). Notably, the 5-year mortality rate was 15%, although 12% of patients were lost to follow-up during COVID-19 pandemic.
+
+A total of 71 DNA samples—corresponding to 67 patients (including 4 serial samples)—were analyzed. The mean HTLV-1 genomic coverage in the Peruvian cohort was **191×** (95% CI: 156–226; **Supplementary Figure 1**). After excluding 4 samples with coverage \<5×, the final dataset comprised **63 cases** (**Supplementary Figure 2**, **Flowchart 1**). Among these, **4 cases (6.3%)** harbored **type II defective viruses** (5’LTR-deleted; **Figure 1A**). Notably, **two of three ATL cases** and **two asymptomatic carriers (ACs)** exhibited these deletions. No **type I defective viruses** were detected.
+
+—IRID038, IRID011, IRID040, IRID032, IRID006, IRID016, IRID086, and IRID067—were excluded.
+
 HLA-I allele frequencies
 
 The Peruvian HTLV-1 cohort exhibited distinct HLA-I allele distributions, with A*02:01 being the most frequent allele at the HLA-A locus (44%), followed by A*24:02 (17%) and A*68:01 (7%). The HLA-B locus showed equal frequencies for B*35:01 and B*35:05 (12% each), with B*48:01 at 11%, while the HLA-C locus was dominated by C*04:01 (29%), followed by C*01:02 (18%) and C\*07:02 (13%). Comparative analyses with the NMDP database and a Japanese HTLV-1 cohort revealed population-specific variations, with HLA-A and HLA-C conforming to Hardy-Weinberg equilibrium (p=0.06 and p=0.33, respectively), but HLA-B showing significant deviation (p=0.01), likely reflecting its well-documented role in balancing selection or cohort-specific demographic factors. Complete allele frequencies are detailed in Supplementary Table 1. The Peruvian and Japanese cohorts showed significant moderate genetic differentiation (mean F<sub>ST</sub> = 0.047, 95% CI \[0.023, 0.072\]), consistent with population-specific HLA allele frequency distributions.

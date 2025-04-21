@@ -23,7 +23,7 @@ htlv_metadata = read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIe
 #----------------------------------------
 # - Step 1: Manipulation 
 htlv_mdata = htlv_metadata |>
-  filter(Complete!="NO_HTLV") |>
+  #filter(Complete!="NO_HTLV") |>
   select(
     ID, 
     Status, 
