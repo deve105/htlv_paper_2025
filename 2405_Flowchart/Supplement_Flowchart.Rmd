@@ -50,7 +50,7 @@ arrow1=getOption("connectGrobArrow", default=arrow(type="closed", length = unit(
 
 ```{R}
 #new page
-png("../output/2405tree/supplement_Fig1.png", width=3000, height=2500, res=300)
+png("2505_supplement_Fig1.png", width=3000, height=2500, res=300)
 #svglite(filename = "Sup1.svg",width=10, height = 8)
 grid.newpage()
 #create main boxes NCBI
@@ -97,6 +97,7 @@ box6<-boxGrob("Identity >60% and filtered\nby Taxonomy ID: 11908",
               box_gp=dbox,
               txt_gp=dtxt)
 
+
 box7<-boxGrob("Cell lines sequences excluded:\n- Human (n=4):\nM86840, LC378575, D13784,\nAB979451.\n- Animal (n=3):\nL03562, L03561, KU214243.1",
               just="left",
               y=.55,
@@ -140,14 +141,14 @@ hd1<-boxGrob("Consensus HTLV-1 sequences:\n- 71 CG samples (Peru)",
               box_gp=dbox2,
               txt_gp=dtxt2)
 
-hd2<-boxGrob("Filtered by: lenght >6000 bp \nand >5x coverage.\n- Excluded:\nIRID011_S130, IRID038_S122,\nIRID040_S124, IRID067_S233", 
+hd2<-boxGrob("Filtered by: >5x coverage.\n- Excluded:\nIRID011, IRID032,\nIRID040, IRID038", 
               just="left",
               y=.70,
               x=rightxb,
               box_gp=dbox2,
               txt_gp=dtxt2)
 
-hd3<-boxGrob("Time series sequences excluded:\n \nIRID026_S237, PE_SS02_S1, \nPE_SS04_S3, PE_SS20_S204",
+hd3<-boxGrob("Time series samples excluded:\nIRID026, SS02, \nSS04, PE_SS20",
               just="left",
               y=.55,
               x=rightxb,
@@ -183,7 +184,7 @@ connectGrob(box11,box12,type="N", lty_gp=gp1, arrow_obj=arrow1)
 connectGrob(box3,box4,type="v","l", lty_gp=gp1, arrow_obj=arrow1)
 
 #main path description
-maind1<-boxGrob("Sequences with potential\nrecombination signal were excluded:\nKF797883, KY007245, KY007246",
+maind1<-boxGrob("Sequences with potential\nrecombination signal were excluded:\nKF797883, KY007245, KY007246\n5'LTR Defective  viruses:\nIRID006, IRID016, IRID086, IRID067",
               just="left",
               y=.40,
               x=rightxbf,
