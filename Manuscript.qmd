@@ -30,11 +30,67 @@ Most studies came from Japan High throughput sequencing to explore viroly and ho
 
 ## Methods
 
+### Population study and HTLV-1 confirmation
+
+After informed consent, blood samples were collected from patients of the prospective HTLV-1 cohort at the Instituto de Medicina Tropical Alexander Von Humbold (Universidad Peruana Cayetano Heredia, Lima-Peru). The study was approved by the Ethics committee of Universidad Peruana Cayetano Heredia, Miayazaki University and Kagoshima University. All patients were previously HTLV-1 screened and confirmed by an Enzyme-linked immunoabsorbent assay (ELISA, **details**), and PCR?/western-blot?.
+
+### DNA extraction
+A total of 71 blood samples were collected, and purified DNA was obtained by Fycoll gradient technique from peripheral mononuclear blood cells. After quality confirmation by Qubit?, DNA samples were sequences  
+
+# NGS sequencing
+ DNA samples were sequenced on a Illumina Hiseq3000 at a depth of .... (place were).
+Raw reads were first analyzed for quality and adaptor removal using fastp, then consensus sequences were obtained using BWA MEM + IVAR and J02029.1 as HTLV-1 reference sequence, with t 0.8 and quality parameter pileup 20 in samstool.
+
+MSA was performed by MAFFT using L-NS-i approach. Samples with less than 6000bp or pairwise identity less than 60% were excluded.  (IRID011_S130, IRID038_S122, IRID040_S124, IRID067_S233) n=4
+
+### Maximun Likelihood Phylogenetics
+
+For ML inference, identical sequences were spared (duplicated sequences), 
+n=4
+IRID025_S236, IRID026 was eliminated)
+>PE_SS02_S1 eliminated, Peru_IRID062_S231 remains
+>PE_SS04_S3 eliminated, Peru_IRID039_S123 remains
+>PE_SS20_S204 eliminated, Peru_IRID089_S292 remains
+
+63 sequences for maximum likelihood inference RAxML-NG  
+22 nucleotides positions were trimmed on the 5LTR and 13 on the 3LTR. 
+
+iqtree2 -s 0923gp46all_2020liao.fa -m TN+F+I+R3 -B 10000 -alrt 10000 --polytomy  -blmin 3.3e-7 -T 5  -mem 20G --prefix iqtree1002_
+
+were excluded for being too gapy
+M86840.1
+NC_001436.1
+KU
+
+
+#using aliview i checked Duplicates
+LC209998.1 (remains LC210057.1)
+LC210056.1
+LC210015.1
+
+
+### Methods
+Recombination analyses
+
+Recombination was initially evaluated using the phi-test followed by a exploratory screening using RDP, GENECONV, Bootscan, MaxChi, SisCan and 3Seq and LARD, implemented in RDP4.5. Potential recombination was suspected when at least four methods showed a Bonferroni-corrected P-value threshold of 0.05(or smaller). Sequences with potential recombination signal were evaluated with GARD, implemented in Hyphy, and  excluded from the final data set.
+An exploratory screening for recombination was performed using phylogenetic methods (Bootscan and RDP), and nucleotide substitution methods (Chimaera, GENECONV, MaxChi, SisCan and 3Seq), Additionally phi-test performed in the RDP4.5 software. Sequences with potential recombination signal were considered when at least four alogorithms reached a threshold p-value of 0.05 with Bonferroni correction.
+GARD implemented in Hyphy was used to evaluate
+
+
 Following reads extraction from the chromosome 6, coverage and quality score analyses were performed for all HLA regions. High-resolution HLA typing was carried out using OptiType (2-field resolution for HLA-I) and HLA-LA (3-field resolution for HLA-I/II). Allotypes failing quality thresholds (score \<0.8 or average coverage \<20) were discarded. Results from both bioinformatics tools were pairwise compared, and considering the average coverage for HLA-II, only HLA-I was considered to further analysis. The concordances and Cohen's Kappa between HLA-LA and Optitype were 93%, 85%, and 100% for HLA-A, HLA-B, and HLA-C, respectively. The HLA-LA pipeline was selected for further analyses.Hardy-Weinberg Equilibrium (HWE) was tested for each locus using the exact test implemented on the pegas package with 1000 replicates with a significance threshold of α=0.05. Pairwise F<sub>ST</sub> was estimated using Weir & Cockerham’s (1984) method with 10,000 bootstrap replicates implemented on the package hierfstat. Significant differentiation was inferred when 95% CIs excluded zero.
 
 HLA class I allele frequencies were calculated after reduction to 2-field resolution using the *reduceHlaCalls* function from the package midasHLA. Frequencies for the Peruvian population were obtained using the function *getHlaFrequencies* and compared to the USA National Marrow Donor Program (NMDP) populations that were retrieved from Allele Frequency Net Database (http://www.allelefrequencies.net/).
 
 # Results
+
+A total of 67 patients with confirmed HTLV-1 infection were included in the study, comprising 10 HAM/TSP patients and 57 asymptomatic carriers (ACs). The lifetime *Strongyloides* infection rate was 56.7% overall and more frequent among males. No association was found between *Strongyloides* infection and HTLV-1-related complications. Demographic and epidemiological characteristics are detailed in **Table 1**. During the 5-year follow-up, the progression rate to ATL among ACs was 5.3% (3 cases). Notably, the 5-year mortality rate was 15%, although 12% of patients were lost to follow-up during COVID-19 pandemic.
+
+A total of 71 DNA samples—corresponding to 67 patients (including 4 serial samples)—were analyzed. The mean HTLV-1 genomic coverage in the Peruvian cohort was 191× (95% CI: 156–226; **Supplementary Figure 1**). After excluding 4 samples with less than 5x coverage, the final dataset comprised 63 cases (**Supplementary Figure 2**, **Flowchart 1**). Among these, 4 cases (6.3%) harbored type II defective viruses (5’LTR-deleted; **Figure 1A**). Notably, two of three ATL cases and two asymptomatic carriers (ACs) exhibited these deletions. No type I defective viruses were detected in this cohort.
+
+
+
+
+—IRID038, IRID011, IRID040, IRID032, IRID006, IRID016, IRID086, and IRID067—were excluded.
 
 HLA-I allele frequencies
 
