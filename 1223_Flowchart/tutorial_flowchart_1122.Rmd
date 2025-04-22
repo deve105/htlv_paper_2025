@@ -1,0 +1,300 @@
+---
+title: "Flowchart Tutorial"
+author: "Daniel Enriquez"
+date: "2023-11-22"
+output: html_document
+---
+https://www.r-bloggers.com/2022/06/creating-flowcharts-with-ggplot2/
+https://mikeyharper.uk/flowcharts-in-r-using-diagrammer/
+https://epirhandbook.com/en/diagrams-and-charts.html
+
+## Flowchart by Gmisc and grid
+References:
+https://cran.r-project.org/web/packages/Gmisc/vignettes/Grid-based_flowcharts.html
+
+
+### * Requirements
+
+```{r setup, include=FALSE}
+library(pacman)
+p_load(Gmisc,glue,htmlTable,grid,magrittr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### * Basic components
+
+ - Boxes: `boxGrob` and `boxPropGrob` functions.
+ - Arrows: `connectGrob` function.
+ - Spread position: `spreadHorizontal` and `spreadVertical` functions.
+ - Alignment of boxes before or after spreading: `alignHorizontal` and `alignVertical`
+ 
+#### * A simple box
+
+```{r box}
+grid.newpage()
+box<-"All patients were
+included for this study
+-A new line
+-Another line"
+#It respects our breaklines or use \n
+boxGrob(box)
+```
+
+#### * A box with style
+
+```{r style}
+grid.newpage()
+boxGrob("Hola\nyo hablo\nnihongo\nok", #it has to include \n to break a line
+        width = .8, height = .8,
+        x = 0, y = 0,
+        bjust = c("left", "bottom"),
+        txt_gp = gpar(col = "darkblue", cex = 2),
+        box_gp = gpar(fill = "transparent", col = "darkblue"))
+```
+
+#### * A box with proportions
+
+```{r proportions}
+grid.newpage()
+boxPropGrob("This is how i am writing this papper", "Uncompleted", "Completed", prop=0.3)
+```
+
+#### * A box with coordinates
+
+```{r coordinates}
+grid.newpage()
+smpl_bx <- boxGrob(
+  label = "A simple box",
+  x = .5,
+  y = .9,
+  just = "center")
+
+prop_bx <- boxPropGrob(
+  label = "A split box",
+  label_left = "Left side",
+  label_right = "Right side",
+  x = .5,
+  y = .3,
+  prop = .3,
+  just = "center")
+
+plot(smpl_bx)
+plot(prop_bx)
+
+smpl_bx_coords <- coords(smpl_bx)
+grid.circle(y = smpl_bx_coords$y,
+            x = smpl_bx_coords$x,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "#FFFFFF99", col = "black"))
+grid.circle(y = smpl_bx_coords$bottom,
+            x = smpl_bx_coords$right,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "red"))
+grid.circle(y = smpl_bx_coords$top,
+            x = smpl_bx_coords$right,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "purple"))
+grid.circle(y = smpl_bx_coords$bottom,
+            x = smpl_bx_coords$left,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "blue"))
+grid.circle(y = smpl_bx_coords$top,
+            x = smpl_bx_coords$left,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "orange"))
+
+prop_bx_coords <- coords(prop_bx)
+grid.circle(y = prop_bx_coords$y,
+            x = prop_bx_coords$x,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "#FFFFFF99", col = "black"))
+grid.circle(y = prop_bx_coords$bottom,
+            x = prop_bx_coords$right_x,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "red"))
+grid.circle(y = prop_bx_coords$top,
+            x = prop_bx_coords$right_x,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "purple"))
+grid.circle(y = prop_bx_coords$bottom,
+            x = prop_bx_coords$left_x,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "blue"))
+grid.circle(y = prop_bx_coords$top,
+            x = prop_bx_coords$left_x,
+            r = unit(1, "mm"),
+            gp = gpar(fill = "orange"))
+
+grid.circle(y = prop_bx_coords$bottom,
+            x = prop_bx_coords$right,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "red"))
+grid.circle(y = prop_bx_coords$top,
+            x = prop_bx_coords$right,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "purple"))
+grid.circle(y = prop_bx_coords$bottom,
+            x = prop_bx_coords$left,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "blue"))
+grid.circle(y = prop_bx_coords$top,
+            x = prop_bx_coords$left,
+            r = unit(2, "mm"),
+            gp = gpar(fill = "orange"))
+
+```
+
+#### * Connecting the boxes
+
+```{r connectors}
+grid.newpage()
+# Initiate the boxes that we want to connect
+side <- boxPropGrob("Side", "Left", "Right",
+                    prop = .3,
+                    x = 0, y = .9,
+                    bjust = c(0,1))
+start <- boxGrob("Top",
+                 x = .6, y = coords(side)$y,
+                 box_gp = gpar(fill = "yellow"))
+bottom <- boxGrob("Bottom",
+                  x = .6, y = 0,
+                  bjust = "bottom")
+
+
+sub_side_left <- boxGrob("Left",
+                         x = coords(side)$left_x,
+                         y = 0,
+                         bjust = "bottom")
+sub_side_right <- boxGrob("Right",
+                          x = coords(side)$right_x,
+                          y = 0,
+                          bjust = "bottom")
+
+odd <- boxGrob("Odd\nbox",
+               x = coords(side)$right,
+               y = .5)
+
+odd2 <- boxGrob("Also odd",
+               x = coords(odd)$right +
+                 distance(bottom, odd, type = "h", half = TRUE) -
+                 unit(2, "mm"),
+               y = 0,
+               bjust = c(1,0))
+
+exclude <- boxGrob("Exclude:\n - Too sick\n - Prev. surgery",
+                   x = 1,
+                   y = coords(bottom)$top +
+                     distance(start, bottom, type = "v", half = TRUE),
+                   just = "left", bjust = "right")
+
+# Connect the boxes and print/plot them
+connectGrob(start, bottom, "vertical")
+connectGrob(start, side, "horizontal")
+connectGrob(bottom, odd, "Z", "l")
+connectGrob(odd, odd2, "N", "l")
+connectGrob(side, sub_side_left, "v", "l")
+connectGrob(side, sub_side_right, "v", "r")
+connectGrob(start, exclude, "-",
+            lty_gp = gpar(lwd = 2, col = "darkred", fill = "darkred"))
+
+# Print the grobs
+start
+bottom
+side
+exclude
+sub_side_left
+sub_side_right
+odd
+odd2
+
+```
+
+### * Basic diagrams for paper
+https://bookdown.org/yihui/rmarkdown-cookbook/diagrams.html
+```{r setup, include=FALSE}
+#library(pacman)
+#p_load(DiagrammeR)
+pacman::p_load(DiagrammeR, networkD3, tidyverse)
+#import data with rio package
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+
+Basic diagram
+```{r}
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  rec1 [label = 'Step 1. Wake up']
+  rec2 [label = 'Step 2. Write code']
+  rec3 [label =  'Step 3. ???']
+  rec4 [label = 'Step 4. PROFIT']
+  
+  # edge definitions with the node IDs
+  rec1 -> rec3 
+  rec2 -> rec4
+  }",
+  height = 500)
+```
+
+Using Gmisc
+
+```{r}
+pacman::p_load(Gmisc, glue, htmlTable, grid, magrittr,extrafont)
+```
+
+
+example
+```{r}
+grid.newpage()
+
+boxh1 <- boxGrob("A cool\nreference\nbox",
+               x = .5, y = .8,
+               box_gp = gpar(fill = "#ADB5C7"))
+another_box <- boxGrob("A horizontal box", x = .1, y =  .5)
+yet_another_box <- boxGrob("Another horizontal box", x = .8, y = .3)
+
+alignedBoxes <- alignHorizontal(box,
+                                another_box,
+                                yet_another_box,
+                                .position = "center")
+
+box
+for (b in alignedBoxes) {
+  print(b)}
+```
+
+```{r}
+library(grid)
+grid.newpage()
+
+box1 <- boxGrob("B1", x = .2, y = .8)
+box2 <- boxGrob("B2", x = .2, y = .8)
+box3 <- boxGrob("B3", x = .2, y = .8)
+box4 <- boxGrob("B4", x = .2, y = .8)
+box5 <- boxGrob("B5", x = .2, y = .8)
+
+spread_boxes <- spreadVertical(box1,
+                               box2,
+                               box3,
+                               box4,
+                               box5, 
+                               .type = "between")
+for (b in spread_boxes) {
+  print(b)
+}
+
+```
+
+
+```{R}
+
+```
+
+
+```
