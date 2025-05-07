@@ -57,6 +57,12 @@ A total of 71 DNA samples—corresponding to 67 patients (including 4 serial sam
 
 —IRID038, IRID011, IRID040, IRID032, IRID006, IRID016, IRID086, and IRID067—were excluded.
 
+A total of 63 complete HTLV-1 genomes from Peru and xxx curated HTLV-1 genomes retrieved from NCBI were included. After multiple recombination analyses three sequences showed recombinant signal that was confirmed in the phylogenetic analysis and using xx% of the samples belonged to the transcontinental subgroup and xx isolates belonged to the African subgroup. (any difference by region??). A predominant cluster was observed aggregated together to the main Brazilian group. (Andean-Amazonian subgroup).
+
+To explore the origin of the Andean-Amazonian subgroup, a Bayesian analysis using the complete genomes and constant model.
+
+Also, 319 CG sequences were obtained from NCBI (112 Brazilian and 1 Chilean). The ML consensus tree confirmed that the majority of SA samples had an aggregation pattern inside the transcontinental clade (Fig1). Additionally, a minority of SA samples are either distributed inside the Japanese clade (Nikkei), close to the African clade or unclassified. The cluster analyses and the discriminant analysis of principal components consistently confirmed the existence of a well-defined clade in SA. After reclassification, the structured coalescent analysis revealed an ancient origin of the SA clade. The divergence time estimation was 7409 (CI 5064 - 9020) YBP.
+
 HLA-I allele frequencies
 
 The Peruvian HTLV-1 cohort exhibited distinct HLA-I allele distributions, with A*02:01 being the most frequent allele at the HLA-A locus (44%), followed by A*24:02 (17%) and A*68:01 (7%). The HLA-B locus showed equal frequencies for B*35:01 and B*35:05 (12% each), with B*48:01 at 11%, while the HLA-C locus was dominated by C*04:01 (29%), followed by C*01:02 (18%) and C\*07:02 (13%). Comparative analyses with the NMDP database and a Japanese HTLV-1 cohort revealed population-specific variations, with HLA-A and HLA-C conforming to Hardy-Weinberg equilibrium (p=0.06 and p=0.33, respectively), but HLA-B showing significant deviation (p=0.01), likely reflecting its well-documented role in balancing selection or cohort-specific demographic factors. Complete allele frequencies are detailed in Supplementary Table 1. The Peruvian and Japanese cohorts showed significant moderate genetic differentiation (mean F<sub>ST</sub> = 0.047, 95% CI \[0.023, 0.072\]), consistent with population-specific HLA allele frequency distributions.
