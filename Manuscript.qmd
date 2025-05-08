@@ -1,5 +1,7 @@
 ---
 bibliography: references.bib
+format: docx
+csl: vancouver.csl
 ---
 
 ## Introduction
@@ -16,22 +18,63 @@ Environmental factors, such as Strongyloides coinfection, have been linked to AT
 
 ### Population study and HTLV-1 confirmation
 
-After obtaining informed consent, blood samples were collected from participants in the prospective HTLV-1 cohort at the Instituto de Medicina Tropical Alexander von Humboldt (Universidad Peruana Cayetano Heredia, Lima, Peru). The study was approved by the Ethics Committees of Universidad Peruana Cayetano Heredia, Miyazaki University, and Kagoshima University. All participants had previously been screened for HTLV-1 and confirmed positive by both enzyme-linked immunosorbent assay (ELISA) and PCR-based testing. DNA was extracted from peripheral blood mononuclear cells (PBMCs) using the Ficoll gradient technique, and DNA quality was confirmed by Nanostring.
+After obtaining informed consent, blood samples were collected from participants in the prospective HTLV-1 cohort at the Instituto de Medicina Tropical Alexander von Humboldt (Universidad Peruana Cayetano Heredia, Lima, Peru). The study was approved by the Ethics Committees of Universidad Peruana Cayetano Heredia, Miyazaki University, and Kagoshima University. All participants had previously been screened for HTLV-1 and confirmed positive by both enzyme-linked immunosorbent assay (ELISA) and PCR-based testing. DNA was extracted from peripheral blood mononuclear cells (PBMCs) using the Ficoll gradient technique. DNA concentration and purity were assessed using NanoDrop spectrophotometry, with samples meeting A260/A280 ratios of \>1.8 considered suitable for sequencing.
 
 # NGS sequencing
 
-DNA samples were sequenced on a Illumina Hiseq3000 at a depth of .... (place were). Raw reads were first analyzed for quality and adapter removal using Fastp, then consensus sequences were obtained using BWA MEM + IVAR and J02029.1 as HTLV-1 reference sequence, with t 0.8 and quality parameter pileup 20 in Samstool.
+Next-Generation Sequencing (NGS) Library preparation was performed using \[kit name\], following manufacturer's protocol. Sequencing was conducted on Illumina Hiseq3000 with \[read length\] paired-end reads and an average depth of \[X\] per sample. Raw reads were first analyzed for quality and adapter removal using Fastp, then consensus HTLV-1 sequences were obtained using BWA MEM + IVAR and J02029.1 as reference sequence, with -t 0.8 and quality parameter pileup 20 in Samstool.
 
-After targeted enriched NGS, sequence reads were trimmed, mapped, processed, and assembled with Fastp, BWA-MEM, Samtools, and IVAR, using J02029.1 as reference. Sequences with low-quality, duplicates or with \< 60% pairwise identity were excluded. Filtered and curated HTLV-1 complete genomes were retrieved from NCBI (September 2023). MSA was performed by MAFFT using L-NS-i approach. Samples with less than 6000bp or pairwise identity less than 60% were excluded. (IRID011_S130, IRID038_S122, IRID040_S124, IRID067_S233) n=4. After MAFFT alignment, sequences were screened for recombination using RDP 4.5. A three-partitions model was selected using ModelFinder and PartitionFinder. SRA and consensus sequences are available under the xxx Bioproject in NCBI (Accession Number). All the pipelines included in the present paper are published in a GitHub repository. (https://github.com/deve105/htlv_paper_2025)
+After targeted enriched NGS, sequence reads were trimmed, mapped, processed, and assembled with Fastp, BWA-MEM, Samtools, and IVAR, using J02029.1 as reference. Sequences with low-quality, duplicates or with \< 60% pairwise identity were excluded. Filtered and curated HTLV-1 complete genomes were retrieved from NCBI (Accessed by January, 2024). MSA was performed by MAFFT using L-NS-i approach. Samples with less than 6000bp or pairwise identity less than 60% were excluded. (IRID011_S130, IRID038_S122, IRID040_S124, IRID067_S233) n=4. After MAFFT alignment. A three-partitions model was selected using ModelFinder and PartitionFinder. SRA and consensus sequences are available under the xxx Bioproject in NCBI (Accession Number). All the pipelines included in the present paper are published in a GitHub repository. (https://github.com/deve105/htlv_paper_2025)
 
-ML consensus tree was obtained using RXAML after reaching coalescence with more than 5000 bootstraps. Cluster analysis and diversity were explored using ML, Bayesian, DAPC and Kmeans. Bayesian phylodynamic and phylogeographic analyses were performed using BEAST v2.7.
+ML consensus tree was obtained using RXAML after reaching coalescence with more than 5000 bootstraps. Cluster analysis and diversity were explored using ML, Bayesian, DAPC and Kmeans. Bayesian phylodynamic and phylogeographic analyses were performed using BEAST v2.7. For the ML consensus tree, identical sequences were excluded. Sequences were trimmed at 22 nucleotides in the 5'LTR and 13 in the 3'LTR.
+
+### Recombination analyses
+
+Recombination was initially evaluated using the phi-test followed by a exploratory screening using RDP, GENECONV, Bootscan, MaxChi, SisCan and 3Seq and LARD, implemented in RDP4.5. Potential recombination was suspected when at least four methods showed a Bonferroni-corrected P-value threshold of 0.05(or smaller). Sequences with potential recombination signal were evaluated with GARD, implemented in Hyphy, and excluded from the final data set.
+
+### Integration Site Analysis
+
+### HLA Analysis
+
+Following reads extraction from the chromosome 6, coverage and quality score analyses were performed for all HLA regions. High-resolution HLA typing was carried out using OptiType (2-field resolution for HLA-I) and HLA-LA (3-field resolution for HLA-I/II). Allotypes failing quality thresholds (score \<0.8 or average coverage \<20) were discarded. Results from both bioinformatics tools were pairwise compared, and considering the average coverage for HLA-II, only HLA-I was considered to further analysis. The concordances and Cohen's Kappa between HLA-LA and Optitype were 93%, 85%, and 100% for HLA-A, HLA-B, and HLA-C, respectively. The HLA-LA pipeline was selected for further analyses.Hardy-Weinberg Equilibrium (HWE) was tested for each locus using the exact test implemented on the pegas package with 1000 replicates with a significance threshold of α=0.05. Pairwise F<sub>ST</sub> was estimated using Weir & Cockerham’s (1984) method with 10,000 bootstrap replicates implemented on the package hierfstat. Significant differentiation was inferred when 95% CIs excluded zero. HLA class I allele frequencies were calculated after reduction to 2-field resolution using the *reduceHlaCalls* function from the package midasHLA. Frequencies for the Peruvian population were obtained using the function *getHlaFrequencies* and compared to the USA National Marrow Donor Program (NMDP) populations that were retrieved from Allele Frequency Net Database (http://www.allelefrequencies.net/). Evolutionary divergence of the human leucocyte antigen class I (HLA-I) genes was evaluated using the Grantham distance at HLA-A, HLA-B, and HLA-C. Grantham distance takes into account composition, polarity, and volume.
+
+# Results
+
+## Clinical and epidemiological features
+
+A total of 67 patients with confirmed HTLV-1 infection were included in the study, comprising 10 HAM/TSP patients and 57 asymptomatic carriers (ACs). The lifetime *Strongyloides* infection rate was 56.7% overall and more frequent among males. No association was found between *Strongyloides* infection and HTLV-1-related complications. Demographic and epidemiological characteristics are detailed in **Table 1**. During the 5-year follow-up, the progression rate to ATL among ACs was 5.3% (3 cases). Notably, the 5-year mortality rate was 15%, although 12% of patients were lost to follow-up during COVID-19 pandemic. \[\***Proviral load data should be included in this paragraph**\*\]
+
+## HTLV-1 genomics and phylogenomics features
+
+A total of 71 DNA samples—corresponding to 67 patients (including 4 serial samples)—were analyzed. The median HTLV-1 genome coverage in the Peruvian cohort was 158x (IQR: 23-218); (**Supplementary Figure 1**). After excluding 4 samples with less than 5x coverage, the final dataset comprised 63 cases (**Supplementary Figure 2**). Among these, 3 cases (4.8%) harbored type II defective viruses (5’LTR-deleted; **Figure 1A**). Notably, 2 out of 3 ATL cases and 1 AC exhibited these deletions. No type I defective viruses were detected in this cohort. . The mean Oligoclonality Index (OCI) for the entire cohort was 0.21 (95% CI: 0.17–0.26). Five out of 57 samples showed an OCI greater than 0.5. Importantly, all cases that developed ATLL had an OCI greater than 0.6. No significant differences in OCI were observed regarding Strongyloides status (p-value = 0.63). The OCI was 0.91 (95% CI: 0.903–0.908) for ATLL, 0.14 (95% CI: 0.093–0.182) for HAM/TSP, and 0.19 (95% CI: 0.156–0.225) for ACs (**Figure 1B**). \[**\*Correlation between PVL and IS abundance, and PVL with OCI,** **Additional reanalysis is pending**\*\]
+
+A total of 63 complete HTLV-1 genomes from Peru and 320 curated HTLV-1 genomes retrieved from NCBI were included (112 Brazilian, 1 Chilean, and 207 from other regions). After recombination screening using RDP4, SimPlot, and Bootscan, three sequences showed consistent recombination signals in at least 3 algorithms (KF797883, KY007245, KY007246), all of Brazilian origin, and were excluded from further phylogenetic analysis. Traditional genomic classification of the 63 Peruvian HTLV-1 isolates revealed that 61 (96.8%) belonged to the Cosmopolitan/Transcontinental (1a) subtype, while 2 (3.2%) were classified as African subtype (Black Peruvian). Particularly, both African subtype cases originated from the coastal region of Peru, were of mestizo ethnicity, and one individual presented with HAM/TSP. This distribution confirms the predominance of the Cosmopolitan subtype in the Andean region, with rare African subtype cases possibly representing more recent viral introductions.
+
+The maximum likelihood consensus tree is presented in **Figure 2**. The majority of South American samples clustered within the Transcontinental (subtype 1a) clade, primarily in the Andean-Amazonian subgroup. However, 6 Peruvian cases (9.5%) fell outside the Andean-Amazonian subgroup, clustering instead with samples of worldwide origin, including isolates from Native Americans in Canada, Brazil, and Iran. A minority of Brazilian sequences (3.6%) clustered within the Japanese, potentially related to Japanese-descendant cases. Interestingly, one Peruvian sample (IRID034) showed direct phylogenetic relationship to the common Transcontinental ancestor, while two Peruvian isolates (IRID003 and IRID074) clustered separately from the Cosmopolitan subtype, showing closer genetic proximity to African subtypes. Interestingly, most HTLV-1-related complications were observed in sequences from Transcontinental subtype viruses, with no HAM/TSP cases observed within the Japanese clade among publicly available complete HTLV-1 genomes.
+
+The unsupervised cluster analyses using the discriminant analysis of principal components consistently confirmed the existence of a well-defined clade in SA.
+
+Bayesian Analysis: The only calibration available was the assumption of contemporaneous sequences of African origin introduced during the early 1600. The structured coalescent analysis revealed an ancient origin of the SA clade. The divergence time estimation was 7409 (CI 5064 - 9020) YBP.
+
+## HLA-I diversity in the Peruvian HTLV-1 cohort
+
+The Peruvian HTLV-1 cohort exhibited distinct HLA-I allele distributions, with A*02:01 being the most frequent allele at the HLA-A locus (44%), followed by A*24:02 (17%) and A*68:01 (7%). The HLA-B locus showed equal frequencies for B*35:01 and B*35:05 (12% each), with B*48:01 at 11%, while the HLA-C locus was dominated by C*04:01 (29%), followed by C*01:02 (18%) and C\*07:02 (13%). Comparative analyses with the NMDP database and a Japanese HTLV-1 cohort revealed population-specific variations, with HLA-A and HLA-C conforming to Hardy-Weinberg equilibrium (p=0.06 and p=0.33, respectively), but HLA-B showing significant deviation (p=0.01), likely reflecting its well-documented role in balancing selection or cohort-specific demographic factors. Complete allele frequencies are detailed in Supplementary Table 1. The Peruvian and Japanese cohorts showed significant moderate genetic differentiation (mean F<sub>ST</sub> = 0.047, 95% CI \[0.023, 0.072\]), consistent with population-specific HLA allele frequency distributions. No differences were observed in the outcome, proviral load, or OCI with respect to HLA subtype at either the nucleotide or amino acid level. Then, we aimed to explore HLA evolutionary divergence between Japanese and Peruvian HTLV-1 cases using an independent cohort from Miyazaki, considering that alleles diversity peptide-binding strongly affects immune response. Peruvian samples showed a reduced HLA global divergence but driven mainly by HLA-A. These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population. Fewer dominant alleles may constrain immune responses to HTLV-1.
+
+Suplementary Figure 1: NGS average coverage of HLA locus from the Peruvian HTLV-1 cohort and the Miyazaki-Japan HTLV-1 cohort.
+
+Figure 1: Haplotype frequency for HLA-I alleles greater than 5% in the Peruvian HTLV-1 cohort compared to a) relevant populations from the NMDP database and b) the Miyazaki-Japan HTLV-1 cohort.
+
+### Genomic mutations in the HTLV-1 cohort.
 
 ### Maximun Likelihood Phylogenetics
 
-For ML inference, identical sequences were spared (duplicated sequences), n=4 IRID026 was eliminated IRID025_S236, \>PE_SS02_S1 eliminated, Peru_IRID062_S231 remains \>PE_SS04_S3 eliminated, Peru_IRID039_S123 remains \>PE_SS20_S204 eliminated, Peru_IRID089_S292 remains
+For ML inference, identical sequences were spared (duplicated sequences), n=4 IRID026 was eliminated IRID025_S236,
 
-63 sequences for maximum likelihood inference RAxML-NG\
-22 nucleotides positions were trimmed on the 5LTR and 13 on the 3LTR.
+\>PE_SS02_S1 eliminated, Peru_IRID062_S231 remains
+
+\>PE_SS04_S3 eliminated, Peru_IRID039_S123 remains
+
+\>PE_SS20_S204 eliminated, Peru_IRID089_S292 remains
 
 iqtree2 -s 0923gp46all_2020liao.fa -m TN+F+I+R3 -B 10000 -alrt 10000 --polytomy -blmin 3.3e-7 -T 5 -mem 20G --prefix iqtree1002\_
 
@@ -39,46 +82,4 @@ were excluded for being too gapy M86840.1 NC_001436.1 KU
 
 #using aliview i checked Duplicates LC209998.1 (remains LC210057.1) LC210056.1 LC210015.1
 
-### Recombination analyses
-
-Recombination was initially evaluated using the phi-test followed by a exploratory screening using RDP, GENECONV, Bootscan, MaxChi, SisCan and 3Seq and LARD, implemented in RDP4.5. Potential recombination was suspected when at least four methods showed a Bonferroni-corrected P-value threshold of 0.05(or smaller). Sequences with potential recombination signal were evaluated with GARD, implemented in Hyphy, and excluded from the final data set. An exploratory screening for recombination was performed using phylogenetic methods (Bootscan and RDP), and nucleotide substitution methods (Chimaera, GENECONV, MaxChi, SisCan and 3Seq), Additionally phi-test performed in the RDP4.5 software. Sequences with potential recombination signal were considered when at least four alogorithms reached a threshold p-value of 0.05 with Bonferroni correction. GARD implemented in Hyphy was used to evaluate
-
-### HLA Analysis
-
-Following reads extraction from the chromosome 6, coverage and quality score analyses were performed for all HLA regions. High-resolution HLA typing was carried out using OptiType (2-field resolution for HLA-I) and HLA-LA (3-field resolution for HLA-I/II). Allotypes failing quality thresholds (score \<0.8 or average coverage \<20) were discarded. Results from both bioinformatics tools were pairwise compared, and considering the average coverage for HLA-II, only HLA-I was considered to further analysis. The concordances and Cohen's Kappa between HLA-LA and Optitype were 93%, 85%, and 100% for HLA-A, HLA-B, and HLA-C, respectively. The HLA-LA pipeline was selected for further analyses.Hardy-Weinberg Equilibrium (HWE) was tested for each locus using the exact test implemented on the pegas package with 1000 replicates with a significance threshold of α=0.05. Pairwise F<sub>ST</sub> was estimated using Weir & Cockerham’s (1984) method with 10,000 bootstrap replicates implemented on the package hierfstat. Significant differentiation was inferred when 95% CIs excluded zero.
-
-HLA class I allele frequencies were calculated after reduction to 2-field resolution using the *reduceHlaCalls* function from the package midasHLA. Frequencies for the Peruvian population were obtained using the function *getHlaFrequencies* and compared to the USA National Marrow Donor Program (NMDP) populations that were retrieved from Allele Frequency Net Database (http://www.allelefrequencies.net/).
-
-# Results
-
-## Clinical and epidemiological features
-
-A total of 67 patients with confirmed HTLV-1 infection were included in the study, comprising 10 HAM/TSP patients and 57 asymptomatic carriers (ACs). The lifetime *Strongyloides* infection rate was 56.7% overall and more frequent among males. No association was found between *Strongyloides* infection and HTLV-1-related complications. Demographic and epidemiological characteristics are detailed in **Table 1**. During the 5-year follow-up, the progression rate to ATL among ACs was 5.3% (3 cases). Notably, the 5-year mortality rate was 15%, although 12% of patients were lost to follow-up during COVID-19 pandemic.
-
-## HTLV-1 genomics and phylogenomics features
-
-A total of 71 DNA samples—corresponding to 67 patients (including 4 serial samples)—were analyzed. The median HTLV-1 genome coverage in the Peruvian cohort was 158x (IQR: 23-218); (**Supplementary Figure 1**). After excluding 4 samples with less than 5x coverage, the final dataset comprised 63 cases (**Supplementary Figure 2**). Among these, 3 cases (4.8%) harbored type II defective viruses (5’LTR-deleted; **Figure 1A**). Notably, 2 out of 3 ATL cases and 1 AC exhibited these deletions. No type I defective viruses were detected in this cohort.
-
 —IRID038, IRID011, IRID040, IRID032, IRID006, IRID016, IRID086, and IRID067—were excluded.
-
-A total of 63 complete HTLV-1 genomes from Peru and 319 curated HTLV-1 genomes retrieved from NCBI were included(112 Brazilian and 1 Chilean). The ML consensus tree confirmed that the majority of SA samples had an aggregation pattern inside the transcontinental clade (Fig1). Additionally, a minority of SA samples are either distributed inside the Japanese clade (Nikkei), close to the African clade or unclassified. (we questionate the frequency of African subtypes in this cohort) After multiple recombination analyses three sequences showed recombinant signal that was confirmed in the phylogenetic analysis and using xx% of the samples belonged to the transcontinental subgroup and xx isolates belonged to the African subgroup. (any difference by region??). A predominant cluster was observed aggregated together to the main Brazilian group. (Andean-Amazonian subgroup).
-
-To explore the origin of the Andean-Amazonian subgroup, a Bayesian analysis using the complete genomes and constant model. The ML consensus tree confirmed that the majority of SA samples had an aggregation pattern inside the transcontinental clade (Fig1). Additionally, a minority of SA samples are either distributed inside the Japanese clade (Nikkei), close to the African clade or unclassified. The cluster analyses and the discriminant analysis of principal components consistently confirmed the existence of a well-defined clade in SA. After reclassification, the structured coalescent analysis revealed an ancient origin of the SA clade. The divergence time estimation was 7409 (CI 5064 - 9020) YBP.
-
-## HLA-I diversity among HTLV-1
-
-The Peruvian HTLV-1 cohort exhibited distinct HLA-I allele distributions, with A*02:01 being the most frequent allele at the HLA-A locus (44%), followed by A*24:02 (17%) and A*68:01 (7%). The HLA-B locus showed equal frequencies for B*35:01 and B*35:05 (12% each), with B*48:01 at 11%, while the HLA-C locus was dominated by C*04:01 (29%), followed by C*01:02 (18%) and C\*07:02 (13%). Comparative analyses with the NMDP database and a Japanese HTLV-1 cohort revealed population-specific variations, with HLA-A and HLA-C conforming to Hardy-Weinberg equilibrium (p=0.06 and p=0.33, respectively), but HLA-B showing significant deviation (p=0.01), likely reflecting its well-documented role in balancing selection or cohort-specific demographic factors. Complete allele frequencies are detailed in Supplementary Table 1. The Peruvian and Japanese cohorts showed significant moderate genetic differentiation (mean F<sub>ST</sub> = 0.047, 95% CI \[0.023, 0.072\]), consistent with population-specific HLA allele frequency distributions.
-
-Considering the highNext, we
-
-These differences may contribute to distinct patterns of HTLV-1 susceptibility or disease progression in the Peruvian population. Fewer dominant alleles may constrain immune responses to HTLV-1.
-
-Suplementary Figure 1: NGS average coverage of HLA locus from the Peruvian HTLV-1 cohort and the Miyazaki-Japan HTLV-1 cohort.
-
-Figure 1: Haplotype frequency for HLA-I alleles greater than 5% in the Peruvian HTLV-1 cohort compared to a) relevant populations from the NMDP database and b) the Miyazaki-Japan HTLV-1 cohort.
-
-Pairwise divergence
-
-We aimed to explore HLA evolutionary divergence between Japanese and Peruvian HTLV-1 cases, considering that alleles diversity peptide-binding strongly affects immune response.
-
-was performed using OptiType and HLA-LA Evolutionary divergence of the human leucocyte antigen class I (HLA-I) genes was evaluated using the Grantham distance at HLA-A, HLA-B, and HLA-C. Grantham distance takes into account composition, polarity, and volume. HLA-B \> HLA-A or HLA-C Hierarchical clustering
