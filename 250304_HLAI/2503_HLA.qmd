@@ -1,7 +1,16 @@
 
+Notes: 
 
+- IRID011, IRID026 and IRID038 were excluded (no HTLV-1 clones detected)
+- IRID039_S123 and SS04 (are the same)  confirmed
+- IRID015 and SS14 (are the same) confirmed
+- IRID062 and SS02 (are the same) confirmed
+- IRID089 and SS20 (are the same) confirmed
+- IRID015 and 032 are siblings
 
+to check SS27, SS01, IRID2,3,5-10
 
+IRID025_S236 was eliminated
 
 ```{r}
 """
