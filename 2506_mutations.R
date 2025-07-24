@@ -376,10 +376,16 @@ colnames(mutations_annotated_final) <- str_replace_all(
     "ALT" = "Tumor_Seq_Allele2",
     "VARIANT_TYPE" = "Variant_Type",
     "FUNC" = "Functional_Consequence",
-    "SYNO" = "Synonymous_Consequence",
-    "SAMPLE_ID" = "Tumor_Sample_Barcode",
-    "SYNO"="Variant_Classification")
+    "SYNO" = "Variant_Classification",
+    "SAMPLE_ID" = "Tumor_Sample_Barcode")
 )
+
+#
+mutations_annotated_final |>
+    group_by(Variant_Type, Variant_Classification, Functional_Consequence) |>
+    summarise(
+        Count = n())
+
 
 high_quality_mutations <- mutations_annotated_final %>%
     filter(
@@ -403,6 +409,7 @@ high_quality_mutations <- mutations_annotated_final %>%
         VARIANT_TYPE == "SNV"
     )
 high_quality_mutations
+
 
 read.maf(mutations_annotated_final) -> mutations_annotated_final_maf
 
