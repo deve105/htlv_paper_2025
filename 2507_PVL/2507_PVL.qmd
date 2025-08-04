@@ -1,0 +1,65 @@
+
+```{r}
+pacman::p_load(tidyverse, tidyplots, readxl)
+# Reading excel file
+
+
+file_list <- list.files(
+  path = "/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/2507_HTLVpaper/PVL/",
+  pattern = "\\.xls$",
+  full.names = TRUE
+)
+# Read and combine all files first
+all_SS <- purrr::map_dfr(file_list, function(file) {
+  read_xls(file, skip = 6) |>
+    dplyr::filter(Task == "UNKNOWN") |>
+    dplyr::select(
+      ID = `Sample Name`,
+      target = `Target Name`,
+      Qmean = `Quantity Mean`,
+      Qsd = `Quantity SD`
+    )
+})
+
+all_pvl <- all_SS |>
+  group_by(ID, target) |>
+  summarise(
+    Qmean = mean(Qmean, na.rm = TRUE),
+    Qsd = mean(Qsd, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  tidyr::pivot_wider(
+    names_from = target,
+    values_from = c(Qmean, Qsd)
+  ) |>
+  mutate(
+    PVL = Qmean_P30 / Qmean_Globin * 100,
+    CV_P30 = (Qsd_P30 / Qmean_P30) * 100,
+    CV_Globin = (Qsd_Globin / Qmean_Globin) * 100,
+    SD_PVL = PVL * sqrt((Qsd_P30 / Qmean_P30)^2 + (Qsd_Globin / Qmean_Globin)^2)
+  )
+
+
+# Apply to all files and merge
+all_pvl <- all_pvl |>
+dplyr::select(ID, PVL, SD_PVL)
+
+DT::datatable(all_pvl)
+unique(all_pvl$target)
+## Read the original database
+
+HTLV_db =googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1608446469#gid=1608446469")
+
+newdb=HTLV_db |>
+    mutate(ID2=stringr::str_remove(ID, "_S[0-9].*$")) |>
+    mutate(ID2=stringr::str_remove(ID2, "PE_")) |>
+left_join(all_pvl, by=c("ID2"="ID"))
+
+DT::datatable(newdb)
+
+googlesheets4::write_sheet(newdb, "https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1608446469#gid=1608446469", sheet="Sheet3")
+
+
+
+    
+```
