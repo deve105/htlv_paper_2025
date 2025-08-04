@@ -1,16 +1,4 @@
 
-Notes: 
-
-- IRID011, IRID026 and IRID038 were excluded (no HTLV-1 clones detected)
-- IRID039_S123 and SS04 (are the same)  confirmed
-- IRID015 and SS14 (are the same) confirmed
-- IRID062 and SS02 (are the same) confirmed
-- IRID089 and SS20 (are the same) confirmed
-- IRID015 and 032 are siblings
-
-to check SS27, SS01, IRID2,3,5-10
-
-IRID025_S236 was eliminated
 
 ```{r}
 """
@@ -18,7 +6,7 @@ IRID025_S236 was eliminated
 IRID025_S236 was eliminated
 to check SS27, SS01, IRID2,3,5-10
 
-- IRID039_S123 and SS04 (are the same)  confirmed
+- IRID039 and SS04 (are the same)  confirmed
 - IRID015 and SS14 (are the same) confirmed
 - IRID062 and SS02 (are the same) confirmed
 - IRID089 and SS20 (are the same) confirmed
@@ -27,17 +15,20 @@ to check SS27, SS01, IRID2,3,5-10
 ####################
 # HLA_S1_Locus average coverage and quality
 ####################
+
 #---Loading packages
 pacman::p_load(tidyverse, DT, tidyplots, languageserver, midasHLA, stringr)
-badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
+pacman::p_load(flextable, officer)
+serialsamples = c("IRID039|IRID015|IRID062|IRID089")
 
 #---Loading HLA coverage and data
 htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
     as.data.frame() |>
     dplyr::filter(Q1 > .8, AverageCoverage>20) |>
     mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
-    dplyr::filter(!grepl(badquality, Sample))
+    dplyr::filter(!grepl(serialsamples, Sample))
 
+DT::datatable(htlv_hla_la)
 #---HLA coverage - Ploting coverage
 htlv_hla_la |>
 tidyplot(x = Locus, y = AverageCoverage, color=country) |>
@@ -62,13 +53,13 @@ tidyplot(x = Locus, y = AverageCoverage, color=country) |>
 ####################
 # HLA_Fig1 Allele frequencies
 ####################
-pacman::p_load(flextable, officer)
+
 #---Wide format of HLA
 htlv_hla_la_wide <- htlv_hla_la |>
-    select(1:3, 13, 14) |>
+    dplyr::select(1:3, 13, 14) |>
     mutate(allele = paste0(Locus, "_", Chromosome)) |>
     dplyr::rename(ID = Sample) |>
-    select(ID, allele, Allele, country) |>
+    dplyr::select(ID, allele, Allele, country) |>
     mutate(Allele = gsub("G$|N$", "", Allele)) |>
     pivot_wider(
         names_from = allele,
@@ -78,11 +69,12 @@ htlv_hla_la_wide <- htlv_hla_la |>
 #---Peru frequencies   
 peru_hla = htlv_hla_la_wide |>
     filter(country=="Peru") |>
-    select(-country)
+    dplyr::select(-country)
+DT::datatable(peru_hla)
 #---Japan frequencies
 japan_hla = htlv_hla_la_wide |>
     filter(country=="Japan") |>
-    select(-country)
+    dplyr::select(-country)
 japan_hla
 #---frequency calling
 peru_hlacall <- reduceHlaCalls(peru_hla, resolution = 4)
@@ -94,8 +86,8 @@ japan_hlafreq = getHlaFrequencies(
     ref = allele_frequencies
 ) |>
     dplyr::rename("Miyazaki - Japan Cohort"="Freq") |>
-    select(-Counts) 
-
+    dplyr::select(-Counts) 
+peru_hlacall
 #---Peru calling
 peru_hlafreq = getHlaFrequencies(
     peru_hlacall,
@@ -103,9 +95,10 @@ peru_hlafreq = getHlaFrequencies(
     ref = allele_frequencies
     ) |>
     dplyr::rename("Peru_Cohort"="Freq") |>
-    select(-Counts) |>
+    dplyr::select(-Counts) |>
     full_join(japan_hlafreq, by="allele") |>
     arrange(allele, Peru_Cohort)
+
 peru_hlafreq
 #---Table for supplementary files
 ft <- flextable(peru_hlafreq) %>%
@@ -148,7 +141,7 @@ peru_hlafreq_world = getHlaFrequencies(
 #---HLA frequencies compared to other places
 peru_hlafreq_world = peru_hlafreq_world |>
 dplyr::filter(Freq > 0.05) |>
-  select(1,3,7,9,6,8,4) |>
+  dplyr::select(1,3,7,9,6,8,4) |>
   dplyr::rename(
     "Latino NMDP"="USA NMDP Hispanic South or Central American",
     Amerindian="USA NMDP North American Amerindian",
@@ -156,7 +149,7 @@ dplyr::filter(Freq > 0.05) |>
     European="USA NMDP European Caucasian",
     "African-American NMDP"="USA NMDP African American pop 2"
     ) |>
-    select(-Amerindian, -European)|>
+    dplyr::select(-Amerindian, -European)|>
     tidyr::pivot_longer(-allele,names_to="Population", values_to="haplotype_freq") |>
     mutate(Population=ifelse(Population=="Freq", "HTLV-1 Peru", Population)) |>
     mutate(Population=factor(Population, levels=c("HTLV-1 Peru", "Latino NMDP",  "Japanese NMDP", "African-American NMDP")))
@@ -183,7 +176,7 @@ pacman::p_load(adegenet, pegas, hierfstat)
 
 # Reducing manually to 2-fields
 htlv_df = htlv_hla_la_wide |>
-  select(1:8) |>
+  dplyr::select(1:8) |>
   mutate(across(
     .cols = 3:8, 
     .fns = ~ str_trunc(., width = 7, side = "right", ellipsis = "")
@@ -192,7 +185,8 @@ htlv_df = htlv_hla_la_wide |>
   HLA_B = paste(B_1, B_2, sep = "/"),
   HLA_C = paste(C_1, C_2, sep = "/"),
   ) |>
-  select(ID, country, HLA_A, HLA_B, HLA_C ) 
+  dplyr::select(ID, country, HLA_A, HLA_B, HLA_C ) 
+
 
 genind_obj <- df2genind(
   X = htlv_df[, c("HLA_A", "HLA_B", "HLA_C")],  
@@ -207,13 +201,17 @@ print(hwe_test)
 
 # Weir & Cockerham’s FST
 hierfstat_data <- genind2hierfstat(genind_obj)
+hierfstat_data
 fst_boot <- boot.ppfst(hierfstat_data, nboot = 10000, diploid=TRUE, quant=c(0.025,0.975))
+fst_boot
+
 ```
 
 ## Comparing optitype vs HLA-LA
 
 ```{r}
 
+## Avoiding this for a matter of time
 pacman::p_load(tidyverse, midasHLA, styler, lintr, DT, irr)
 #hla_la 2 fields
 comp_hlala = htlv_df |>
@@ -221,9 +219,9 @@ comp_hlala = htlv_df |>
 
 # hla opt
 htlv_opt = read_tsv("250304_HLAI/concatenated_HLA.txt", col_names = c("none", "A_1", "A_2", "B_1", "B_2", "C_1", "C_2", "none_reads", "none_obj", "ID")) |>
-  select(-starts_with("none")) |>
+  dplyr::select(-starts_with("none")) |>
   dplyr::filter(!grepl("ATLSkin|1339", ID)) |>
-  dplyr::filter(!grepl(badquality, ID)) |>
+  dplyr::filter(!grepl(serialsamples, ID)) |>
   mutate(
     ID=stringr::str_replace(ID, "^Peru_", "")
     ) 
@@ -243,8 +241,8 @@ comp_opt <- htlv_opt %>%
       paste(sort(alleles), collapse = "/")
     })
   ) |>
-  select(ID, HLA_A2, HLA_B2, HLA_C2)
-
+  dplyr::select(ID, HLA_A2, HLA_B2, HLA_C2)
+comp_opt
 comp_hlala = comp_hlala |>
   left_join(comp_opt, by="ID")
 
@@ -270,31 +268,44 @@ mean(comp_hlala$HLA_C == comp_hlala$HLA_C2)* 100
 #---packages
 pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA, stringr)
 
-#---data loading
-htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
-    dplyr::filter(Q1 > .8)
 
+#---data loading
+htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") #|>
+    dplyr::filter(Q1 > .8)
+DT::datatable(htlv_hla_la)
 #---data wrangling
 hlala_dataset <- htlv_hla_la |>
     filter(Locus %in% c("A", "B", "C")) |>
-    select(Locus, Chromosome, Allele, Sample) |>
+    dplyr::select(Locus, Chromosome, Allele, Sample) |>
     mutate(Allele = stringr::str_replace(Allele, "G", "")) |>
     mutate(Allele = str_trunc(Allele, width = 7, "right", ellipsis = "")) |>
     mutate(Alleles = paste0(Locus, Chromosome)) |>
     pivot_wider(values_from = "Allele", names_from = "Alleles", id_cols = "Sample") |>
-    write_tsv("data/2503_hla_la_htlv_peru_and_japan.tsv")
+    write_tsv("250304_HLAI/data/2508_hla_la_htlv_peru_and_japan.tsv")
 
+hlala_dataset
 #===After reading the file with hla_hed.py
 #---reading the output
-hla_hed = read_tsv("data/2503_hla_total_hed.tsv")
+hla_hed = read_tsv("250304_HLAI/data/2508_v2_hla_total_hed.tsv")
 #---data wrangling to make a new variable for countries
-badquality = c("IRID011|IRID026|IRID038|IRID025|SS04|SS14|SS02|SS20")
+
+hla_hed = hla_hed |>
+  mutate(Sample=stringr::str_replace(Sample, ".*_SS", "SS"))
+
 
 hla_hed = hla_hed |>
     mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
-    dplyr::filter(!grepl(badquality, Sample))
+    dplyr::filter(!grepl(serialsamples, Sample))
 
-hla_hed |>
+
+
+### 1 events of LOH or complete homozygotus for HLA-1
+
+hla_hed2 =hla_hed |>
+    filter((HED_A+HED_B+HED_C)!=0) 
+DT::datatable(hla_hed2)
+hla_hed2
+hla_hed2  |>   
     pivot_longer(
         -c(country, Sample), 
         names_to="HLAHED", 
@@ -313,8 +324,8 @@ hla_hed |>
                 "HLA-B",
                 "HLA-C"
             )
-        ) |> 
-    tidyplot(x=country, 
+        ) |>
+        tidyplot(x=country, 
         y=HED, 
         color=country) |>
     add_data_points_jitter() |>
@@ -326,9 +337,9 @@ hla_hed |>
     remove_legend() |>
     adjust_x_axis(
         title="",
-        labels = function(x) paste0(x, "\n(n = ", table(hla_hed$country)[x], ")")
+        labels = function(x) paste0(x, "\n(n = ", table(hla_hed2$country)[x], ")")
         ) |>
-    adjust_y_axis(limits = c(0,NA), padding = c(0.1, NA)) |>
+    adjust_y_axis(limits = c(0,NA), padding = c(0, NA)) |>
     adjust_title(face="bold") |>
         adjust_colors(
         new=c("#E69F00","#D55E00")
@@ -344,44 +355,84 @@ hla_hed |>
         height = NA,
         bg = "transparent"
     )
+
+newdb = googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3") |>
+  left_join(hla_hed, by=c("ID2"="Sample"))
+newdb |>
+googlesheets4::write_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3")
+newdb = newdb|>
+  mutate(logPVL=log(PVL+1))
+cor_test <- cor.test(newdb$logPVL, newdb$Mean_HE, method = "spearman", use = "complete.obs")
+print(cor_test)
+print(cor_test)
+newdb |>
+  mutate(logPVL=log(PVL+1)) |>
+  tidyplot(x=Status, y=Mean_HE) |>
+  add_data_points() |>
+  add_test_pvalue()
+newdb
+
+newdb$status1 = ifelse(newdb$Status=="death", 1, 0)
+
+logit_model <- glm(strongy_lifetime  ~  Sex + Age + Mean_HE + PVL, 
+                   data = newdb, 
+                   family = binomial)
+colnames(newdb)                
+logit_model |>
+  tbl_regression(exponentiate = TRUE)
+summary(logit_model)
+exp(cbind(OR = coef(logit_model), confint(logit_model)))
+
+logit_model |>
+  tbl_regression(exponentiate = TRUE) |>
+  as_gt() |>
+  gtsave(filename = "2508_sup_deathregresion.docx", path="./output")
+
+# Including lost
+htlv_mdata$status2 = ifelse(htlv_mdata$Status=="Death", 1, 0)
+logit_model2 <- glm(status2  ~ Age + Sex + strongy_lifetime + PVL, 
+                   data = htlv_mdata, 
+                   family = binomial)
+summary(logit_model)
+logit_model2 |>
+  tbl_regression(exponentiate = TRUE)
+exp(cbind(OR = coef(logit_model), confint(logit_model)))
+
 ```
 
 ## Analysis
 ```{r}
+### Analysis by groups
 
-   
-    #|>
-    left_join(htlv_mdata, by=("ID")) |>
-    left_join(result, by=c("ID"="sample"))
+hlala_dataset_v2 = hlala_dataset |>
+  mutate(Sample=stringr::str_replace(Sample, ".*_SS", "SS")) |>
+  left_join(newdb, by=c("Sample"="ID2"))
 
-datatable(htlv_hla) #visualization
-write_tsv(htlv_hla, "2503_filtered_HLA_rearranged.tsv")
 
-htlv_opt
 # Step2: figures by 
-A24A2 = htlv_hla |>
+A24A2 = hlala_dataset_v2 |>
   mutate(
-    A0201 = ifelse(grepl("A\\*02:01", A_1) | grepl("A\\*02:01", A_2), "A*02:01(+)", "A*02:01(-)"),
-    A2402 = ifelse(grepl("A\\*24:02", A_1) | grepl("A\\*24:02", A_2),  "A*24:02(+)", "A*24:02(-)")) |>
+    A0201 = ifelse(grepl("A\\*02:01", A1) | grepl("A\\*02:01", A2), "A*02:01(+)", "A*02:01(-)"),
+    A2402 = ifelse(grepl("A\\*24:02", A1) | grepl("A\\*24:02", A2),  "A*24:02(+)", "A*24:02(-)")) |>
     pivot_longer(cols=c(A0201, A2402), names_to="HLA", values_to="haplotype")|>
     mutate(HLA=recode(HLA, A0201 = "HLA-A*02:01", A2402="HLA-A*24:02"))
-
+A24A2
 # comparison of IS by A24 and A02
 A24A2|>
-    tidyplot(x=haplotype, y=sum_freq) |>
+    tidyplot(x=haplotype, y=PVL) |>
     add_data_points_jitter(alpha=0.95) |>
     add_violin(draw_quantiles = 0.5, alpha=0.2) |>
     add_test_pvalue(method="t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
-    adjust_y_axis(title = "Integration Sites (IS) \nNGS Abundance") |>
+    adjust_y_axis(title = "PVL (%)") |>
     adjust_x_axis(title = NULL) |>
     split_plot(by=HLA, tag_level=NULL) |>
-    save_plot("output/S2_A_1_vs_NGSreads.png", view_plot = TRUE,
+    save_plot("output/2508_A24A2_PVL.png", view_plot = TRUE,
     bg = "transparent",
     width = 15,
     height = 8, 
     unit="cm") 
 
-    
+##### Not performed 
 # comparison of OCI by A24 and A02
 A24A2|>
     tidyplot(x=haplotype, y=gini) |>
@@ -397,11 +448,11 @@ A24A2|>
     height = 8, 
     unit="cm") 
 
-
+########### Not performed yet
 # B35 and OCI
 fig_B35 = htlv_hla |>
   mutate(
-    B35= ifelse(grepl("B\\*35", B_1) | grepl("B\\*35", B_2), "B*35(+)", "B*35(-)")) |>
+    B35= ifelse(grepl("B\\*35:01", B_1) | grepl("B\\*35", B_2), "B*35(+)", "B*35(-)")) |>
     tidyplot(x=B35, y=gini) |>
     add_data_points_jitter(alpha=0.95) |>
     add_violin(draw_quantiles = 0.5, alpha=0.2) |>
@@ -438,13 +489,125 @@ show(fig_B35)
 
 
 ```{r}
-comparison_hla = getHlaFrequencies(
-  hla_htlv,
-  compare=TRUE,
-  ref = allele_frequencies) |>
-  dplyr::filter(Freq > 0.05) 
-dim(comparison_hla)
 
+#---Peru frequencies   
+peru_hla = htlv_hla_la_wide |>
+    filter(country=="Peru") |>
+    mutate(ID=stringr::str_replace(ID, ".*_SS", "SS")) |>
+    dplyr::select(-country) |>
+    arrange(ID)
+
+peru_hla |>
+  write.csv("2508_HLA_forMIDAS.csv")
+#---frequency calling
+
+peru_hlacall <- reduceHlaCalls(peru_hla, resolution = 4)
+
+### metadata
+colnames(newdb)
+pheno = newdb |>
+  dplyr::select(ID2, status1, PVL, logPVL, strongy_lifetime, Status, disease_2) |>
+  mutate(strongy=ifelse(strongy_lifetime=="YES", 1, 0),
+  status2_lost=ifelse(Status %in% c("death", "LOST"), 1, 0),
+  disease=ifelse(disease_2=="AC", 0, 1)) |>
+  dplyr::select(-disease_2, -Status, -strongy_lifetime) |>
+  mutate(ID2=
+  case_when(
+    ID2=="IRID062" ~"SS02",
+    ID2=="IRID039" ~"SS04",
+    ID2=="IRID015" ~"SS14",
+    ID2=="IRID089" ~"SS20", 
+    .default=ID2)) |>
+  dplyr::rename(ID=ID2) |>
+  arrange(ID)
+
+pheno |>
+  write.csv("2508_pheno_forMIDAS.csv")
+
+
+
+#### preparing midas object
+
+
+getHlaFrequencies(hla_calls = peru_hlacall, compare=FALSE) |>
+filter(Freq>0.01) |>
+dim()
+#### Preparing MIDAS
+pheno[] <- lapply(pheno, as.character)
+str(pheno)
+midas <- prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment = "hla_supertypes",
+  unkchar=FALSE
+  )
+### HWE
+
+midas <-
+  HWETest(
+    object = midas,
+    experiment = "hla_alleles",
+    HWE_cutoff = 0.05 / 94,
+  as.MiDAS = TRUE
+    )
+midas
+
+### Running midas
+library(MASS)
+robust_model <- lm(PVL ~ term, data = midas) 
+r1 =robust_model |>
+tbl_regression()
+pacman::p_update(midasHLA)
+browseVignettes("midasHLA")
+pheno
+HLA_model <- lm(logPVL ~ term, data = midas) #, family = binomial())
+HLA_results <- runMiDAS(
+  object = robust_model, 
+  experiment = "hla_supertypes", 
+  inheritance_model = "dominant",
+  lower_frequency_cutoff = 0.05, 
+  upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  exponentiate = TRUE
+)
+
+HLA_results
+# Logistic regression
+object <- glm(status2_lost ~ term + PVL, data = midas, family = binomial(link = "logit"))
+
+results <-
+  runMiDAS(
+    object = object,
+    experiment = "hla_alleles",
+    inheritance_model = "dominant",
+    conditional = FALSE,
+    omnibus = FALSE,
+    lower_frequency_cutoff = 0.05
+    )
+results |>
+arrange(p.value)
+kableResults(results)
+############ NK Ligands
+# Install development version from GitHub
+devtools::install_github("Genentech/MiDAS")
+
+prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment = "hla_aa")
+pheno
+NKlig_model <- glm(status2_lost ~ term, data = NKlig, family = binomial())
+NKlig_results <- runMiDAS(
+  NKlig_model,
+  experiment = "hla_divergence",
+  inheritance_model = "dominant",
+  correction = "bonferroni",
+  exponentiate = TRUE
+)
+NKlig_results
+
+
+midas
 custom_midas <- function(hla_df, pheno_df, exp, inheritance,outcome, conditional, omnibus, additional){
   # Prepare midasHLA
   HLA <- prepareMiDAS(
@@ -477,6 +640,8 @@ custom_midas <- function(hla_df, pheno_df, exp, inheritance,outcome, conditional
 )
   return(HLA_results)
 }
+
+custom_midas(peru_hlacall, pheno_df, exp, inheritance,outcome, conditional, omnibus, additional)
 # metadata
 colhtlv=htlv_hla |>
   select(ID, disease_2, strongy_lifetime, sum_freq, gini, Status) |>

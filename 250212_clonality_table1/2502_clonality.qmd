@@ -124,7 +124,42 @@ tbl_merge(list(r1, r2)) |>
   as_gt() |>
   gtsave(filename = "2508_sup_PVLregresion.docx", path="./output")
 
+htlv_mdata = htlv_mdata |>
+  dplyr::mutate(status2=ifelse(is.na(Status), "Death", Status))
+unique(htlv_mdata$status2)
 
+
+n_deaths <- sum(htlv_mdata$Status == "Death", na.rm = TRUE)
+n_total <- nrow(htlv_mdata)
+
+risk <- n_deaths / n_total
+ci <- binom.test(n_deaths, n_total)$conf.int
+
+cat(sprintf("Cumulative mortality risk: %.1f%% (95%% CI: %.1f%%–%.1f%%)", risk*100, ci[1]*100, ci[2]*100))
+
+# Logistic regression model
+htlv_mdata
+htlv_mdata$status1 = ifelse(htlv_mdata$Status=="Death", 1, 0)
+logit_model <- glm(status1  ~ Age + Sex + strongy_lifetime + PVL, 
+                   data = htlv_mdata, 
+                   family = binomial)
+summary(logit_model)
+exp(cbind(OR = coef(logit_model), confint(logit_model)))
+
+logit_model |>
+  tbl_regression(exponentiate = TRUE) |>
+  as_gt() |>
+  gtsave(filename = "2508_sup_deathregresion.docx", path="./output")
+
+# Including lost
+htlv_mdata$status2 = ifelse(htlv_mdata$Status=="death", 1, 0)
+logit_model2 <- glm(status2  ~ Age + Sex + strongy_lifetime + PVL, 
+                   data = htlv_mdata, 
+                   family = binomial)
+summary(logit_model)
+logit_model2 |>
+  tbl_regression(exponentiate = TRUE)
+exp(cbind(OR = coef(logit_model), confint(logit_model)))
 
 ```
 
