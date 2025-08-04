@@ -538,7 +538,7 @@ str(pheno)
 midas <- prepareMiDAS(
   hla_calls = peru_hlacall,
   colData = pheno,
-  experiment = "hla_supertypes",
+  experiment = "hla_aa",
   unkchar=FALSE
   )
 ### HWE
