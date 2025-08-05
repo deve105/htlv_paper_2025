@@ -303,8 +303,10 @@ hla_hed = hla_hed |>
 
 hla_hed2 =hla_hed |>
     filter((HED_A+HED_B+HED_C)!=0) 
+
 DT::datatable(hla_hed2)
 hla_hed2
+
 hla_hed2  |>   
     pivot_longer(
         -c(country, Sample), 
@@ -334,7 +336,7 @@ hla_hed2  |>
         label.size = 6/ggplot2::.pt
         ) |>
     add_violin() |>
-    remove_legend() |>
+    #remove_legend() |>
     adjust_x_axis(
         title="",
         labels = function(x) paste0(x, "\n(n = ", table(hla_hed2$country)[x], ")")
@@ -348,7 +350,7 @@ hla_hed2  |>
         by = HLAHED, 
         ncol = 4, 
         nrow = 1,
-        guides="keep") |>
+        guides="keep") #|>
     save_plot(
         filename = "./output/2503_hla_la_japan_vs_peru.png",
         width = NA,
