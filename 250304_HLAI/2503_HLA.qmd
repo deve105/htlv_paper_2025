@@ -24,7 +24,7 @@ serialsamples = c("IRID039|IRID015|IRID062|IRID089")
 #---Loading HLA coverage and data
 htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
     as.data.frame() |>
-    dplyr::filter(Q1 > .8, AverageCoverage>20) |>
+    #dplyr::filter(Q1 > .8, AverageCoverage>20) |>
     mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
     dplyr::filter(!grepl(serialsamples, Sample))
 
@@ -65,7 +65,7 @@ htlv_hla_la_wide <- htlv_hla_la |>
         names_from = allele,
         id_cols = c(ID, country),
         values_from = Allele)
-
+DT::datatable(htlv_hla_la_wide)
 #---Peru frequencies   
 peru_hla = htlv_hla_la_wide |>
     filter(country=="Peru") |>
@@ -487,24 +487,37 @@ show(fig_B35)
 ```
 
 
-
+## MIDAS
 ```{r}
-
-#---Peru frequencies   
+#---Peru frequencies 
 peru_hla = htlv_hla_la_wide |>
     filter(country=="Peru") |>
     mutate(ID=stringr::str_replace(ID, ".*_SS", "SS")) |>
     dplyr::select(-country) |>
     arrange(ID)
+peru_hla
 
+DT::datatable(peru_hla)
 peru_hla |>
-  write.csv("2508_HLA_forMIDAS.csv")
+  write.csv("2508_HLA_forMIDAS.csv") 
+
+##### from the backup
+pacman::p_load(tidyverse, midasHLA)  
+peru_hla = read.csv("2508_HLA_forMIDAS.csv") 
+
+head(peru_hla)
+peru_hla = peru_hla |>
+  select(-X)
+
+###. selection only by NGS
+peru_hla
+reduced_hla = peru_hla |>
+  dplyr::select(c(1:7)) #, "DRB1_1", "DRB1_2"))
+
 #---frequency calling
-
-peru_hlacall <- reduceHlaCalls(peru_hla, resolution = 4)
-
+peru_hlacall <- reduceHlaCalls(reduced_hla, resolution = 4)
+peru_hlacall
 ### metadata
-colnames(newdb)
 pheno = newdb |>
   dplyr::select(ID2, status1, PVL, logPVL, strongy_lifetime, Status, disease_2) |>
   mutate(strongy=ifelse(strongy_lifetime=="YES", 1, 0),
@@ -524,51 +537,263 @@ pheno = newdb |>
 pheno |>
   write.csv("2508_pheno_forMIDAS.csv")
 
-
-
+pheno = read.csv("2508_pheno_forMIDAS.csv") |>
+ select(-X)
+head(pheno)
+peru_hlacall
+#___________________________________________________
+?prepareMiDAS
 #### preparing midas object
-
-
-getHlaFrequencies(hla_calls = peru_hlacall, compare=FALSE) |>
-filter(Freq>0.01) |>
-dim()
-#### Preparing MIDAS
-pheno[] <- lapply(pheno, as.character)
-str(pheno)
 midas <- prepareMiDAS(
   hla_calls = peru_hlacall,
   colData = pheno,
-  experiment = "hla_aa",
-  unkchar=FALSE
-  )
-### HWE
+  experiment =  c("hla_alleles", "hla_aa", "hla_g_groups", "hla_supertypes",
+    "hla_NK_ligands", "hla_divergence", "hla_het"))
 
+# ALLELES and cutoff >10%
 midas <-
-  HWETest(
+  filterByFrequency(
     object = midas,
     experiment = "hla_alleles",
-    HWE_cutoff = 0.05 / 94,
-  as.MiDAS = TRUE
+    lower_frequency_cutoff = 0.10
     )
-midas
 
+getHlaFrequencies(hla_calls = peru_hlacall, compare=FALSE) |>
+filter(Freq>0.10) 
+
+
+#### Preparing MIDAS
+#midas <-
+#  HWETest(
+##    object = midas,
+#    experiment = "hla_NK_ligands",
+#    HWE_cutoff = 0.05 / 4,
+#  as.MiDAS = TRUE
+#    )
+
+
+## Dominant Model Inheritance and Mortality Risk
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_alleles", 
+  inheritance_model = "dominant",
+  lower_frequency_cutoff = 0.10, 
+  upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I association with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_allele_Dominant.docx")
+
+### AA + Dominant Model + Mortality Risk
+midas <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_aa",
+    lower_frequency_cutoff = 0.20
+    )
+
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_aa", 
+  inheritance_model = "dominant",
+  lower_frequency_cutoff = 0.10, 
+  upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+results
+
+library(scales)
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I association (Aminoacids) with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_aa_Dominant.docx")
+
+## HLA G groups
+peru_hlacall <- reduceHlaCalls(reduced_hla, resolution = 6)
+midas <- prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment =  "hla_g_groups")
+
+
+
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_g_groups", 
+  inheritance_model = "dominant",
+  #lower_frequency_cutoff = 0.10, 
+  #upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+results
+
+library(scales)
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I association (G-groups) with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_g-groups_Dominant.docx")
+
+### HLA supertypes
+
+peru_hlacall <- reduceHlaCalls(reduced_hla, resolution = 6)
+midas <- prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment =  "hla_supertypes")
+
+midas <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_supertypes",
+    lower_frequency_cutoff = 0.10
+    )
+
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_supertypes", 
+  inheritance_model = "recessive",
+  #lower_frequency_cutoff = 0.10, 
+  #upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+results
+
+library(scales)
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I association (HLA-supertypes) with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_hla_supertypes_Dominant.docx")
+
+## HLA NK ligands
+peru_hlacall <- reduceHlaCalls(reduced_hla, resolution = 6)
+midas <- prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment =  "hla_NK_ligands")
+
+midas <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_supertypes",
+    lower_frequency_cutoff = 0.10
+    )
+
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_NK_ligands", 
+  inheritance_model = "dominant",
+  lower_frequency_cutoff = 0.10, 
+  upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+results
+
+library(scales)
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I association (HLA-NK-Ligands) with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_hla_NK_ligands_Dominant.docx")
+
+
+## HLA Divergence
+peru_hlacall <- reduceHlaCalls(reduced_hla, resolution = 6)
+midas <- prepareMiDAS(
+  hla_calls = peru_hlacall,
+  colData = pheno,
+  experiment =  "hla_het")
+
+midas <-
+  filterByFrequency(
+    object = midas,
+    experiment = "hla_het",
+    lower_frequency_cutoff = 0.10
+    )
+
+object <- glm(status1 ~ term , data = midas, family = binomial(link = "logit"))
+results <-
+  runMiDAS(
+  object = object, 
+  experiment = "hla_het", 
+  #inheritance_model = "dominant",
+  #lower_frequency_cutoff = 0.10, 
+  #upper_frequency_cutoff = 0.95, 
+  correction = "bonferroni", 
+  #omnibus=TRUE,
+  exponentiate = TRUE
+    )
+results
+
+library(scales)
+results |>
+  as.data.frame() |>
+  mutate(across(where(is.numeric), ~ round(., 2))) |>
+  regulartable() |>
+  autofit() |>
+  add_header_lines("TableX. HLA-I Heterozygozity with Mortality Risk (Dominant Inheritance Model)") |>
+  flextable::save_as_docx(path="2508_hla_heterozygozyty_Dominant.docx")
+
+
+
+library(knitr)
+library(flextable)
+regulartable(results) #|>
+  kableExtra::save_kable("output/2508_hlaNK_deathrisk.docx")
 ### Running midas
 library(MASS)
 robust_model <- lm(PVL ~ term, data = midas) 
 r1 =robust_model |>
 tbl_regression()
-pacman::p_update(midasHLA)
-browseVignettes("midasHLA")
+¡
 pheno
-HLA_model <- lm(logPVL ~ term, data = midas) #, family = binomial())
+HLA_model <- glm(status2_lost ~ term, data = midas , family = binomial())
 HLA_results <- runMiDAS(
-  object = robust_model, 
-  experiment = "hla_supertypes", 
+  object = HLA_model, 
+  experiment = "hla_aa", 
   inheritance_model = "dominant",
   lower_frequency_cutoff = 0.05, 
   upper_frequency_cutoff = 0.95, 
-  correction = "bonferroni", 
-  exponentiate = TRUE
+  correction = "BH", 
+  exponentiate = TRUE,
+  omnibus=TRUE,
+  omnibus_groups_filter =c("A_24", "A_68")
 )
 
 HLA_results
