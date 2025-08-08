@@ -95,13 +95,8 @@ plotmafSummary(maf = dataset, rmOutlier = TRUE, addStat = 'median', dashboard = 
 dev.off()
 
 getSampleSummary(dataset) |>
-  dplyr::summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE))) |>
-  t() |>
+  dplyr::summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE))) 
 
-
-
-col_sums
-    
 
 colnames(dataset@data)[which(str_detect(colnames(dataset@data), "ClinVar"))]
 
