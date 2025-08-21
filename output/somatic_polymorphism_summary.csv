@@ -1,0 +1,4 @@
+variant_classification,total_variants,unique_genes,samples_affected,median_vaf
+Germline_Polymorphism,496,167,67,0.452
+Low_Frequency_Somatic,723,103,67,0.026
+Uncertain_Significance,450,84,65,0.306
