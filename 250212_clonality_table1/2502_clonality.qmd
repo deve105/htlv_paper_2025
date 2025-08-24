@@ -21,8 +21,10 @@ htlv_metadata = read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIe
 
 #----------------------------------------
 # - Step 1: Manipulation 
-htlv_mdata = htlv_metadata |>
+#htlv_mdata = htlv_metadata |>
   #filter(Complete!="NO_HTLV") |>
+
+htlv_mdata  = db_update |>
   dplyr::select(
     ID, 
     Status, 
@@ -30,8 +32,10 @@ htlv_mdata = htlv_metadata |>
     Sex, 
     Age, 
     PVL, 
+    gini,
     strongy_lifetime, 
-    disease_2) |>
+    disease_2,
+    ) |>
   dplyr::rename(
     birthplace=Birth_place_DNI
   ) |>
@@ -58,7 +62,7 @@ datatable(htlv_mdata)
 #---------------------------------------
 # Table 1 - Final - gtsummary
 table1 = htlv_mdata |>
-  dplyr::select(strongy_lifetime, -ID, -birthplace, Sex, Age, id_birth,  PVL, disease_2,Status) |>
+  dplyr::select(strongy_lifetime, -ID, -birthplace, Sex, Age, id_birth,  PVL, gini, disease_2,Status) |>
   gtsummary::tbl_summary(
     by="strongy_lifetime",
     missing="no",
@@ -68,25 +72,28 @@ table1 = htlv_mdata |>
       id_birth ~ "categorical",
       disease_2 ~ "categorical",
       Status ~ "categorical",
-      PVL ~ "continuous"),
+      PVL ~ "continuous",
+      gini ~ "continuous"),
     label=list(
       Sex ~ "Sex",
       Age ~ "Age(years)",
       id_birth ~ "Birthplace",
       PVL ~ "Proviral Load (PVL,%)",
+      gini ~ "OCI",
       disease_2 ~ "7-year Disease outcome",
       Status ~ "7-year Vital status"),
       digits = list(
       Age ~ 1,
-      PVL ~ 2
+      PVL ~ 2,
+      gini ~2
     )
     ) |>
   gtsummary::add_p() |>
-  modify_header(label="**Variable**", all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p, digits=1)}%)") |>
-  bold_labels() |>
+  gtsummary::modify_header(label="**Variable**", all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p, digits=1)}%)") |>
+  gtsummary::bold_labels() |>
   gtsummary::add_overall(last=TRUE, col_label="**Total**") |>
   as_gt()
-
+library(gtsummary)
 table1
 gtsave(table1, filename = "2508_Table1.docx", path="./output")
 
@@ -177,13 +184,24 @@ gini_index <- function(counts) {
 }
 
 # Step 1 - Loading clonality total file
-htlv_is <- read_tsv("./250212_clonality_is_htlv/concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
+htlv_is <- read_tsv("./250212_clonality_table1/concatenated_clonality.txt", col_names = c("range", "chrom", "start", "end", "freq", "freq_p", "sample"))
 
 # Option A for gini index
 result <- htlv_is |>
     group_by(sample) |>
-    summarise(gini = Gini(freq), .groups = "drop") |>
+    summarise(gini = Gini(freq), .groups = "drop") #|>
     filter(gini0.4) # filtering those with high oligoclonality
+
+result = result |>
+  mutate(sample=stringr::str_remove(sample, "^Peru_"))
+datatable(result)
+### Adding clonality to the datasets
+db_update = googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3")
+
+db_update = db_update |>
+  left_join(result, by=c("ID2"="sample"))
+### Updating dataset
+googlesheets4::write_sheet(db_update, "https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3")
 
 # Option B - Official, using ineq and join
 result <- htlv_is |>
@@ -225,17 +243,50 @@ htlv_mdata |>
         ci_lower = mean_gini - qt(0.975, df = n - 1) * se, # Lower bound of 95% CI
         ci_upper = mean_gini + qt(0.975, df = n - 1) * se # Upper bound of 95% CI
     )
-welch_test <- htlv_mdata |>
-    left_join(result, by = c("ID" = "sample")) |>
-    dplyr::filter(!is.na(disease_2)) |> # Remove missing values
-    oneway.test(gini ~ disease_2, data = _, var.equal = FALSE) # Welch's t-test
+
+
+### welch test between gini and disease
+db_update = googlesheets4::read_sheet( "https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3")
+
+labelx = paste("Spearman rho =", 
+                          round(cor(db_update$PVL, db_update$gini, 
+                                    method="spearman", use="complete.obs"), 2),
+                          "\np =", round(cor.test(db_update$PVL, db_update$gini, 
+                                        method="spearman")$p.value, 7))
+labelx
+cor.test(htlv_db$meanCOV, htlv_db$PVL, 
+                                        method="spearman")
+
+db_update |>
+    tidyplots::tidyplot(x=gini, y=PVL, color=disease_2) |>
+    tidyplots::add_data_points_beeswarm(size=1.5, preserve="total", alpha=.8) |>
+    tidyplots::add(geom_smooth(
+      method = "lm", 
+      se = FALSE, 
+      color = "black", 
+      size=.5,
+      inherit.aes=FALSE, aes(x=gini, y=PVL),
+      alpha = 0.4
+      )) |>
+    tidyplots::add_annotation_text(
+      labelx,
+      x = min(db_update$gini, na.rm=TRUE) + 0.3,
+      y = max(db_update$PVL, na.rm=TRUE) - 1,
+    ) |>
+     tidyplots::adjust_x_axis_title("Oligoclonality Index (OCI)", face="bold") |>
+    tidyplots::adjust_y_axis_title("Proviral Load (% PBMC)", face="bold") |>
+    tidyplots::adjust_legend_title("Last Disease \nStatus") |>
+    tidyplots::adjust_colors(new_colors=c("#377EB8", "#E41A1C", "#a6611a")) |>
+    tidyplots::adjust_font(face="bold") |>
+    tidyplots::save_plot("output/2508_PVL_vsGini.png", bg="transparent")
+
+welch_test <- db_update |>
+    oneway.test(gini ~ strongy_lifetime, data = _, var.equal = FALSE) # Welch's t-test
 
 # Print Welch's t-test results
 print(welch_test)
-
-htlv_mdata |>
-    mutate(disease_2 = ifelse(disease_2 == "Asymptomatic carriers", "ACs", disease_2)) |>
-    left_join(result, by = c("ID" = "sample")) |>
+unique(db_update$disease_2)
+db_update |>
     tidyplots::tidyplot(x = disease_2, y = gini, color = disease_2) |>
     tidyplots::add_data_points_jitter() |>
     tidyplots::add_boxplot() |>
@@ -278,15 +329,14 @@ corr <- round(cor(result$gini, result$sum_freq, method = c("pearson")), 4)
 
 datatable(result)
 # 2-----Plotting OCI vs Strongy
-result |>
-    dplyr::right_join(htlv_mdata, by = c("sample" = "ID")) |>
-    tidyplot(x = strongy_lifetime, y = gini) |>
-    add_data_points_jitter(alpha = 0.95) |>
-    add_violin(draw_quantiles = 0.5, alpha = 0.2) |>
-    add_test_pvalue(method = "t_test", method.args = list(alternative = "two.sided", var.equal = FALSE), hide_info = TRUE) |>
-    adjust_y_axis(title = "Oligoclonality Index (OCI)", limits = c(-0.1, 1.1)) |>
-    adjust_x_axis(title = NULL) |>
-    save_plot("output/S1_Strongi_vs_OCI.png",
+db_update |>
+    tidyplots::tidyplot(x = strongy_lifetime, y = gini) |>
+    tidyplots::add_data_points_jitter(alpha = 0.95) |>
+    tidyplots::add_violin(draw_quantiles = 0.5, alpha = 0.2) |>
+    tidyplots::add_test_pvalue(method = "t_test",  hide_info = TRUE) |>
+    tidyplots::adjust_y_axis(title = "Oligoclonality Index (OCI)", limits = c(-0.1, 1.1)) |>
+    tidyplots::adjust_x_axis(title = NULL, labels=c("No-LSI","LSI")) |>
+    tidyplots::save_plot("output/2508_S1_Strongi_vs_OCI.png",
         view_plot = TRUE,
         bg = "transparent",
         width = 7,

@@ -5,7 +5,7 @@ pacman::p_load(tidyverse, tidyplots, readxl)
 
 
 file_list <- list.files(
-  path = "/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/2507_HTLVpaper/PVL/",
+  path = "/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/Project_HTLV1 Peru_2025/2507_HTLVpaper/PVL",
   pattern = "\\.xls$",
   full.names = TRUE
 )
@@ -21,6 +21,7 @@ all_SS <- purrr::map_dfr(file_list, function(file) {
     )
 })
 
+all_SS
 all_pvl <- all_SS |>
   group_by(ID, target) |>
   summarise(
