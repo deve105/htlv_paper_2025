@@ -34,7 +34,7 @@ all_pvl <- all_SS |>
     values_from = c(Qmean, Qsd)
   ) |>
   mutate(
-    PVL = Qmean_P30 / Qmean_Globin * 100,
+    PVL = Qmean_P30 *2  / (Qmean_Globin*8) * 100,
     CV_P30 = (Qsd_P30 / Qmean_P30) * 100,
     CV_Globin = (Qsd_Globin / Qmean_Globin) * 100,
     SD_PVL = PVL * sqrt((Qsd_P30 / Qmean_P30)^2 + (Qsd_Globin / Qmean_Globin)^2)
@@ -46,6 +46,7 @@ all_pvl <- all_pvl |>
 dplyr::select(ID, PVL, SD_PVL)
 
 DT::datatable(all_pvl)
+mean(all_pvl$PVL)
 unique(all_pvl$target)
 ## Read the original database
 
