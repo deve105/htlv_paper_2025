@@ -12,26 +12,27 @@ to check SS27, SS01, IRID2,3,5-10
 IRID025_S236 was eliminated
 
 ```{r}
+## Loading Packages
 pacman::p_load(googlesheets4, tidyverse, DT,lubridate, gtsummary, gt, rmarkdown)
-# ----------------------------
+#----------------------------
+## Loading Packages
 # - Step 0: Adquiring metadata from google and do replacements in the strings
 htlv_metadata = read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3") |>
   mutate(ID=stringr::str_replace(ID, "^PE_", "")) |>
   mutate(ID=stringr::str_replace(ID, "_S.*", ""))
-
-#----------------------------------------
+#----------------------------
 # - Step 1: Manipulation 
 #htlv_mdata = htlv_metadata |>
   #filter(Complete!="NO_HTLV") |>
 
-htlv_mdata  = db_update |>
+htlv_mdata  = htlv_metadata |>
   dplyr::select(
     ID, 
     Status, 
     Birth_place_DNI, 
     Sex, 
     Age, 
-    PVL, 
+    PVL2, 
     gini,
     strongy_lifetime, 
     disease_2,
@@ -56,13 +57,13 @@ htlv_mdata  = db_update |>
       NO="Strongyloides (-)")
 
   )
-DT::datatable(htlv_mdata)
 # Preliminary review
-datatable(htlv_mdata)
+DT::datatable(htlv_mdata)
 #---------------------------------------
-# Table 1 - Final - gtsummary
+## Table 1 - Final - gtsummary
 table1 = htlv_mdata |>
-  dplyr::select(strongy_lifetime, -ID, -birthplace, Sex, Age, id_birth,  PVL, gini, disease_2,Status) |>
+  dplyr::mutate(PVLc=ifelse(PVL2>=4, "High-Risk", "Low-Risk")) |>
+  dplyr::select(strongy_lifetime, -ID, -birthplace, Sex, Age, id_birth,  PVL2, PVLc, gini, disease_2,Status) |>
   gtsummary::tbl_summary(
     by="strongy_lifetime",
     missing="no",
@@ -72,20 +73,28 @@ table1 = htlv_mdata |>
       id_birth ~ "categorical",
       disease_2 ~ "categorical",
       Status ~ "categorical",
-      PVL ~ "continuous",
+      PVL2 ~ "continuous",
+      PVLc ~ "categorical",
       gini ~ "continuous"),
     label=list(
       Sex ~ "Sex",
       Age ~ "Age(years)",
       id_birth ~ "Birthplace",
-      PVL ~ "Proviral Load (PVL,%)",
+      PVL2 ~ "Proviral Load (PVL,%)",
+      PVLc ~ "PVL-Risk (≥4%)",
       gini ~ "OCI",
       disease_2 ~ "7-year Disease outcome",
       Status ~ "7-year Vital status"),
+    statistic = list(
+      # Ensure proper statistics for categorical variables
+      PVLc ~ "{n} ({p})",
+      all_categorical() ~ "{n} ({p})",
+      all_continuous() ~ "{median} ({p25}, {p75})"
+    ),
       digits = list(
       Age ~ 1,
-      PVL ~ 2,
-      gini ~2
+      PVL2 ~ 1,
+      gini ~1
     )
     ) |>
   gtsummary::add_p() |>
@@ -96,33 +105,35 @@ table1 = htlv_mdata |>
 library(gtsummary)
 table1
 gtsave(table1, filename = "2508_Table1.docx", path="./output")
-
-## Predictors of PVL
-
-htlv_mdata$pvl4 = ifelse(htlv_mdata$PVL>4, "HR", "LR")
-
-janitor::tabyl(htlv_mdata, pvl4, strongy_lifetime ) |>
+#---------------------------------------
+## Predictors of PVL - PVL DOES NOT FOLLOW A NORMAL DISTRIBUTION
+htlv_mdata |>
+dplyr::mutate(PVLc=ifelse(PVL2>=4, "High-Risk", "Low-Risk")) |>
+janitor::tabyl(PVLc, strongy_lifetime ) |>
 janitor::adorn_percentages("col") |>
   janitor::adorn_pct_formatting(digits = 1) |>
   janitor::adorn_ns() 
 
-hist(htlv_mdata$PVL, breaks = 20, main = "Histogram of PVL", xlab = "PVL (%)")
-qqnorm(htlv_mdata$PVL); qqline(htlv_mdata$PVL)
-shapiro.test(htlv_mdata$PVLd) # If n < 5000
-
-htlv_mdata$PVLd = log(htlv_mdata$PVL +1)
-shapiro.test(htlv_mdata$PVLd) # If n < 5000
-
-
+hist(htlv_mdata$PVL2, breaks = 20, main = "Histogram of PVL", xlab = "PVL (%)")
+qqnorm(htlv_mdata$PVL2); qqline(htlv_mdata$PVL)
+shapiro.test(htlv_mdata$PVL2) # If n < 5000
 # Not follow a normal distribution
-library(MASS)
-robust_model <- rlm(PVL ~ Age + Sex + strongy_lifetime + id_birth, data = htlv_mdata) 
+htlv_mdata$PVLd = log(htlv_mdata$PVL2)
+shapiro.test(htlv_mdata$PVLd) # If n < 5000
+
+#---------------------------------------
+## Predictors of PVL
+pacman::p_load(betareg, MASS)
+robust_model <- rlm(PVL2 ~ Age + Sex + strongy_lifetime + id_birth, data = htlv_mdata) 
 r1 =robust_model |>
 tbl_regression()
+r1 |>
+as_gt() #|>
+gtsave(filename = "2508_sup_PVLregresionA.docx", path="./output")
 
 summary(robust_model)
 
-htlv_mdata$PVLc = (htlv_mdata$PVL/100)
+htlv_mdata$PVLc = (htlv_mdata$PVL2/100)
 beta_model <- betareg::betareg(PVLc ~ Age + Sex + strongy_lifetime + id_birth, data = htlv_mdata)
 r2 = beta_model |>
   tbl_regression()
@@ -131,23 +142,21 @@ tbl_merge(list(r1, r2)) |>
   as_gt() |>
   gtsave(filename = "2508_sup_PVLregresion.docx", path="./output")
 
+#---------------------------------------
+## Predictors of Death
 htlv_mdata = htlv_mdata |>
   dplyr::mutate(status2=ifelse(is.na(Status), "Death", Status))
 unique(htlv_mdata$status2)
-
-
 n_deaths <- sum(htlv_mdata$Status == "Death", na.rm = TRUE)
 n_total <- nrow(htlv_mdata)
-
 risk <- n_deaths / n_total
 ci <- binom.test(n_deaths, n_total)$conf.int
-
 cat(sprintf("Cumulative mortality risk: %.1f%% (95%% CI: %.1f%%–%.1f%%)", risk*100, ci[1]*100, ci[2]*100))
 
 # Logistic regression model
 htlv_mdata
 htlv_mdata$status1 = ifelse(htlv_mdata$Status=="Death", 1, 0)
-logit_model <- glm(status1  ~ Age + Sex + strongy_lifetime + PVL, 
+logit_model <- glm(status1  ~ Age + Sex + PVL2 + strongy_lifetime, 
                    data = htlv_mdata, 
                    family = binomial)
 summary(logit_model)
