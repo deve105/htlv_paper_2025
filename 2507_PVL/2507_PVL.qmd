@@ -1,4 +1,5 @@
 ## Script to calculate the PVL from qPCR results
+
 ```{r}
 ## Loading packages
 pacman::p_load(tidyverse, tidyplots, readxl)
@@ -43,7 +44,19 @@ all_pvl <- all_SS |>
     SD_PVL2 = PVL2 * sqrt((Qsd_P30 / Qmean_P30)^2 + (Qsd_Globin / Qmean_Globin)^2)
   )
 
-mean(all_pvl$PVL2)
+pvl_summary_stats <- all_pvl %>%
+  filter(!is.na(PVL2)) %>%
+  summarise(
+    n = n(),
+    median_pvl = median(PVL2, na.rm = TRUE),
+    sd_pvl = sd(PVL2, na.rm = TRUE),
+    mean_pvl = mean(PVL2, na.rm = TRUE),
+    iqr_pvl = IQR(PVL2, na.rm = TRUE),
+    q1_pvl = quantile(PVL2, 0.25, na.rm = TRUE),
+    q3_pvl = quantile(PVL2, 0.75, na.rm = TRUE)
+  )
+
+print(pvl_summary_stats)
 
 ## Median and mean using Hmisc
 pvl_ci_hmisc <- all_pvl %>%

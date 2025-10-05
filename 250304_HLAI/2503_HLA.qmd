@@ -1,5 +1,3 @@
-
-
 ```{r}
 """
 - IRID011, IRID026 and IRID038 were excluded (no HTLV-1 clones detected)
@@ -264,7 +262,7 @@ mean(comp_hlala$HLA_C == comp_hlala$HLA_C2)* 100
 
 ## HLA divergence including all HLA-LA from Japan
 
-```{r}
+```{ws{r}
 #---packages
 pacman::p_load(tidyverse, DT, tidyplots, httpgd, languageserver, midasHLA, stringr)
 
@@ -291,13 +289,15 @@ hla_hed = read_tsv("250304_HLAI/data/2508_v2_hla_total_hed.tsv")
 
 hla_hed = hla_hed |>
   mutate(Sample=stringr::str_replace(Sample, ".*_SS", "SS"))
+hla_hed
+
 
 
 hla_hed = hla_hed |>
     mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
     dplyr::filter(!grepl(serialsamples, Sample))
 
-
+newdb = googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=1412798579#gid=1412798579", sheet="Sheet3")
 
 ### 1 events of LOH or complete homozygotus for HLA-1
 
@@ -307,6 +307,60 @@ hla_hed2 =hla_hed |>
 DT::datatable(hla_hed2)
 hla_hed2
 
+
+hla_hed2 = newdb |>
+  select(HED_A, HED_B, HED_C, Mean_HE, strongy_lifetime, ID2) |>
+  pivot_longer(-c(ID2, strongy_lifetime), names_to="HLAHED", values_to = "HED") |>
+   mutate(
+        HLAHED=HLAHED |> fct_recode(
+            "Mean HLA-I"="Mean_HE",
+            "HLA-A"="HED_A",
+            "HLA-B"="HED_B",
+            "HLA-C"="HED_C"
+            ) |>
+            fct_relevel(
+                "Mean HLA-I",
+                "HLA-A",
+                "HLA-B",
+                "HLA-C"
+            ),
+        strongy_lifetime=strongy_lifetime |> fct_recode("LSI"="YES", "non-LSI"="NO")
+        ) 
+
+hla_hed2 |>       
+        tidyplot(x=strongy_lifetime, 
+        y=HED, 
+        color=strongy_lifetime) |>
+    add_data_points_jitter() |>
+    add_test_pvalue(
+        hide_info = TRUE,
+        label.size = 6/ggplot2::.pt
+        ) |>
+    add_violin() |>
+    #remove_legend() |>
+    adjust_x_axis(
+        title="",
+        labels = function(x) paste0(x, "\n(n = ", table(hla_hed2$strongy_lifetime)[x]/4, ")")
+        ) |>
+    adjust_y_axis(limits = c(0,NA), padding = c(0, NA)) |>
+    adjust_title(face="bold") |>
+        adjust_colors(
+        new=c("#E69F00","#D55E00")
+    ) |>
+    tidyplots::remove_legend() |>
+    split_plot(
+        by = HLAHED, 
+        ncol = 2, 
+        nrow = 2,
+        guides="keep")  |>
+            save_plot(
+        filename = "./output/2510_hla_la_LSI_HED.tiff",
+        width = NA,
+        height = NA,
+        bg = "transparent"
+    )
+
+hla_hed2
 hla_hed2  |>   
     pivot_longer(
         -c(country, Sample), 
@@ -403,6 +457,7 @@ exp(cbind(OR = coef(logit_model), confint(logit_model)))
 ```
 
 ## Analysis
+
 ```{r}
 ### Analysis by groups
 
@@ -488,8 +543,8 @@ show(fig_B35)
 
 ```
 
-
 ## MIDAS
+
 ```{r}
 #---Peru frequencies 
 peru_hla = htlv_hla_la_wide |>
@@ -925,9 +980,7 @@ write_tsv(combined_df, "output/2503_HLAanalysis_bydisease.tsv")
 
 
 
-````
 
-```{r}
 custom_midas_het <- function(hla_df, pheno_df, exp, outcome){
   # Prepare midasHLA
   HLA <- prepareMiDAS(
@@ -1015,6 +1068,7 @@ models <- c("dominant", "recessive", "overdominant", "additive")
 resultx = custom_midas_pvl(hla_df=hla_df2, pheno_df=colhtlv2, exp="hla_aa", inheritance="additive",outcome="sum_freq", omnibus=TRUE)
 datatable(resultx)
 ```
+
 ```{r}
 ### ANALYSIS ASSOCIATION
 #-- First, I am exploring the distribution of sum_freq (PVL) or gini index
@@ -1152,29 +1206,17 @@ htlv_hla
 
 https://github.com/cancerit/dockstore-cgpmap/wiki/1.-Reference-files
 
-ftp://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/bwa_idx_GRCh38_hla_decoy_ebv_bwamem2.tar.gz
-https://genentech.github.io/midasHLA/articles/MiDAS_vignette.html
+ftp://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/bwa_idx_GRCh38_hla_decoy_ebv_bwamem2.tar.gz https://genentech.github.io/midasHLA/articles/MiDAS_vignette.html
 
 https://hla.or.jp/med/frequency_search/en/allele/
 
-
-
 ## HLA-I or MHC-I
-are divided into:
-- Classical HLA-I: 
-A, B, C. Immunosurveillance and cancer immunotherapy.
-60-90% in cancer are affected. (immunescape)
-a-heavy chain (HLA-A, HLA-B, HLA-C)
-b-2-microglobulin.
 
-After ubiquitinylation, proteins degraded by immunoproteasome.
-Transportation by the transporter associated with antigen processing (TAP1/TAP2) into the ER.
-Tapasin + chaperones (calreticulin, ERp57)
-- Non-classical HLA-I: 
+are divided into: - Classical HLA-I: A, B, C. Immunosurveillance and cancer immunotherapy. 60-90% in cancer are affected. (immunescape) a-heavy chain (HLA-A, HLA-B, HLA-C) b-2-microglobulin.
+
+After ubiquitinylation, proteins degraded by immunoproteasome. Transportation by the transporter associated with antigen processing (TAP1/TAP2) into the ER. Tapasin + chaperones (calreticulin, ERp57) - Non-classical HLA-I:
 
 ### 
-
-
 
 ```{r}
 library(tidyplots, DT, ggplot2)
@@ -1205,12 +1247,11 @@ save_plot(plot1,
 datatable(plot_OR)
 ```
 
-
 Using optitype, pairwise divergences of HLA-A, HLA-B, and HLA-C were similar
 
 S20 seems to have a lower Quality for B
 
-HED scores were calculated using a python script implemented in HLA-HED. [https://github.com/sunhuaibo/HLA-HED]
+HED scores were calculated using a python script implemented in HLA-HED. \[https://github.com/sunhuaibo/HLA-HED\]
 
 ```{python}
 ## hed to execute in the terminal
@@ -1220,11 +1261,7 @@ python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_l
 python hla_hed.py -d ./grantham_matrix.txt -f ./ABC_prot.fa -i ./data/2503_hla_la_htlv.tsv -p -o data/2503_hla_la_paired.txt
 ```
 
-
-Background 
-The antigen presentation from HLA-I represent the most effective control system to mantain HTLV-1 infection  from HTLV-1 products
-THe spectrum of antigens presented by HLA type 
-## Heatmap of HLA-I evolutionary distances (HED) from Peruvian HTLV-1 cases
+Background The antigen presentation from HLA-I represent the most effective control system to mantain HTLV-1 infection from HTLV-1 products THe spectrum of antigens presented by HLA type \## Heatmap of HLA-I evolutionary distances (HED) from Peruvian HTLV-1 cases
 
 The heatmap shows z-score-normalized HED across HLA-I subtypes in HTLV-1 cases from Peru. The blue to red gradient indicates low to high HED between allele pairs, respectively.
 
@@ -1294,7 +1331,6 @@ complete_data |>
     )
 ```
 
-
 https://github.com/aiminy/IS-Seq-python3
 
 https://github.com/nf-core/viralrecon
@@ -1325,8 +1361,7 @@ https://github.com/GIGA-AnimalGenomics-BLV/Public/tree/master/PIC
 
 https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-6647-4
 
-https://github.com/ding-lab/VirusIntegrate
-https://github.com/SannaAb/Viral_Integration_Pipe
+https://github.com/ding-lab/VirusIntegrate https://github.com/SannaAb/Viral_Integration_Pipe
 
 https://github.com/sara-javadzadeh/FastViFi
 
