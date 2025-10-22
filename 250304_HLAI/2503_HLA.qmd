@@ -75,7 +75,12 @@ japan_hla = htlv_hla_la_wide |>
     dplyr::select(-country)
 japan_hla
 #---frequency calling
-peru_hlacall <- reduceHlaCalls(peru_hla, resolution = 4)
+peru_hla2 = peru_hla |>
+  dplyr::select(1:13)
+peru_hlacall <- reduceHlaCalls(peru_hla2, resolution = 4)
+
+
+
 japan_hlacall <- reduceHlaCalls(japan_hla, resolution = 4)
 #---Japan calling
 japan_hlafreq = getHlaFrequencies(
@@ -86,6 +91,7 @@ japan_hlafreq = getHlaFrequencies(
     dplyr::rename("Miyazaki - Japan Cohort"="Freq") |>
     dplyr::select(-Counts) 
 peru_hlacall
+
 #---Peru calling
 peru_hlafreq = getHlaFrequencies(
     peru_hlacall,
@@ -93,7 +99,7 @@ peru_hlafreq = getHlaFrequencies(
     ref = allele_frequencies
     ) |>
     dplyr::rename("Peru_Cohort"="Freq") |>
-    dplyr::select(-Counts) |>
+    dplyr::select(-Counts) # |>
     full_join(japan_hlafreq, by="allele") |>
     arrange(allele, Peru_Cohort)
 
@@ -152,18 +158,21 @@ dplyr::filter(Freq > 0.05) |>
     mutate(Population=ifelse(Population=="Freq", "HTLV-1 Peru", Population)) |>
     mutate(Population=factor(Population, levels=c("HTLV-1 Peru", "Latino NMDP",  "Japanese NMDP", "African-American NMDP")))
 population_colors=c("#C02D45", "#4FAE62",  "#ffb703", "#219ebc")
-peru_hlafreq_world    |>
-    dplyr::filter(grepl("^A|^B|^C", allele)) |>
-    tidyplot(x=haplotype_freq, y=allele, color=Population) |>
+datax =peru_hlafreq_world    |>
+    dplyr::filter(grepl("^A|^B|^C", allele)) 
+plotx = tidyplot(x=haplotype_freq, y=allele, color=Population, data=datax) |>
     add_mean_bar(width=.5) |>
     add_sum_dot(size=.9) |>
     adjust_y_axis_title("Alleles HLA-I > 5%", face="bold") |>
     adjust_x_axis_title("Haplotype Frequency", face="bold") |>
     adjust_legend_title("Population", face="bold") |>
     adjust_x_axis(labels=scales::percent_format()) |>
-    adjust_colors(new_colors = population_colors) |>
-    save_plot("output/S3_HLAfreq_by_NMDP.png", view_plot = TRUE,
-    bg = "transparent")
+    adjust_colors(new_colors = population_colors) #|>
+    save_plot("output/2510_HLAfreq_by_NMDP.tiff", view_plot = TRUE,
+    bg = "transparent", )
+
+
+ggsave("2510_hla_v2.tiff", plot = plotx,  path=here("output/"), scale=1, dpi=600, limitsize=FALSE)
 ```
 
 ## Statistics
