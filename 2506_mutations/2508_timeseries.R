@@ -58,7 +58,7 @@ googlesheets4::sheet_write(metadata, ss='https://docs.google.com/spreadsheets/d/
 ### Re-reading the dataset
 seriesdb = googlesheets4::read_sheet('https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/edit?gid=148794326#gid=148794326', sheet="Sheet4")
 
-seriesdb |>
+series1 = seriesdb |>
     select(ID2, PVL, time, Gini, total ) |>
     rename("PVL(%)"=PVL, "Oligoclonality Index (OCI)"=Gini, "Total Number of Mutations"=total) |>
     pivot_longer(-c(ID2, time), values_to = "score", names_to = "group") |>
@@ -72,8 +72,11 @@ seriesdb |>
   add_test_pvalue() |>
     tidyplots::remove_caption() |>
     tidyplots::adjust_font(face="bold" ) |>
-  tidyplots::split_plot(by=group) |>
+  tidyplots::split_plot(by=group) #|>
       tidyplots::save_plot("output/2508_timeseries.png", bg="transparent")
+
+ggsave("2510_timeseries.tiff", series1, width = 7, height = 3, dpi = 600)
+
 
 seriesdb |>
   select(time, total ) |>
@@ -85,6 +88,6 @@ matching_barcodes2 = unique(dataset@data$Tumor_Sample_Barcode[str_detect(dataset
 
 sub1 = maftools::subsetMaf(dataset, tsb = matching_barcodes)
 sub2 = maftools::subsetMaf(dataset, tsb = matching_barcodes2)
-png("2508_timeseries_maf_barplot.png", width = 1600, height = 1000, res = 300)
+tiff("2510_timeseries_maf_barplot.tiff", width = 6, height = 4, res = 600, unit="in")
 coBarplot(m1 = sub2, m2 = sub1, m1Name = "Baseline", m2Name = "Follow-up", geneSize=.6, legendTxtSize = .7, showPct = FALSE, titleSize = 1)
 dev.off()

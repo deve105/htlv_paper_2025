@@ -44,7 +44,7 @@ metadata = googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14e
     mutate(PVLlog = as.numeric(log(PVL)))
 
 #---MAF official
-dataset = merge_maf_objects("/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/2507_HTLVpaper/maf_htlv") 
+dataset = merge_maf_objects("/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/Project_HTLV1 Peru_2025/2507_HTLVpaper/maf_htlv") 
 
 
 #----------------------------------------------
@@ -63,7 +63,7 @@ labelx = paste("Spearman rho =",
                                         method="spearman")$p.value, 3))
 
 
-correlation |>
+plot1 = correlation |>
     tidyplots::tidyplot(x=PVLlog, y=total, color=disease_2) |>
     tidyplots::add_data_points_beeswarm(size=1.5, preserve="total", alpha=.8) |>
     tidyplots::add(geom_smooth(
@@ -86,9 +86,10 @@ correlation |>
     tidyplots::adjust_font(face="bold") #|>
     tidyplots::save_plot("output/2508_PVL_vs_total_mutations.png", bg="transparent")
 
+ggsave("output/2508_PVL_vs_total_mutations.tiff",  dpi=600)
 #----------------------------------------------
 #---5-MAF summary
-png("2508_summary_maf_barplot.png", width = 1800, height = 2400, res = 300)
+tiff("2508_summary_maf_barplot.tiff", res = 600)
 plotmafSummary(maf = dataset, rmOutlier = TRUE, addStat = 'median', dashboard = TRUE, top = 20, titvRaw = FALSE)
 dev.off()
 
@@ -184,7 +185,7 @@ top_silent_genes_median <- silent_db2 |>
 
 
 ## Graph for silent genes
-graph_silent |>
+grap2 = graph_silent |>
 tidyplots::tidyplot(x=Hugo_Symbol, y=Frequency, color=Variant_Classification) |>
   tidyplots::add_barstack_absolute() |>
   tidyplots::adjust_x_axis(rotate_labels=TRUE) |>
@@ -192,9 +193,11 @@ tidyplots::tidyplot(x=Hugo_Symbol, y=Frequency, color=Variant_Classification) |>
   tidyplots::adjust_legend_title("Variant Classification") |>
   tidyplots::adjust_x_axis_title("Gene Symbol") |>
   tidyplots::sort_x_axis_labels(.fun=sum, .reverse=TRUE) |>
-  tidyplots::adjust_font(face="bold", fontsize=6) |>
+  tidyplots::adjust_font(face="bold", fontsize=6) #|>
   tidyplots::save_plot("output/2508_Silent_mutations.png", bg="transparent")
+grap2
 
+ggsave("output/2508_Silent_mutations.tiff", plot=grap2, dpi=600, width=8, height=6)
 
 remove_constant_cols <- function(df) {
   df %>%
@@ -766,7 +769,7 @@ getClinicalData(dataset2)
 library(grid)
 
 
-png("2508_maf_barplot.png", width = 2400, height = 1600, res = 300)
+("2508_maf_barplot.png", width = 2400, height = 1600, res = 300)
 mafbarplot(dataset2, n=30, fontSize=0.7, legendfontSize = 0.7)
 dev.off()
 
@@ -791,7 +794,7 @@ dataset2@data |>
     dplyr::arrange(desc('mean VAF')) -> genes_vaf
 genes_vaf
 ### Include clinical data in oncoplot
-png("2508_oncoplot_clinical2.png", width = 2800, height = 1900, res = 300)
+tiff("2508_oncoplot_clinical2.tiff", width = 8, height = 5.2, units="in", res = 600)
 oncoplot(maf = dataset2, 
          clinicalFeatures = c("Outcome disease", "log(PVL)", "Mean_HE"),
          draw_titv = TRUE,
