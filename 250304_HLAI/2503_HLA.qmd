@@ -22,9 +22,30 @@ serialsamples = c("IRID039|IRID015|IRID062|IRID089")
 #---Loading HLA coverage and data
 htlv_hla_la <- read_tsv("250304_HLAI/hla-la/v2/hla_la_concatenated_output.txt") |>
     as.data.frame() |>
-    #dplyr::filter(Q1 > .8, AverageCoverage>20) |>
+    dplyr::filter(Q1 > .8, AverageCoverage>20) |>
     mutate(country=ifelse(str_detect(Sample, "IRID|SS"), "Peru", "Japan")) |>
     dplyr::filter(!grepl(serialsamples, Sample))
+
+htlv_hla_la = htlv_hla_la|> filter(country=="Peru")
+htlv_hla_la
+DT::datatable(htlv_hla_la)
+#---HLA coverage - Ploting coverage
+htlv_hla_la |>
+tidyplot(x = Locus, y = AverageCoverage) |>
+    adjust_x_axis(rotate_labels = TRUE) |>
+    add_data_points_beeswarm(white_border = FALSE, size = 0.4, alpha = 0.4) |>
+    adjust_y_axis(transform = "log10") |>
+    adjust_y_axis_title("NGS Average Coverage", face="bold") |>
+    add_median_bar(alpha=.3) |>
+    adjust_x_axis_title("HLA Locus", face="bold") |>
+    adjust_title("Average Coverage per HLA Locus", , face="bold") |>
+    adjust_colors(
+        new=c("#E69F00")) |>
+    save_plot("output/2510_S3_HLA_NGS_coverage.png",
+        view_plot = TRUE,
+        bg = "transparent"
+    )
+```
 
 DT::datatable(htlv_hla_la)
 #---HLA coverage - Ploting coverage
