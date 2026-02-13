@@ -45,7 +45,7 @@ tidyplot(x = Locus, y = AverageCoverage) |>
         view_plot = TRUE,
         bg = "transparent"
     )
-```
+
 
 DT::datatable(htlv_hla_la)
 #---HLA coverage - Ploting coverage
