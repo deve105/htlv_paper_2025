@@ -2,17 +2,19 @@
 format: docx
 ---
 
-1. For others to replicate this work, it’s crucial to cite the specific software used (FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST) and also to note the exact versions run. This level of detail is often missing but is essential.
+### 1. For others to replicate this work, it’s crucial to cite the specific software used (FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST) and also to note the exact versions run. This level of detail is often missing but is essential.
+   
+FASTQC (Version 0.12.1), Fastp (Version 0.23.4), MultiQC (Version 1.27.1), BWA-MEM2 (Version 2.2.1), GATK (Version 4.3.0), MAFFT (Version 7.49), IQ-TREE (Version 3.0.1), and BEAST (Version 2.7) were the specific software tools used in our analysis. We have updated the Methods section to include these details, along with the original scripts for variant calling available in our repository, to ensure that others can replicate our work accurately.
 
 We appreciate the importance of citing specific software and their versions for reproducibility. We have updated the Methods section to include the exact versions of all software used in our analysis, including FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST. In addition, the original scripts for variant calling are available in the repository. This information is now clearly stated to ensure that others can replicate our work accurately.
 
-2. The authors looked for recombination events the right way, starting with a phi-test and then using several algorithms. However, when I checked the alignments linked to Supplementary Table 3, the evidence for recombination wasn’t convincing in several instances. This part of the analysis, despite secondary, needs more precise support.
+### 1. The authors looked for recombination events the right way, starting with a phi-test and then using several algorithms. However, when I checked the alignments linked to Supplementary Table 3, the evidence for recombination wasn’t convincing in several instances. This part of the analysis, despite secondary, needs more precise support.
 
 We acknowledge the importance of providing clear evidence for recombination events. The intention of the recombination analysis was to exclude any potential confounding effects of recombination on our phylogenetic analyses.
 
 We have re-evaluated the alignments linked to Supplementary Table 3 and have included additional analyses to strengthen our support for recombination. We have also added more detailed explanations in the Results section to clarify the evidence for recombination and how it was determined using the phi-test and subsequent algorithms. This should provide a more convincing argument for the presence of recombination events in our dataset.
 
-3. I also have a couple of questions about the phylogenetics. Could the authors briefly explain why a three partition scheme was chosen? Did they try other strategies? Since the LTR region is standard for HTLV-1 genotyping, a straightforward explanation for using a different approach would be helpful.
+### 3. I also have a couple of questions about the phylogenetics. Could the authors briefly explain why a three partition scheme was chosen? Did they try other strategies? Since the LTR region is standard for HTLV-1 genotyping, a straightforward explanation for using a different approach would be helpful.
 
 We acknoledge the reviewer's question regarding our choice of a three-partition scheme for phylogenetic analysis.
 Different genomic regions (codon positions, genes) evolve at different rates; ignoring this causes bias in tree topology and node support. We tested multiple partitioning strategies using PartitionFinder, including (i) no partitioning (single model for whole genome), (ii) two partitions (LTR vs. rest of genome), and (iii) three partitions (LTR + env + whole genome). The three-partition scheme was selected as the best-fitting model based on AIC and BIC criteria, indicating it provides the optimal balance between model complexity and phylogenetic signal. This approach allows us to leverage the high variability of the LTR region while also incorporating the evolutionary signal from coding regions like env, which may capture different aspects of viral evolution and divergence history.
@@ -24,7 +26,7 @@ We chose this approach based on both biological rationale and data-driven model 
 
 Our three-partition scheme (LTR + env + whole genome) represents an advancement beyond standard LTR-only genotyping. While current HTLV-1 classification (Cosmopolitan, Japanese, West African subtypes) relies primarily on LTR and env diversity, these regions alone may not capture the full evolutionary signal for divergence time estimation and population history. PartitionFinder automatically tested multiple partition strategies and identified the three-partition scheme as the best-fitting model using AIC and BIC criteria, indicating this approach represents the optimal balance between model complexity and phylogenetic signal. This data-driven approach allowed us to leverage coding and regulatory diversity to improve tree topology inference and node support, while maintaining phylogenetic signal integrity through multiple independent validation approaches (ML phylogenetics, Bayesian inference, DAPC, k-means clustering).
 
-1. My biggest concern is about the phylogenetic analysis itself. While the discussion of the trees is balanced, the methods underneath need shoring up. For any tree, it’s good practice to check for sufficient phylogenetic signal (e.g., with likelihood mapping). More importantly, for the Bayesian timetree analysis, was a temporal signal actually tested for the data? The methods section should also detail and justify the clock model, tree priors, and MCMC settings used in BEAST, including any model testing performed. Finally, the estimated time to the most recent common ancestor (tMRCA) seems surprisingly old. Perhaps some historical context would help in this topic.
+### 1. My biggest concern is about the phylogenetic analysis itself. While the discussion of the trees is balanced, the methods underneath need shoring up. For any tree, it’s good practice to check for sufficient phylogenetic signal (e.g., with likelihood mapping). More importantly, for the Bayesian timetree analysis, was a temporal signal actually tested for the data? The methods section should also detail and justify the clock model, tree priors, and MCMC settings used in BEAST, including any model testing performed. Finally, the estimated time to the most recent common ancestor (tMRCA) seems surprisingly old. Perhaps some historical context would help in this topic.
 
 We perform the analysis i a relaxed lognormal clock model, including all available prior clock methods used in previous HTLV-1 studies 
 
@@ -50,5 +52,13 @@ regions) with rapid substitution rates in remaining sites (Gamma α = 0.999),
 indicating biologically meaningful compositional heterogeneity consistent with 
 selection pressures across the HTLV-1 genome.
 
+
+## Reviewer 2:
+
+### Line 250: The authors state that PVL correlates with mortality. It is unclear whether mortality refers exclusively to HTLV-related deaths. Were only three fatal cases included in this analysis? The total number of deceased individuals and their causes of death should be clearly specified in the text. Earlier (line 259), only two ATL-related deaths are mentioned, in addition to one case without a reported cause. This discrepancy requires clarification.
+
+
+### Section 4:
+In line with the possibility of pre-ATL cases, the authors should consider whether specific mutations, including non-synonymous mutations, correlate with OCI or early leukemogenic processes.
 
 
