@@ -1,0 +1,12 @@
+#nexus
+begin sets;
+	charset LTRregion_DNA = 1-755 8279-9033;
+	charset gag_DNA = 802-2091;
+	charset pol-pro_DNA = 1938-5189;
+	charset env_DNA = 5181-6647;
+	charset px_DNA = 6831-8360;
+	charset rest_DNA = 756-801 6648-6834;
+	charset all_CP1 = 802-2091\3 1938-5189\3 5181-6647\3 6831-8360\3;
+	charset all_CP2 = 803-2089\3 1939-5187\3 5182-6645\3 6832-8358\3;
+	charset all_CP3 = 804-2090\3 1940-5188\3 5183-6646\3 6833-8359\3;
+end;
