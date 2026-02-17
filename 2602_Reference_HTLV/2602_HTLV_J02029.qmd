@@ -1,0 +1,282 @@
+
+```{python}
+#| eval: false
+# Only the first time
+!pip install --upgrade pip
+!pip install --upgrade biopython
+!pip install --upgrade matplotlib
+!pip install --upgrade seaborn
+!pip install --upgrade pandas
+!pip install --upgrade numpy
+!pip install --upgrade gffutils
+
+```
+
+
+```{python}
+import gffutils
+
+# Create a database from GFF file
+gff_file = "/Users/denriquez/Library/CloudStorage/OneDrive-Personal/phyloseq0919/231010_Partitionsfinder/Partitions/PROKKA_12042023.gff"
+
+db = gffutils.create_db(
+    gff_file, 
+    dbfn="htlv1_annotations.db",
+    force=True,
+    merge_strategy="merge"
+)
+
+
+# Get all genes/features
+for feature in db.all_features():
+    print(f"{feature.id}: {feature.start}-{feature.end} ({feature.featuretype})")
+
+# Get specific genes (LTR, gag, pol, env, etc.)
+for gene in db.features_of_type('gene'):
+    print(f"Gene: {gene.id}")
+    for child in db.children(gene):
+        print(f"  └─ {child.featuretype}: {child.start}-{child.end}")
+
+# If you want to save to disk instead:
+# db = gffutils.create_db(gff_file, dbfn="annotations.db", force=True)
+```
+
+
+```{python}
+
+import gffutils
+from Bio import SeqIO, Seq, SeqRecord, Align
+import re
+
+def extract_reference_sequence(gff_file):
+    """
+    Extract reference sequence from GFF3 file (from ##FASTA section).
+    More robust parsing for GFF3 with embedded FASTA.
+    """
+    
+    print("Extracting reference sequence from GFF3...")
+    
+    try:
+        # Read the file and find ##FASTA marker
+        with open(gff_file, 'r') as f:
+            lines = f.readlines()
+        
+        # Find where FASTA starts
+        fasta_start = None
+        for i, line in enumerate(lines):
+            if line.strip() == "##FASTA":
+                fasta_start = i + 1
+                break
+        
+        if fasta_start is None:
+            print("  ✗ ##FASTA marker not found")
+            return None
+        
+        # Extract FASTA sequence
+        fasta_lines = []
+        in_header = False
+        
+        for line in lines[fasta_start:]:
+            line = line.strip()
+            
+            if not line:  # Skip empty lines
+                continue
+            
+            if line.startswith('>'):  # FASTA header
+                if fasta_lines:  # If we already have sequence, keep it
+                    pass
+                in_header = True
+                continue
+            
+            if in_header or not line.startswith('>'):
+                # Accumulate sequence lines
+                fasta_lines.append(line)
+        
+        sequence = "".join(fasta_lines)
+        
+        if sequence:
+            print(f"  ✓ Extracted {len(sequence)} bp")
+            return sequence
+        else:
+            print("  ✗ No sequence found after ##FASTA")
+            return None
+    
+    except Exception as e:
+        print(f"  ✗ Error extracting sequence: {e}")
+        return None
+
+def gff3_to_nexus_all_regions(gff_file, output_file):
+    """
+    Convert GFF3 to NEXUS format with charsets for ALL regions.
+    Includes the reference sequence and all genomic regions as charsets.
+    
+    Args:
+        gff_file: Input GFF3 file path with embedded FASTA
+        output_file: Output NEXUS file path
+    
+    Returns:
+        Dictionary with region information and charsets
+    """
+    
+    print("=" * 60)
+    print("GFF3 to NEXUS Conversion with All Regions")
+    print("=" * 60)
+    
+    # Extract reference sequence
+    print("\nExtracting reference sequence...")
+    genome_seq = extract_reference_sequence(gff_file)
+    
+    if not genome_seq:
+        print("ERROR: Could not extract genomic sequence from GFF3")
+        return None
+    
+    print(f"✓ Reference sequence length: {len(genome_seq)} bp")
+    
+    # Create GFF3 database
+    print("\nCreating GFF3 database...")
+    db = gffutils.create_db(
+        gff_file, 
+        dbfn=":memory:", 
+        force=True, 
+        merge_strategy="merge"
+    )
+    
+    # Extract ALL features with their coordinates
+    print("\nExtracting all genomic regions...")
+    all_features = []
+    feature_dict = {}
+    
+    for feature in db.all_features():
+        feature_type = feature.featuretype
+        if feature_type not in feature_dict:
+            feature_dict[feature_type] = []
+        
+        feature_dict[feature_type].append({
+            'id': feature.id,
+            'start': feature.start,
+            'end': feature.end,
+            'strand': feature.strand,
+            'type': feature_type
+        })
+        all_features.append(feature)
+    
+    print(f"✓ Found {len(feature_dict)} unique feature types")
+    for ftype, features in sorted(feature_dict.items()):
+        print(f"    - {ftype}: {len(features)} features")
+    
+    # Build concatenated sequence and charsets
+    print("\nBuilding charsets from regions...")
+    position = 1
+    charsets = {}
+    sequence_parts = []
+    
+    # Sort features by start position to maintain order
+    sorted_features = sorted(all_features, key=lambda x: x.start)
+    
+    for feature in sorted_features:
+        feature_id = feature.id or f"{feature.featuretype}_{feature.start}_{feature.end}"
+        feature_type = feature.featuretype
+        
+        # Extract sequence for this feature
+        start_idx = feature.start - 1  # Convert to 0-based
+        end_idx = feature.end
+        feature_seq = genome_seq[start_idx:end_idx]
+        
+        # Reverse complement if needed
+        if feature.strand == '-':
+            feature_seq = str(Seq.Seq(feature_seq).reverse_complement())
+        
+        # Track position
+        charset_start = position
+        charset_end = position + len(feature_seq) - 1
+        
+        # Create charset entry if new feature type
+        if feature_type not in charsets:
+            charsets[feature_type] = []
+        
+        charsets[feature_type].append((charset_start, charset_end))
+        sequence_parts.append(feature_seq)
+        position = charset_end + 1
+        
+        print(f"    {feature_type:<20} {feature_id:<30} {charset_start:6d}-{charset_end:6d}")
+    
+    # Concatenate all sequences
+    full_sequence = "".join(sequence_parts)
+    total_length = len(full_sequence)
+    
+    print(f"\n✓ Total concatenated sequence: {total_length} bp")
+    
+    # Write NEXUS file
+    print(f"\nWriting NEXUS file to {output_file}...")
+    
+    with open(output_file, 'w') as f:
+        # NEXUS header
+        f.write("#NEXUS\n")
+        f.write("[ Reference HTLV-1 sequence with all annotated regions ]\n\n")
+        
+        # Data block
+        f.write("begin data;\n")
+        f.write(f"  dimensions ntax=1 nchar={total_length};\n")
+        f.write("  format datatype=dna gap=- missing=?;\n")
+        f.write("  matrix\n")
+        f.write(f"    HTLV1_reference     {full_sequence}\n")
+        f.write("  ;\n")
+        f.write("end;\n\n")
+        
+        # Sets/charsets block
+        f.write("begin sets;\n")
+        f.write("  [ Individual feature charsets ]\n")
+        
+        # Write charsets for each feature type
+        for feature_type in sorted(charsets.keys()):
+            positions = charsets[feature_type]
+            if len(positions) == 1:
+                # Single region
+                start, end = positions[0]
+                f.write(f"  charset {feature_type} = {start}-{end};\n")
+            else:
+                # Multiple regions of same type
+                pos_str = ", ".join([f"{s}-{e}" for s, e in positions])
+                f.write(f"  charset {feature_type} = {pos_str};\n")
+        
+        f.write("end;\n\n")
+        
+        # Partition block for phylogenetic analysis
+        f.write("begin partition;\n")
+        f.write("  [ Partitioning scheme for phylogenetic inference ]\n")
+        
+        # Group into major partitions
+        f.write("  partition HTLV1_regions = ")
+        charset_names = sorted(charsets.keys())
+        f.write(", ".join([f"1:{name}" for name in charset_names]))
+        f.write(";\n")
+        f.write("end;\n")
+    
+    # Print summary
+    print(f"\n{'=' * 60}")
+    print(f"✓ NEXUS file created successfully!")
+    print(f"{'=' * 60}")
+    print(f"Output file: {output_file}")
+    print(f"Sequence length: {total_length} bp")
+    print(f"Total charsets: {len(charsets)}")
+    print(f"\nCharset summary:")
+    for ftype in sorted(charsets.keys()):
+        positions = charsets[ftype]
+        total_bp = sum(e - s + 1 for s, e in positions)
+        print(f"  {ftype:<20} {len(positions)} region(s), {total_bp:6d} bp")
+    print(f"{'=' * 60}\n")
+    
+    return {
+        'sequence_length': total_length,
+        'charsets': charsets,
+        'feature_types': list(feature_dict.keys()),
+        'output_file': output_file
+    }
+
+# Usage for your HTLV-1 analysis
+if __name__ == "__main__":
+    result = gff3_to_nexus_all_regions(
+        gff_file="/Users/denriquez/Library/CloudStorage/OneDrive-Personal/phyloseq0919/231010_Partitionsfinder/Partitions/PROKKA_12042023.gff",
+        output_file="/Users/denriquez/Documents/GitHub/htlv_paper_2025/output/HTLV1_reference_all_regions.nex"
+    )
+```

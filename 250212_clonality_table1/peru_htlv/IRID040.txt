@@ -1,0 +1,2 @@
+id	chr	start	end	tag	tag%
+chr20:53792744-53792744	chr20	53792744	53792744	1	100

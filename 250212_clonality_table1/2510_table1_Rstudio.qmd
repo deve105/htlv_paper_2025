@@ -1,0 +1,63 @@
+```{R eval=FALSE}
+htlv1<-read_sheet("https://docs.google.com/spreadsheets/d/14eZCI8lRsfIebXu-tpAxbuPEOhE6moAnTDKKKUQyNOI/") 
+metadata<-read_csv(file="~/Documents/Rstats/RepoGit/Rdev24b/Rdev24/data/0422/0502_metadatafinal.csv")
+metadata<-read_csv("./data/0422/0502_metadatafinal.csv")
+
+#Manipulation of the database
+dbh1<-htlv1 %>%
+  filter(QC==1) %>%
+  select(1, 9, 12, 13, 15, 20) %>%
+  left_join(., metadata[c(2, 6)], by=c("Accession"="Accession")) %>%
+  mutate(Residence=toupper(Residence)) %>%
+  mutate(residcat = case_when(
+    Residence  %in% c("AMAZONAS", "LORETO", "MADRE DE DIOS", "SAN MARTIN", "UCAYALI") ~ "Amazon Region",
+    Residence  %in% c("ANCASH", "AREQUIPA", "CALLAO", "ICA", "LA LIBERTAD",   "LAMBAYEQUE", "LIMA", "MOQUEGUA", "PIURA", "TACNA", "TUMBES") ~ "Coast Region",
+    Residence %in% c("PUNO", "HUANCAVELICA", "HUANUCO", "APURIMAC", "AYACUCHO", "CAJAMARCA", "JUNIN", "PASCO",  "CUSCO") ~ "Andean Region",
+    )) %>%
+  mutate(residcat2 = factor(case_when(
+    residcat  == "Coast Region" ~ "Coastal Region",
+    residcat %in% c("Andean Region", "Amazon Region") ~ "Andean-Amazon Region"
+    )))  %>%
+  mutate(V2c = factor(case_when(
+    V2  == "Africa" ~ "a-Afroamerican",
+    V2 %in% c("Southamerican", "Transcontinental") ~ "a-Transcontinental"
+    ))) 
+#Saving my table
+write.csv(dbh1, file="~/Documents/Rstats/RepoGit/Rdev24b/Rdev24/data/0422/00504_table1_db", row.names = FALSE)
+
+dbh1<-read_csv("./data/0422/00504_table1_db")
+#Table1
+table1 <- dbh1 %>%
+  select(Sex, Age, strongy, Type, V2c, residcat2) %>%
+    tbl_summary(
+  by=residcat2,
+  missing = "no",
+  statistic=list(all_categorical() ~ "{n} ({p}%)",
+                 all_dichotomous() ~ "{n} ({p}%)",
+                 Age ~ "{median} ({sd})"),
+  digits= list(all_continuous() ~ c(1,1),
+               all_categorical() ~ c(0,0)),
+  type= list(Sex ~ "dichotomous",
+             Age ~ "continuous",
+             Type ~ "categorical",
+             strongy ~ "dichotomous",
+             V2c ~ "categorical"),
+  value= list(Sex ~ "F",
+             strongy ~ "YES"),
+  label=list(Sex ~ "Female",
+             Age ~ "Age, years",
+             Type ~ "Clinical Subtype",
+             strongy ~ "Strongyloides Coinfection",
+             V2c ~ "Genotype"),
+  sort= list(everything() ~ "frequency")
+  ) %>%
+  modify_header(label="**Variable**", all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p, digits=1)}%)"
+  )  %>%
+  modify_caption("Characteristics of Peruvian HTLV-1-infected individuals by geographic region") %>%
+  bold_labels() %>%
+  add_overall(last=FALSE, col_label="**Total**")   %>%
+  add_p() %>%
+  as_gt() %>%
+  gtsave(filename="table1.docx", path="output/2405tree/")
+  
+```
