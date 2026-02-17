@@ -1,7 +1,0 @@
-#chr	pos	flg	dbsnp	cosmic	tommo	hgvd	esp	1000G	symbol	func	syno	gene_detail	Sample	ref	alt	qual	ref_tag	alt_tag
-chr1	111421427	0	.	.	.	.	.	.	OVGP1	exonic	nonsynonymous SNV	OVGP1:uc001eba.4:exon8:c.C752T:p.A251V	-	G	A	32038.77	1072	1051
-chr2	29193500	0	rs1881421	ID=COSM3758201;OCCURENCE=1(large_intestine)	TOMMO:0.7087	HGVD:0.70702479338843	0.4335	0.572883	ALK	exonic	nonsynonymous SNV	ALK:uc061hui.1:exon11:c.C1467G:p.D489E,ALK:uc061huj.1:exon28:c.C3456G:p.D1152E,ALK:uc002rmy.4:exon29:c.C4587G:p.D1529E	-	G	C	71065.77	3	2022
-chr3	47083895	0	rs4082155	ID=COSM149376;OCCURENCE=1(stomach)	TOMMO:0.5999	.	0.4713	0.469848	SETD2	exonic	nonsynonymous SNV	SETD2:uc003cqs.4:exon12:c.C5885T:p.P1962L	-	G	A	35139.77	1417	1197
-chr5	112841059	0	rs459552	ID=COSM3760871;OCCURENCE=1(large_intestine)	TOMMO:0.9058	HGVD:0.914876033057851	0.8263	0.865415	APC	exonic	nonsynonymous SNV	APC:uc003kpy.5:exon16:c.T5465A:p.V1822D,APC:uc003kpz.5:exon17:c.T5465A:p.V1822D	-	T	A	30927.77	0	881
-chr6	33412280	0	.	.	.	.	.	.	PHF1	exonic	nonsynonymous SNV	PHF1:uc003oeh.4:exon2:c.G17C:p.R6P,PHF1:uc003oei.4:exon2:c.G17C:p.R6P,PHF1:uc063nwz.1:exon2:c.G17C:p.R6P,PHF1:uc063nxa.1:exon2:c.G17C:p.R6P,PHF1:uc063nxb.1:exon2:c.G17C:p.R6P,PHF1:uc063nxc.1:exon2:c.G17C:p.R6P,PHF1:uc063nwy.1:exon3:c.G17C:p.R6P	-	G	C	9528.77	339	314
-chr7	142865537	0	rs762466445	ID=COSM3662993;OCCURENCE=1(breast),1(liver)	.	.	.	.	EPHB6	exonic	nonsynonymous SNV	EPHB6:uc033anu.2:exon4:c.C133A:p.R45S,EPHB6:uc033ant.2:exon5:c.C1012A:p.R338S,EPHB6:uc033ans.2:exon8:c.C1012A:p.R338S	-	C	A	7004.77	279	246
