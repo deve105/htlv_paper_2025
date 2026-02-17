@@ -3,63 +3,79 @@ format: docx
 ---
 
 ### 1. For others to replicate this work, it’s crucial to cite the specific software used (FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST) and also to note the exact versions run. This level of detail is often missing but is essential.
-   
+
 FASTQC (Version 0.12.1), Fastp (Version 0.23.4), MultiQC (Version 1.27.1), BWA-MEM2 (Version 2.2.1), GATK (Version 4.3.0), MAFFT (Version 7.49), IQ-TREE (Version 3.0.1), and BEAST (Version 2.7) were the specific software tools used in our analysis. We have updated the Methods section to include these details, along with the original scripts for variant calling available in our repository, to ensure that others can replicate our work accurately.
 
 We appreciate the importance of citing specific software and their versions for reproducibility. We have updated the Methods section to include the exact versions of all software used in our analysis, including FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST. In addition, the original scripts for variant calling are available in the repository. This information is now clearly stated to ensure that others can replicate our work accurately.
 
-### 1. The authors looked for recombination events the right way, starting with a phi-test and then using several algorithms. However, when I checked the alignments linked to Supplementary Table 3, the evidence for recombination wasn’t convincing in several instances. This part of the analysis, despite secondary, needs more precise support.
+### 2. The authors looked for recombination events the right way, starting with a phi-test and then using several algorithms. However, when I checked the alignments linked to Supplementary Table 3, the evidence for recombination wasn’t convincing in several instances. This part of the analysis, despite secondary, needs more precise support.
 
 We acknowledge the importance of providing clear evidence for recombination events. The intention of the recombination analysis was to exclude any potential confounding effects of recombination on our phylogenetic analyses.
 
-We have re-evaluated the alignments linked to Supplementary Table 3 and have included additional analyses to strengthen our support for recombination. We have also added more detailed explanations in the Results section to clarify the evidence for recombination and how it was determined using the phi-test and subsequent algorithms. This should provide a more convincing argument for the presence of recombination events in our dataset.
+We have re-evaluated the alignments linked to Supplementary Table 3 and have included additional analyses to strengthen our support for recombination including a phylogenetic tree pointing sequences with potential recombinant signal. We have also added more detailed explanations in the Results section to clarify the evidence for recombination and how it was determined using the phi-test and subsequent algorithms.
 
 ### 3. I also have a couple of questions about the phylogenetics. Could the authors briefly explain why a three partition scheme was chosen? Did they try other strategies? Since the LTR region is standard for HTLV-1 genotyping, a straightforward explanation for using a different approach would be helpful.
 
-We acknoledge the reviewer's question regarding our choice of a three-partition scheme for phylogenetic analysis.
-Different genomic regions (codon positions, genes) evolve at different rates; ignoring this causes bias in tree topology and node support. We tested multiple partitioning strategies using PartitionFinder, including (i) no partitioning (single model for whole genome), (ii) two partitions (LTR vs. rest of genome), and (iii) three partitions (LTR + env + whole genome). The three-partition scheme was selected as the best-fitting model based on AIC and BIC criteria, indicating it provides the optimal balance between model complexity and phylogenetic signal. This approach allows us to leverage the high variability of the LTR region while also incorporating the evolutionary signal from coding regions like env, which may capture different aspects of viral evolution and divergence history.
+We acknoledge the reviewer's question regarding our choice of a three-partition scheme for phylogenetic analysis. Different genomic regions (codon positions, genes) evolve at different rates; ignoring this causes bias in tree topology and node support. We tested multiple partitioning strategies using PartitionFinder, including (i) no partitioning (single model for whole genome), (ii) two partitions (LTR vs. rest of genome), and (iii) three partitions (LTR + env + whole genome). The three-partition scheme was selected as the best-fitting model based on AIC and BIC criteria, indicating it provides the optimal balance between model complexity and phylogenetic signal. This approach allows us to leverage the high variability of the LTR region while also incorporating the evolutionary signal from coding regions like env, which may capture different aspects of viral evolution and divergence history.
 
 After calculating the best-fitting partitioning scheme, we performed maximum likelihood phylogenetic inference using IQ-TREE with the selected partitioning strategy and substitution models to obtain a robust phylogenetic framework..
 
- We also conducted Bayesian inference using BEAST with the same partitioning scheme to ensure consistency across methods. The resulting trees showed improved topology and node support compared to simpler partitioning strategies, confirming that the three-partition approach captures more of the underlying evolutionary signal in our dataset.
-We chose this approach based on both biological rationale and data-driven model selection criteria. The LTR region is indeed a standard marker for HTLV-1 genotyping due to its high variability and regulatory importance. However, relying solely on the LTR may not capture the full evolutionary history of the virus, especially given the potential for recombination and selection pressures that can differentially affect coding and non-coding regions.
+We also conducted Bayesian inference using BEAST with the same partitioning scheme to ensure consistency across methods. The resulting trees showed improved topology and node support compared to simpler partitioning strategies, confirming that the three-partition approach captures more of the underlying evolutionary signal in our dataset. We chose this approach based on both biological rationale and data-driven model selection criteria. The LTR region is indeed a standard marker for HTLV-1 genotyping due to its high variability and regulatory importance. However, relying solely on the LTR may not capture the full evolutionary history of the virus, especially given the potential for recombination and selection pressures that can differentially affect coding and non-coding regions.
 
 Our three-partition scheme (LTR + env + whole genome) represents an advancement beyond standard LTR-only genotyping. While current HTLV-1 classification (Cosmopolitan, Japanese, West African subtypes) relies primarily on LTR and env diversity, these regions alone may not capture the full evolutionary signal for divergence time estimation and population history. PartitionFinder automatically tested multiple partition strategies and identified the three-partition scheme as the best-fitting model using AIC and BIC criteria, indicating this approach represents the optimal balance between model complexity and phylogenetic signal. This data-driven approach allowed us to leverage coding and regulatory diversity to improve tree topology inference and node support, while maintaining phylogenetic signal integrity through multiple independent validation approaches (ML phylogenetics, Bayesian inference, DAPC, k-means clustering).
 
 ### 1. My biggest concern is about the phylogenetic analysis itself. While the discussion of the trees is balanced, the methods underneath need shoring up. For any tree, it’s good practice to check for sufficient phylogenetic signal (e.g., with likelihood mapping). More importantly, for the Bayesian timetree analysis, was a temporal signal actually tested for the data? The methods section should also detail and justify the clock model, tree priors, and MCMC settings used in BEAST, including any model testing performed. Finally, the estimated time to the most recent common ancestor (tMRCA) seems surprisingly old. Perhaps some historical context would help in this topic.
 
-We perform the analysis i a relaxed lognormal clock model, including all available prior clock methods used in previous HTLV-1 studies 
+We perform the analysis i a relaxed lognormal clock model, including all available prior clock methods used in previous HTLV-1 studies
 
+Initial phylogenetic exploration of the entire dataset (IQTREE Version 2.2.2.7) showed a high proportion of invariable sites (33.4%), a gamma shape parameter (α) close to 1 (0.999), and GC content of 53.8%. Indicating substantial rate heterogeneity across nucleotide sites.
 
-Initial phylogenetic exploration of the entire dataset (IQTREE Version 2.2.2.7) showed a high proportion of invariable sites (33.4%), a gamma shape parameter (α) close to 1 (0.999), and GC content of 53.8%. Indicating substantial rate heterogeneity across nucleotide sites. 
-
-This suggests that while many sites are conserved, there are also rapidly and heterogenous evolving regions, which is consistent with the known biology of HTLV-1 and its evolutionary dynamics. For the whole genome-wise analysis, we found that GTR+F+I+R5 was the best-fitting model, which further supports the presence of complex rate heterogeneity across sites (AICc: 105,178.58, and -LnL 51709.04). This model includes a general time-reversible substitution model (GTR), empirical base frequencies (F), a proportion of invariable sites (I), and five free-rate categories (R5) to capture the heterogeneity in substitution rates across sites. Model comparison using Akaike Information 
-Criterion (AICc) strongly supported the GTR+F+I+R5 model (AICc = 105,178.58) 
-
-
+This suggests that while many sites are conserved, there are also rapidly and heterogenous evolving regions, which is consistent with the known biology of HTLV-1 and its evolutionary dynamics. For the whole genome-wise analysis, we found that GTR+F+I+R5 was the best-fitting model, which further supports the presence of complex rate heterogeneity across sites (AICc: 105,178.58, and -LnL 51709.04). This model includes a general time-reversible substitution model (GTR), empirical base frequencies (F), a proportion of invariable sites (I), and five free-rate categories (R5) to capture the heterogeneity in substitution rates across sites. Model comparison using Akaike Information Criterion (AICc) strongly supported the GTR+F+I+R5 model (AICc = 105,178.58)
 
 using ModelFinder, we tested 484 DNA models ranked by BIC and AIC criteria. The best-fiting model was GTR+F+I+R5 (AICc) which reflects the heterogeinity of the sequence alignment.
 
-Substitution model selection was performed using ModelFinder in IQ-TREE (Version 2.2.2.7), which systematically tested 484 distinct DNA models, first in a whole-genome-wise and  on our multi-partitioned 
-alignment (9,033 informative sites). Model comparison using Akaike Information 
-Criterion (AICc) strongly supported the GTR+F+I+R5 model (AICc = 105,178.58) 
-over the traditional gamma distribution model (GTR+F+I+G4, AICc = 105,743.05; 
-Delta AICc = 564.47). This 564-point AICc difference demonstrates that our 
-alignment exhibits complex, non-uniform rate heterogeneity across sites, 
-requiring five independent free-rate categories rather than a simple gamma 
-distribution. The data further revealed 33.4% invariable sites (conserved 
-regions) with rapid substitution rates in remaining sites (Gamma α = 0.999), 
-indicating biologically meaningful compositional heterogeneity consistent with 
-selection pressures across the HTLV-1 genome.
+Substitution model selection was performed using ModelFinder in IQ-TREE (Version 2.2.2.7), which systematically tested 484 distinct DNA models, first in a whole-genome-wise and on our multi-partitioned alignment (9,033 informative sites). Model comparison using Akaike Information Criterion (AICc) strongly supported the GTR+F+I+R5 model (AICc = 105,178.58) over the traditional gamma distribution model (GTR+F+I+G4, AICc = 105,743.05; Delta AICc = 564.47). This 564-point AICc difference demonstrates that our alignment exhibits complex, non-uniform rate heterogeneity across sites, requiring five independent free-rate categories rather than a simple gamma distribution. The data further revealed 33.4% invariable sites (conserved regions) with rapid substitution rates in remaining sites (Gamma α = 0.999), indicating biologically meaningful compositional heterogeneity consistent with selection pressures across the HTLV-1 genome.
 
+## On line 162, the methods for filtering should be described.
+
+## 258 The median HTLV-1 genome coverage in the Peruvian cohort was 158x (IQR: 23-218); It is not clear which patients the authors are reffering to.
+
+We appreciate the comments, and we have refrase the paragraph to improve readability:
+
+"A total of 71 DNA samples—corresponding to 67 patients—were analyzed (including 4 patients with serial time-point samples). The median HTLV-1 genome coverage across all 67 patients in the Peruvian cohort was 158× (interquartile range \[IQR\]: 23–218×). After excluding 4 patients with less than 5× viral coverage (coincidentally, all with a PVL ≤ 0.25%), the final dataset comprised 63 cases (**Supplementary Figure 1A–B**)."
+
+## 243 The PVL in this cohort was high, with a median of 4.5 ± 3.8, indicating that it represents a high-risk carrier population (15). The authors should describe if this is expected or if was an inclusion criteria?
+
+\
+\
+\
 
 ## Reviewer 2:
 
-### Line 250: The authors state that PVL correlates with mortality. It is unclear whether mortality refers exclusively to HTLV-related deaths. Were only three fatal cases included in this analysis? The total number of deceased individuals and their causes of death should be clearly specified in the text. Earlier (line 259), only two ATL-related deaths are mentioned, in addition to one case without a reported cause. This discrepancy requires clarification.
+### 1. Line 250: The authors state that PVL correlates with mortality. It is unclear whether mortality refers exclusively to HTLV-related deaths. Were only three fatal cases included in this analysis? The total number of deceased individuals and their causes of death should be clearly specified in the text. Earlier (line 259), only two ATL-related deaths are mentioned, in addition to one case without a reported cause. This discrepancy requires clarification. When calculating mortality rate, it is unclear whether they consider HTLV associated deaths (2) or of any kind, and of the latter is higher that 3.
 
+We acknowledge the reviewer's concern regarding the correlation between PVL and mortality. In our analysis, we correlated PVL with the crude mortality rate, which includes both malignant (ATLL-related) and non-malignant (infection-related) causes of death. We took a conservative approach by not considering patients with unknown causes of death and lost-to-follow-up cases (n = 8), which may underestimate the crude mortality rate. The main cause of mortality was infection-related complications during the COVID-19 pandemic, which explains the vulnerability of this particular population, as previously documented in a meta-analysis by Schierhout et al. We have clarified this in the text and provided additional details on the total number of deceased individuals and their causes of death.
 
+Regarding viral genomics, we describe 3 cases of 5'LTR deletion or defective viruses with their respective outcomes. Two of these cases developed ATLL over time and died, while a third case with a 5'LTR deletion died without apparent malignant transformation due to infectious complications during the COVID-19 pandemic.
 
-### Section 4:
+Methods:
+
+"Vital status follow-up was based on medical records and the national vital status system (Registro Nacional de Identidad y Estado Civil, RENIEC). Mortality was confirmed when both registries consistently showed a death entry. The crude mortality rate included malignant and non-malignant causes of death, calculated using the total population but excluding cases lost to follow-up."
+
+Results:
+
+"A total of 9 confirmed deaths (cumulative crude mortality risk 13.4%, 95% Confidence Interval \[CI\]: 6.3%–24.0%) were observed during the 7-year follow-up, with 3 cases related to malignant transformation and 6 related to infectious complications (during COVID-19 pandemic). Additionally, 8 cases were lost to follow-up, and their vital status could not be confirmed."
+
+Table 1: We have modified table 1 to include lost to follow-up.
+
+## 2. When performing phylogeny, authors have identified African group- what does it mean ? Are these sequencing within the HTLV-1 genotype or do a-NA, a-WA and a-Sen belong to this group. Due to the large diversity of sequences withing the African group, authors should split it into known clades. Previously identified Black Peruvian strains should be clearly indicated in the phylogenetic trees to facilitate comparison and subgroup assignment. All the groups should be clearly presented in the phylogeny figure for easier understanding. Figure 1D: It is unclear whether the strains presented in the graph all belong to the newly sequenced strains. The strains generated in this study should be presented in different colors, and the strains of reference for each group presented with a distinctive color. How many new strains are present in each group. 
+
+## Line 268: Recombination events are mentioned, but the parental groups involved are not specified. The authors should clearly identify the parental strains and the recombinant strains of interest, ideally presenting them within a phylogenetic tree for clarity.
+
+### We acknowledge the importance of providing clear evidence for recombination events. The intention of the recombination analysis was to exclude any potential confounding effects of recombination on our phylogenetic analyses.
+
+We have re-evaluated the alignments linked to Supplementary Table 3 and have included additional analyses to strengthen our support for recombination including a phylogenetic tree pointing sequences with potential recombinant signal (supplementary figure 3). We have also added more detailed explanations in the Results section to clarify the evidence for recombination and how it was determined using the phi-test and subsequent algorithms.
+
 In line with the possibility of pre-ATL cases, the authors should consider whether specific mutations, including non-synonymous mutations, correlate with OCI or early leukemogenic processes.
 
-
+Participants were included regardless of their proviral load.
