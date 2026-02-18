@@ -1,0 +1,8 @@
+#nexus
+begin sets;
+  charset LTRregion_DNA_env_DNA_CP3_rest_DNA = 1-755 8279-9033  5183-6646\3  756-801 6648-6834;
+  charset gag_DNA_pol-pro_DNA_px_DNA_env_DNA_CP1_env_DNA_CP2 = 802-2091  1938-5189  6831-8360  5181-6647\3  5182-6645\3;
+  charpartition mymodels =
+    TIM2+F+I+R3: LTRregion_DNA_env_DNA_CP3_rest_DNA,
+    TN+F+I+R3: gag_DNA_pol-pro_DNA_px_DNA_env_DNA_CP1_env_DNA_CP2;
+end;
