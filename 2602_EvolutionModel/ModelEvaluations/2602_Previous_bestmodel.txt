@@ -2,5 +2,5 @@
 begin sets;
 	charset LTRregion_DNA = 1-755 8279-9033;
 	charset gag_pro_pol_env = 802-2091 1938-5189 5181-6647;
-	charset gag_pX_B_HBZ = 6835-7134 7290-6664 8680-8668;
+	charset gag_pX_B_HBZ = 6835-7134 6664-7290 8668-8680;
 end;
