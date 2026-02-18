@@ -1,0 +1,18 @@
+#nexus
+begin sets;
+  charset 5LTR_3LTR = 1-755  8279-9033;
+  charset gag_p19_env_gp21_px_p30 = 802-1191\3  6117-6647\3  5181-5184\3 6831-7552\3;
+  charset gag_p24_px_27 = 1192-1833\3  7303-7812\3;
+  charset gag_p15_env_gp46_px_p13 = 1834-2091\3  5181-6116\3  7289-7552\3;
+  charset pro_p14 = 1938-2756\3;
+  charset pol_p95_px_p27_px_tax = 2757-5188\3  5125-5184\3  5181-5183\3 7303-8360\3;
+  charset px_p12_px_p8_HBZ_HBZ_SI = 6835-7134\3  6922-7134\3  6664-7290\3  6664-7268\3 8668-8680\3;
+  charpartition mymodels =
+    GTR+F+G4: 5LTR_3LTR,
+    GTR+F+G4: gag_p19_env_gp21_px_p30,
+    GTR+F+I: gag_p24_px_27,
+    GTR+F+G4: gag_p15_env_gp46_px_p13,
+    GTR+F+I+G4: pro_p14,
+    GTR+F+I+G4: pol_p95_px_p27_px_tax,
+    GTR+F+G4: px_p12_px_p8_HBZ_HBZ_SI;
+end;

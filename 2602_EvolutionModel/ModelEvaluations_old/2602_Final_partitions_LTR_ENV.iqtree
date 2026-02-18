@@ -1,0 +1,833 @@
+IQ-TREE 2.3.5 built Jun 26 2024
+
+Partition file name: Partitions/231003_FinalPartitions_LTR_ENV.txt
+Input file name: Fastafiles/seqfinalhcg_1003_maffted.fas
+Type of analysis: ModelFinder + tree reconstruction
+Random seed number: 317341
+
+REFERENCES
+----------
+
+To cite IQ-TREE please use:
+
+Bui Quang Minh, Heiko A. Schmidt, Olga Chernomor, Dominik Schrempf,
+Michael D. Woodhams, Arndt von Haeseler, and Robert Lanfear (2020)
+IQ-TREE 2: New models and efficient methods for phylogenetic inference
+in the genomic era. Mol. Biol. Evol., in press.
+https://doi.org/10.1093/molbev/msaa015
+
+To cite ModelFinder please use: 
+
+Subha Kalyaanamoorthy, Bui Quang Minh, Thomas KF Wong, Arndt von Haeseler,
+and Lars S Jermiin (2017) ModelFinder: Fast model selection for
+accurate phylogenetic estimates. Nature Methods, 14:587–589.
+https://doi.org/10.1038/nmeth.4285
+
+Since you used partition models please also cite:
+
+Olga Chernomor, Arndt von Haeseler, and Bui Quang Minh (2016)
+Terrace aware data structure for phylogenomic inference from
+supermatrices. Syst. Biol., 65:997-1008.
+https://doi.org/10.1093/sysbio/syw037
+
+SEQUENCE ALIGNMENT
+------------------
+
+Input data: 400 taxa with 2 partitions and 1999 total sites (0.21159% missing data)
+
+  ID	Type	Seq	Site	Unique	Infor	Invar	Const	Name
+   1	DNA	356	1510	766	352	869	869	5LTR_3LTR
+   2	DNA	357	489	164	61	370	370	env_gp46_gp21
+
+Column meanings:
+  Unique: Number of unique site patterns
+  Infor:  Number of parsimony-informative sites
+  Invar:  Number of invariant sites
+  Const:  Number of constant sites (can be subset of invariant sites)
+
+ModelFinder
+-----------
+
+Best-fit model according to BIC: TIM2+F+R3:5LTR_3LTR,K2P+I+R2:env_gp46_gp21
+
+List of best-fit models per partition:
+
+  ID  Model                  LogL         AIC      w-AIC        AICc     w-AICc         BIC      w-BIC
+   1  TIM2+F+R3        -10400.027   20822.053 - 3.03e-314   20822.230 + 3.2e-314   20880.572 +        0
+   2  K2P+I+R2          -2232.945    4475.891 - 3.03e-314    4476.015 + 3.2e-314    4496.852 +        0
+
+AIC, w-AIC   : Akaike information criterion scores and weights.
+AICc, w-AICc : Corrected AIC scores and weights.
+BIC, w-BIC   : Bayesian information criterion scores and weights.
+
+Plus signs denote the 95% confidence sets.
+Minus signs denote significant exclusion.
+
+SUBSTITUTION PROCESS
+--------------------
+
+Edge-linked-proportional partition model with separate substitution models and separate rates across sites
+
+  ID  Model           Speed  Parameters
+   1  TIM2+F+R3      1.1635  TIM2{1.64135,15.6362,8.53408}+F{0.209808,0.339939,0.238819,0.211434}+R3{0.640568,0.302107,0.330144,1.74975,0.0292873,7.81264}
+   2  K2P+I+R2       0.4951  K2P{9.25067}+FQ+I{0.546008}+R2{0.444991,1.79716,0.00900017,22.2526}
+
+MAXIMUM LIKELIHOOD TREE
+-----------------------
+
+Log-likelihood of the tree: -12557.6047 (s.e. 346.6059)
+Unconstrained log-likelihood (without tree): -10942.3001
+Number of free parameters (#branches + #model parameters): 726
+Akaike information criterion (AIC) score: 26567.2093
+Corrected Akaike information criterion (AICc) score: 27397.0867
+Bayesian information criterion (BIC) score: 30633.1014
+
+Total tree length (sum of branch lengths): 0.8437
+Sum of internal branch lengths: 0.2561 (30.3592% of tree length)
+
+WARNING: 235 near-zero internal branches (<0.0005) should be treated with caution
+         Such branches are denoted by '**' in the figure below
+
+NOTE: Tree is UNROOTED although outgroup taxon 'J02029.1' is drawn at root
+
++--J02029.1
+|
+|                                               +--Japan_10_S208
+|                                            +--|
+|                                            |  +--LC210063.1
+|                                         +--|
+|                                         |  +--LC210041.1
+|                                      +**|
+|                                      |  +--LC209974.1
+|                                   +**|
+|                                   |  |  +--LC209995.1
+|                                   |  +**|
+|                                   |     +--LC210020.1
+|                                +**|
+|                                |  |        +--LC192264.1
+|                                |  |     +**|
+|                                |  |     |  |     +--LC210006.1
+|                                |  |     |  |  +**|
+|                                |  |     |  |  |  +--LC210021.1
+|                                |  |     |  +--|
+|                                |  |     |     +--LC210037.1
+|                                |  |  +**|
+|                                |  |  |  +--LC209988.1
+|                                |  +**|
+|                                |     +--LC209971.1
+|                             +**|
+|                             |  |                             +**Japan_11_S81
+|                             |  |                          +**|
+|                             |  |                          |  +**LC210056.1
+|                             |  |                       +**|
+|                             |  |                       |  +--LC210023.1
+|                             |  |                    +**|
+|                             |  |                    |  +**LC210066.1
+|                             |  |                 +**|
+|                             |  |                 |  +--LC192260.1
+|                             |  |              +**|
+|                             |  |              |  |     +--Japan_14_S84
+|                             |  |              |  |  +--|
+|                             |  |              |  |  |  |     +**LC209969.1
+|                             |  |              |  |  |  |  +**|
+|                             |  |              |  |  |  |  |  +**LC209970.1
+|                             |  |              |  |  |  +**|
+|                             |  |              |  |  |     +--LC210040.1
+|                             |  |              |  +**|
+|                             |  |              |     |  +**LC209976.1
+|                             |  |              |     +--|
+|                             |  |              |        +--LC209986.1
+|                             |  |           +**|
+|                             |  |           |  +**LC185237.1
+|                             |  |        +**|
+|                             |  |        |  |                 +--KF797837.1
+|                             |  |        |  |              +**|
+|                             |  |        |  |              |  |  +**LC210011.1
+|                             |  |        |  |              |  +--|
+|                             |  |        |  |              |     +**LC210031.1
+|                             |  |        |  |           +**|
+|                             |  |        |  |           |  +--LC210002.1
+|                             |  |        |  |        +**|
+|                             |  |        |  |        |  |              +**LC185242.1
+|                             |  |        |  |        |  |           +**|
+|                             |  |        |  |        |  |           |  +**LC210061.1
+|                             |  |        |  |        |  |        +--|
+|                             |  |        |  |        |  |        |  +**LC210058.1
+|                             |  |        |  |        |  |     +**|
+|                             |  |        |  |        |  |     |  +--LC209963.1
+|                             |  |        |  |        |  |  +**|
+|                             |  |        |  |        |  |  |  +**U19949.1
+|                             |  |        |  |        |  +**|
+|                             |  |        |  |        |     |           +--LC192257.1
+|                             |  |        |  |        |     |        +--|
+|                             |  |        |  |        |     |        |  +--LC210007.1
+|                             |  |        |  |        |     |     +--|
+|                             |  |        |  |        |     |     |  +--LC209968.1
+|                             |  |        |  |        |     |  +--|
+|                             |  |        |  |        |     |  |  +--LC210060.1
+|                             |  |        |  |        |     +**|
+|                             |  |        |  |        |        |  +--LC209961.1
+|                             |  |        |  |        |        +--|
+|                             |  |        |  |        |           +**LC210059.1
+|                             |  |        |  |     +**|
+|                             |  |        |  |     |  +**LC210043.1
+|                             |  |        |  |  +**|
+|                             |  |        |  |  |  |        +**LC209987.1
+|                             |  |        |  |  |  |     +--|
+|                             |  |        |  |  |  |     |  +--LC210039.1
+|                             |  |        |  |  |  |  +**|
+|                             |  |        |  |  |  |  |  +--LC210033.1
+|                             |  |        |  |  |  +**|
+|                             |  |        |  |  |     +--LC210068.1
+|                             |  |        |  +**|
+|                             |  |        |     +**LC185235.1
+|                             |  |     +**|
+|                             |  |     |  |                    +**Japan_15_S85
+|                             |  |     |  |                 +**|
+|                             |  |     |  |                 |  |  +**LC210018.1
+|                             |  |     |  |                 |  +**|
+|                             |  |     |  |                 |     +**LC210024.1
+|                             |  |     |  |              +**|
+|                             |  |     |  |              |  |  +--LC192501.1
+|                             |  |     |  |              |  +**|
+|                             |  |     |  |              |     |  +**LC209989.1
+|                             |  |     |  |              |     +--|
+|                             |  |     |  |              |        +**LC210069.1
+|                             |  |     |  |           +--|
+|                             |  |     |  |           |  +--LC210028.1
+|                             |  |     |  |        +**|
+|                             |  |     |  |        |  +--LC209972.1
+|                             |  |     |  |     +**|
+|                             |  |     |  |     |  +--LC209979.1
+|                             |  |     |  |  +**|
+|                             |  |     |  |  |  |           +**KF797891.1
+|                             |  |     |  |  |  |        +--|
+|                             |  |     |  |  |  |        |  |  +**LC209980.1
+|                             |  |     |  |  |  |        |  +**|
+|                             |  |     |  |  |  |        |     +--LC209997.1
+|                             |  |     |  |  |  |     +**|
+|                             |  |     |  |  |  |     |  +--LC209985.1
+|                             |  |     |  |  |  |  +**|
+|                             |  |     |  |  |  |  |  +--LC210026.1
+|                             |  |     |  |  |  +**|
+|                             |  |     |  |  |     |     +--LC192254.1
+|                             |  |     |  |  |     |  +**|
+|                             |  |     |  |  |     |  |  +--LC210053.1
+|                             |  |     |  |  |     +**|
+|                             |  |     |  |  |        |  +--LC210027.1
+|                             |  |     |  |  |        +**|
+|                             |  |     |  |  |           +--LC210065.1
+|                             |  |     |  +**|
+|                             |  |     |     +**Japan_8_S206
+|                             |  |  +**|
+|                             |  |  |  |                                                                                         +--Japan_12_S82
+|                             |  |  |  |                                                                                      +--|
+|                             |  |  |  |                                                                                      |  |                                      +--Peru_IRID001_S25
+|                             |  |  |  |                                                                                      |  |                                   +**|
+|                             |  |  |  |                                                                                      |  |                                   |  |        +**Peru_IRID012_S131
+|                             |  |  |  |                                                                                      |  |                                   |  |     +**|
+|                             |  |  |  |                                                                                      |  |                                   |  |     |  +**Peru_IRID024_S294
+|                             |  |  |  |                                                                                      |  |                                   |  |  +--|
+|                             |  |  |  |                                                                                      |  |                                   |  |  |  +--Peru_IRID030_S116
+|                             |  |  |  |                                                                                      |  |                                   |  +--|
+|                             |  |  |  |                                                                                      |  |                                   |     +**Peru_IRID084_S290
+|                             |  |  |  |                                                                                      |  |                                +**|
+|                             |  |  |  |                                                                                      |  |                                |  +--Peru_IRID006_S29
+|                             |  |  |  |                                                                                      |  |                             +**|
+|                             |  |  |  |                                                                                      |  |                             |  |  +--Peru_IRID010_S129
+|                             |  |  |  |                                                                                      |  |                             |  +**|
+|                             |  |  |  |                                                                                      |  |                             |     |  +--Peru_SS08_S5
+|                             |  |  |  |                                                                                      |  |                             |     +**|
+|                             |  |  |  |                                                                                      |  |                             |        +--KF797846.1
+|                             |  |  |  |                                                                                      |  |                          +**|
+|                             |  |  |  |                                                                                      |  |                          |  |  +**Peru_IRID008_S31
+|                             |  |  |  |                                                                                      |  |                          |  +**|
+|                             |  |  |  |                                                                                      |  |                          |     +**Peru_IRID013_S132
+|                             |  |  |  |                                                                                      |  |                       +**|
+|                             |  |  |  |                                                                                      |  |                       |  |        +**Peru_IRID007_S30
+|                             |  |  |  |                                                                                      |  |                       |  |     +--|
+|                             |  |  |  |                                                                                      |  |                       |  |     |  +**Peru_IRID043_S223
+|                             |  |  |  |                                                                                      |  |                       |  |  +**|
+|                             |  |  |  |                                                                                      |  |                       |  |  |  |     +**Peru_IRID009_S32
+|                             |  |  |  |                                                                                      |  |                       |  |  |  |  +--|
+|                             |  |  |  |                                                                                      |  |                       |  |  |  |  |  +--Peru_SS19_S203
+|                             |  |  |  |                                                                                      |  |                       |  |  |  +--|
+|                             |  |  |  |                                                                                      |  |                       |  |  |     +**Peru_IRID076_S336
+|                             |  |  |  |                                                                                      |  |                       |  +**|
+|                             |  |  |  |                                                                                      |  |                       |     |        +**Peru_IRID062_S231
+|                             |  |  |  |                                                                                      |  |                       |     |     +**|
+|                             |  |  |  |                                                                                      |  |                       |     |     |  +**Peru_SS02_S1
+|                             |  |  |  |                                                                                      |  |                       |     |  +--|
+|                             |  |  |  |                                                                                      |  |                       |     |  |  +**Peru_SS03_S2
+|                             |  |  |  |                                                                                      |  |                       |     +**|
+|                             |  |  |  |                                                                                      |  |                       |        +--Peru_IRID069_S331
+|                             |  |  |  |                                                                                      |  |                    +**|
+|                             |  |  |  |                                                                                      |  |                    |  |                 +**Peru_IRID002_S26
+|                             |  |  |  |                                                                                      |  |                    |  |              +**|
+|                             |  |  |  |                                                                                      |  |                    |  |              |  +**Peru_IRID055_S228
+|                             |  |  |  |                                                                                      |  |                    |  |           +--|
+|                             |  |  |  |                                                                                      |  |                    |  |           |  +--Peru_SS18_S202
+|                             |  |  |  |                                                                                      |  |                    |  |        +--|
+|                             |  |  |  |                                                                                      |  |                    |  |        |  |     +**Peru_IRID027_S113
+|                             |  |  |  |                                                                                      |  |                    |  |        |  |  +**|
+|                             |  |  |  |                                                                                      |  |                    |  |        |  |  |  +**Peru_SS16_S8
+|                             |  |  |  |                                                                                      |  |                    |  |        |  +**|
+|                             |  |  |  |                                                                                      |  |                    |  |        |     +--Peru_IRID042_S222
+|                             |  |  |  |                                                                                      |  |                    |  |     +**|
+|                             |  |  |  |                                                                                      |  |                    |  |     |  |  +**KF797856.1
+|                             |  |  |  |                                                                                      |  |                    |  |     |  +**|
+|                             |  |  |  |                                                                                      |  |                    |  |     |     +**KF797890.1
+|                             |  |  |  |                                                                                      |  |                    |  |  +**|
+|                             |  |  |  |                                                                                      |  |                    |  |  |  +--Peru_SS17_S201
+|                             |  |  |  |                                                                                      |  |                    |  +**|
+|                             |  |  |  |                                                                                      |  |                    |     |        +--Peru_IRID048_S225
+|                             |  |  |  |                                                                                      |  |                    |     |     +**|
+|                             |  |  |  |                                                                                      |  |                    |     |     |  +--KF797862.1
+|                             |  |  |  |                                                                                      |  |                    |     |  +**|
+|                             |  |  |  |                                                                                      |  |                    |     |  |  +**KF797855.1
+|                             |  |  |  |                                                                                      |  |                    |     +**|
+|                             |  |  |  |                                                                                      |  |                    |        |  +--Peru_IRID060_S230
+|                             |  |  |  |                                                                                      |  |                    |        +**|
+|                             |  |  |  |                                                                                      |  |                    |           +**KF797857.1
+|                             |  |  |  |                                                                                      |  |                 +**|
+|                             |  |  |  |                                                                                      |  |                 |  +**Peru_IRID023_S235
+|                             |  |  |  |                                                                                      |  |              +**|
+|                             |  |  |  |                                                                                      |  |              |  |     +--Peru_IRID041_S221
+|                             |  |  |  |                                                                                      |  |              |  |  +**|
+|                             |  |  |  |                                                                                      |  |              |  |  |  +--KF797838.1
+|                             |  |  |  |                                                                                      |  |              |  +**|
+|                             |  |  |  |                                                                                      |  |              |     |  +**Peru_IRID089_S292
+|                             |  |  |  |                                                                                      |  |              |     +--|
+|                             |  |  |  |                                                                                      |  |              |        +**Peru_SS20_S204
+|                             |  |  |  |                                                                                      |  |           +--|
+|                             |  |  |  |                                                                                      |  |           |  |        +**Peru_IRID015_S134
+|                             |  |  |  |                                                                                      |  |           |  |     +**|
+|                             |  |  |  |                                                                                      |  |           |  |     |  +**Peru_SS14_S7
+|                             |  |  |  |                                                                                      |  |           |  |  +--|
+|                             |  |  |  |                                                                                      |  |           |  |  |  +**Peru_IRID032_S117
+|                             |  |  |  |                                                                                      |  |           |  +**|
+|                             |  |  |  |                                                                                      |  |           |     +**KY007248.1
+|                             |  |  |  |                                                                                      |  |        +**|
+|                             |  |  |  |                                                                                      |  |        |  |           +--Peru_IRID020_S136
+|                             |  |  |  |                                                                                      |  |        |  |        +--|
+|                             |  |  |  |                                                                                      |  |        |  |        |  |     +**Peru_IRID025_S236
+|                             |  |  |  |                                                                                      |  |        |  |        |  |  +--|
+|                             |  |  |  |                                                                                      |  |        |  |        |  |  |  +**Peru_IRID026_S237
+|                             |  |  |  |                                                                                      |  |        |  |        |  +**|
+|                             |  |  |  |                                                                                      |  |        |  |        |     |  +**Peru_IRID039_S123
+|                             |  |  |  |                                                                                      |  |        |  |        |     +--|
+|                             |  |  |  |                                                                                      |  |        |  |        |        +**Peru_SS04_S3
+|                             |  |  |  |                                                                                      |  |        |  |     +**|
+|                             |  |  |  |                                                                                      |  |        |  |     |  +--Peru_IRID071_S332
+|                             |  |  |  |                                                                                      |  |        |  |  +**|
+|                             |  |  |  |                                                                                      |  |        |  |  |  +--Peru_IRID086_S291
+|                             |  |  |  |                                                                                      |  |        |  +--|
+|                             |  |  |  |                                                                                      |  |        |     +--Peru_IRID033_S118
+|                             |  |  |  |                                                                                      |  |     +--|
+|                             |  |  |  |                                                                                      |  |     |  |                 +--KF797817.1
+|                             |  |  |  |                                                                                      |  |     |  |              +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |        +**KF797821.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |                    +**KF797833.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |                 +--|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |                 |  +--KY007270.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              |  |  +**KF797889.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              |  +--|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              |     |  +**KY007266.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              |     +--|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |              |        +--KY007267.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |           +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |           |  |  +--KF797880.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |           |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |           |     +--KY007258.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |        +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |        |  +**KY007272.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |        +--KF797848.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |     +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |     |  |  +--KF797868.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |     |  +--|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |     |     +**KF797896.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  |  |     +**KF797874.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  |  |  +--|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  |  |  |  +------------------------------------------KF797883.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  |  |     +--KF797878.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |     |     +--KY007245.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  |  |  +**KF797864.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |     |  +--KF797836.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |     +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |        |  +--KF797858.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |        +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |     |           +--KF797881.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |  |  |  +**KF797854.1
+|                             |  |  |  |                                                                                      |  |     |  |              |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |              |     +--KF797888.1
+|                             |  |  |  |                                                                                      |  |     |  |           +**|
+|                             |  |  |  |                                                                                      |  |     |  |           |  +--KF797845.1
+|                             |  |  |  |                                                                                      |  |     |  |        +**|
+|                             |  |  |  |                                                                                      |  |     |  |        |  |     +**KF797823.1
+|                             |  |  |  |                                                                                      |  |     |  |        |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |        |  |  |  +**KF797842.1
+|                             |  |  |  |                                                                                      |  |     |  |        |  +--|
+|                             |  |  |  |                                                                                      |  |     |  |        |     +--KF797895.1
+|                             |  |  |  |                                                                                      |  |     |  |     +--|
+|                             |  |  |  |                                                                                      |  |     |  |     |  +--KF797873.1
+|                             |  |  |  |                                                                                      |  |     |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |  |  |  +**KF797820.1
+|                             |  |  |  |                                                                                      |  |     |  +--|
+|                             |  |  |  |                                                                                      |  |     |     |           +--KF797832.1
+|                             |  |  |  |                                                                                      |  |     |     |        +--|
+|                             |  |  |  |                                                                                      |  |     |     |        |  +**KY007273.1
+|                             |  |  |  |                                                                                      |  |     |     |     +--|
+|                             |  |  |  |                                                                                      |  |     |     |     |  +**KY007269.1
+|                             |  |  |  |                                                                                      |  |     |     |  +**|
+|                             |  |  |  |                                                                                      |  |     |     |  |  |  +--KF797851.1
+|                             |  |  |  |                                                                                      |  |     |     |  |  +**|
+|                             |  |  |  |                                                                                      |  |     |     |  |     +--KY007256.1
+|                             |  |  |  |                                                                                      |  |     |     +**|
+|                             |  |  |  |                                                                                      |  |     |        +--KY007257.1
+|                             |  |  |  |                                                                                      |  |  +--|
+|                             |  |  |  |                                                                                      |  |  |  |        +--Peru_IRID005_S28
+|                             |  |  |  |                                                                                      |  |  |  |     +**|
+|                             |  |  |  |                                                                                      |  |  |  |     |  +--Peru_IRID036_S120
+|                             |  |  |  |                                                                                      |  |  |  |  +--|
+|                             |  |  |  |                                                                                      |  |  |  |  |  |     +--Peru_IRID050_S227
+|                             |  |  |  |                                                                                      |  |  |  |  |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |  |  |  |  |  +--Peru_IRID067_S233
+|                             |  |  |  |                                                                                      |  |  |  |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |  |  |     +**MT543039.2
+|                             |  |  |  |                                                                                      |  |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |                       +--AY563953.1
+|                             |  |  |  |                                                                                      |  |  |     |                    +**|
+|                             |  |  |  |                                                                                      |  |  |     |                    |  +--KY007274.1
+|                             |  |  |  |                                                                                      |  |  |     |                 +**|
+|                             |  |  |  |                                                                                      |  |  |     |                 |  +--KY007271.1
+|                             |  |  |  |                                                                                      |  |  |     |              +**|
+|                             |  |  |  |                                                                                      |  |  |     |              |  |  +--KY007246.1
+|                             |  |  |  |                                                                                      |  |  |     |              |  +--|
+|                             |  |  |  |                                                                                      |  |  |     |              |     |  +--KY007252.1
+|                             |  |  |  |                                                                                      |  |  |     |              |     +--|
+|                             |  |  |  |                                                                                      |  |  |     |              |        +--KY007263.1
+|                             |  |  |  |                                                                                      |  |  |     |           +**|
+|                             |  |  |  |                                                                                      |  |  |     |           |  +--AY563954.1
+|                             |  |  |  |                                                                                      |  |  |     |        +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                       +**KF797816.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |              +--KF797818.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |           +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |           |  +--KY007249.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |        +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |        |  +--KF797829.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |     +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |     |  +--KF797871.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |  |  |  +--KF797877.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  |  |     +--KF797894.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                    |     +**KF797825.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                 +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |                 |  +**KF797849.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |              +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |              |  +--KF797863.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |           +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |           |  |  +**KF797822.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |           |  +--|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |           |     +**KF797898.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        |  |     +--KF797835.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        |  |  |  +--KY007254.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |        |     +--KY007264.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |     +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |     |  |  +--KY007261.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |     |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |     |     +--KY007262.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |  |  |  +**KY007250.1
+|                             |  |  |  |                                                                                      |  |  |     |        |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |        |     +**KY007259.1
+|                             |  |  |  |                                                                                      |  |  |     |     +--|
+|                             |  |  |  |                                                                                      |  |  |     |     |  +--KY007247.1
+|                             |  |  |  |                                                                                      |  |  |     |  +**|
+|                             |  |  |  |                                                                                      |  |  |     |  |  +--LC192529.1
+|                             |  |  |  |                                                                                      |  |  |     +--|
+|                             |  |  |  |                                                                                      |  |  |        +**LC183872.1
+|                             |  |  |  |                                                                                      |  +--|
+|                             |  |  |  |                                                                                      |     +--KY007255.1
+|                             |  |  |  |                                                                                   +--|
+|                             |  |  |  |                                                                                   |  +--KY007260.1
+|                             |  |  |  |                                                                                +**|
+|                             |  |  |  |                                                                                |  |                    +--KF797819.1
+|                             |  |  |  |                                                                                |  |                 +**|
+|                             |  |  |  |                                                                                |  |                 |  +--KF797828.1
+|                             |  |  |  |                                                                                |  |              +**|
+|                             |  |  |  |                                                                                |  |              |  |     +--KF797826.1
+|                             |  |  |  |                                                                                |  |              |  |  +--|
+|                             |  |  |  |                                                                                |  |              |  |  |  +**KF797882.1
+|                             |  |  |  |                                                                                |  |              |  +**|
+|                             |  |  |  |                                                                                |  |              |     +--KF797853.1
+|                             |  |  |  |                                                                                |  |           +**|
+|                             |  |  |  |                                                                                |  |           |  +**KF797876.1
+|                             |  |  |  |                                                                                |  |        +**|
+|                             |  |  |  |                                                                                |  |        |  +--KF797879.1
+|                             |  |  |  |                                                                                |  |     +--|
+|                             |  |  |  |                                                                                |  |     |  |  +--KF797844.1
+|                             |  |  |  |                                                                                |  |     |  +--|
+|                             |  |  |  |                                                                                |  |     |     +--KF797852.1
+|                             |  |  |  |                                                                                |  |  +**|
+|                             |  |  |  |                                                                                |  |  |  +**KF797893.1
+|                             |  |  |  |                                                                                |  +--|
+|                             |  |  |  |                                                                                |     |  +--KF797843.1
+|                             |  |  |  |                                                                                |     +**|
+|                             |  |  |  |                                                                                |        |  +--KY007244.1
+|                             |  |  |  |                                                                                |        +--|
+|                             |  |  |  |                                                                                |           +--KY007268.1
+|                             |  |  |  |                                                                             +**|
+|                             |  |  |  |                                                                             |  |     +**KF797824.1
+|                             |  |  |  |                                                                             |  |  +**|
+|                             |  |  |  |                                                                             |  |  |  +**KF797869.1
+|                             |  |  |  |                                                                             |  +--|
+|                             |  |  |  |                                                                             |     +--KY007253.1
+|                             |  |  |  |                                                                          +**|
+|                             |  |  |  |                                                                          |  |                    +**Japan_1339_S240
+|                             |  |  |  |                                                                          |  |                 +**|
+|                             |  |  |  |                                                                          |  |                 |  +**Peru_SS01_S238
+|                             |  |  |  |                                                                          |  |              +**|
+|                             |  |  |  |                                                                          |  |              |  |  +--Peru_IRID037_S121
+|                             |  |  |  |                                                                          |  |              |  +**|
+|                             |  |  |  |                                                                          |  |              |     |     +--Peru_IRID068_S330
+|                             |  |  |  |                                                                          |  |              |     |  +--|
+|                             |  |  |  |                                                                          |  |              |     |  |  |  +--LC192515.1
+|                             |  |  |  |                                                                          |  |              |     |  |  +**|
+|                             |  |  |  |                                                                          |  |              |     |  |     +--LC192527.1
+|                             |  |  |  |                                                                          |  |              |     +**|
+|                             |  |  |  |                                                                          |  |              |        +--KF797884.1
+|                             |  |  |  |                                                                          |  |           +--|
+|                             |  |  |  |                                                                          |  |           |  +--Peru_IRID014_S133
+|                             |  |  |  |                                                                          |  |        +**|
+|                             |  |  |  |                                                                          |  |        |  +--AF042071.1
+|                             |  |  |  |                                                                          |  |     +--|
+|                             |  |  |  |                                                                          |  |     |  +--Peru_IRID080_S289
+|                             |  |  |  |                                                                          |  |  +--|
+|                             |  |  |  |                                                                          |  |  |  |        +--Peru_IRID057_S229
+|                             |  |  |  |                                                                          |  |  |  |     +--|
+|                             |  |  |  |                                                                          |  |  |  |     |  +--L36905.1
+|                             |  |  |  |                                                                          |  |  |  |  +--|
+|                             |  |  |  |                                                                          |  |  |  |  |  +--AF139170.1
+|                             |  |  |  |                                                                          |  |  |  +**|
+|                             |  |  |  |                                                                          |  |  |     |  +--KF797905.1
+|                             |  |  |  |                                                                          |  |  |     +--|
+|                             |  |  |  |                                                                          |  |  |        +--LC192533.1
+|                             |  |  |  |                                                                          |  +**|
+|                             |  |  |  |                                                                          |     +**KF797886.1
+|                             |  |  |  |                                                                       +--|
+|                             |  |  |  |                                                                       |  |        +**MH392265.1
+|                             |  |  |  |                                                                       |  |     +**|
+|                             |  |  |  |                                                                       |  |     |  +**MH399767.1
+|                             |  |  |  |                                                                       |  |  +**|
+|                             |  |  |  |                                                                       |  |  |  +--MH399768.1
+|                             |  |  |  |                                                                       |  +--|
+|                             |  |  |  |                                                                       |     +--MH395864.1
+|                             |  |  |  |                                                                    +**|
+|                             |  |  |  |                                                                    |  +--LC192256.1
+|                             |  |  |  |                                                                 +**|
+|                             |  |  |  |                                                                 |  |           +--AF259264.1
+|                             |  |  |  |                                                                 |  |        +--|
+|                             |  |  |  |                                                                 |  |        |  +--KC807984.1
+|                             |  |  |  |                                                                 |  |     +**|
+|                             |  |  |  |                                                                 |  |     |  |  +--LC192258.1
+|                             |  |  |  |                                                                 |  |     |  +--|
+|                             |  |  |  |                                                                 |  |     |     +--LC210064.1
+|                             |  |  |  |                                                                 |  |  +**|
+|                             |  |  |  |                                                                 |  |  |  |     +--LC183873.1
+|                             |  |  |  |                                                                 |  |  |  |  +--|
+|                             |  |  |  |                                                                 |  |  |  |  |  |  +--LC192511.1
+|                             |  |  |  |                                                                 |  |  |  |  |  +--|
+|                             |  |  |  |                                                                 |  |  |  |  |     +**LC192512.1
+|                             |  |  |  |                                                                 |  |  |  +--|
+|                             |  |  |  |                                                                 |  |  |     +--LC185236.1
+|                             |  |  |  |                                                                 |  +**|
+|                             |  |  |  |                                                                 |     |        +**HQ606137.1
+|                             |  |  |  |                                                                 |     |     +--|
+|                             |  |  |  |                                                                 |     |     |  +--HQ606138.1
+|                             |  |  |  |                                                                 |     |  +**|
+|                             |  |  |  |                                                                 |     |  |  +--LC210048.1
+|                             |  |  |  |                                                                 |     +**|
+|                             |  |  |  |                                                                 |        +--LC210050.1
+|                             |  |  |  |                                                              +**|
+|                             |  |  |  |                                                              |  +--LC185241.1
+|                             |  |  |  |                                                           +--|
+|                             |  |  |  |                                                           |  +--LC210045.1
+|                             |  |  |  |                                                        +--|
+|                             |  |  |  |                                                        |  |     +--Japan_3_S205
+|                             |  |  |  |                                                        |  |  +**|
+|                             |  |  |  |                                                        |  |  |  |              +--KF797815.1
+|                             |  |  |  |                                                        |  |  |  |           +**|
+|                             |  |  |  |                                                        |  |  |  |           |  +--KF797901.1
+|                             |  |  |  |                                                        |  |  |  |        +**|
+|                             |  |  |  |                                                        |  |  |  |        |  +**KF797866.1
+|                             |  |  |  |                                                        |  |  |  |     +**|
+|                             |  |  |  |                                                        |  |  |  |     |  |  +**KF797840.1
+|                             |  |  |  |                                                        |  |  |  |     |  +--|
+|                             |  |  |  |                                                        |  |  |  |     |     +--KF797841.1
+|                             |  |  |  |                                                        |  |  |  |  +**|
+|                             |  |  |  |                                                        |  |  |  |  |  +**KF797867.1
+|                             |  |  |  |                                                        |  |  |  +--|
+|                             |  |  |  |                                                        |  |  |     |           +--KF797839.1
+|                             |  |  |  |                                                        |  |  |     |        +--|
+|                             |  |  |  |                                                        |  |  |     |        |  +**LC192262.1
+|                             |  |  |  |                                                        |  |  |     |     +**|
+|                             |  |  |  |                                                        |  |  |     |     |  +--LC210067.1
+|                             |  |  |  |                                                        |  |  |     |  +**|
+|                             |  |  |  |                                                        |  |  |     |  |  +**LC210051.1
+|                             |  |  |  |                                                        |  |  |     +**|
+|                             |  |  |  |                                                        |  |  |        |  +--LC210044.1
+|                             |  |  |  |                                                        |  |  |        +**|
+|                             |  |  |  |                                                        |  |  |           +--LC210049.1
+|                             |  |  |  |                                                        |  +**|
+|                             |  |  |  |                                                        |     |  +--LC210010.1
+|                             |  |  |  |                                                        |     +**|
+|                             |  |  |  |                                                        |        +--LC210052.1
+|                             |  |  |  |                                                     +**|
+|                             |  |  |  |                                                     |  +--LC192528.1
+|                             |  |  |  |                                                  +**|
+|                             |  |  |  |                                                  |  |        +--LC192504.1
+|                             |  |  |  |                                                  |  |     +--|
+|                             |  |  |  |                                                  |  |     |  +--LC192531.1
+|                             |  |  |  |                                                  |  |  +--|
+|                             |  |  |  |                                                  |  |  |  +--LC192505.1
+|                             |  |  |  |                                                  |  +**|
+|                             |  |  |  |                                                  |     |  +--LC192523.1
+|                             |  |  |  |                                                  |     +--|
+|                             |  |  |  |                                                  |        +**LC192535.1
+|                             |  |  |  |                                               +--|
+|                             |  |  |  |                                               |  +--LC192534.1
+|                             |  |  |  |                                            +--|
+|                             |  |  |  |                                            |  |              +--LC192503.1
+|                             |  |  |  |                                            |  |           +**|
+|                             |  |  |  |                                            |  |           |  +--LC192536.1
+|                             |  |  |  |                                            |  |        +**|
+|                             |  |  |  |                                            |  |        |  +--LC192520.1
+|                             |  |  |  |                                            |  |     +--|
+|                             |  |  |  |                                            |  |     |  +--LC192530.1
+|                             |  |  |  |                                            |  |  +**|
+|                             |  |  |  |                                            |  |  |  +--LC192525.1
+|                             |  |  |  |                                            |  +**|
+|                             |  |  |  |                                            |     |        +**LC192516.1
+|                             |  |  |  |                                            |     |     +**|
+|                             |  |  |  |                                            |     |     |  +**LC192524.1
+|                             |  |  |  |                                            |     |  +**|
+|                             |  |  |  |                                            |     |  |  +--LC192522.1
+|                             |  |  |  |                                            |     +**|
+|                             |  |  |  |                                            |        +**LC192521.1
+|                             |  |  |  |                                         +**|
+|                             |  |  |  |                                         |  +--LC192519.1
+|                             |  |  |  |                                      +**|
+|                             |  |  |  |                                      |  |  +--LC192502.1
+|                             |  |  |  |                                      |  +**|
+|                             |  |  |  |                                      |     +**LC192532.1
+|                             |  |  |  |                                   +--|
+|                             |  |  |  |                                   |  +--LC192526.1
+|                             |  |  |  |                                +**|
+|                             |  |  |  |                                |  |        +**LC192506.1
+|                             |  |  |  |                                |  |     +--|
+|                             |  |  |  |                                |  |     |  +--LC192507.1
+|                             |  |  |  |                                |  |  +**|
+|                             |  |  |  |                                |  |  |  |           +--LC192508.1
+|                             |  |  |  |                                |  |  |  |        +--|
+|                             |  |  |  |                                |  |  |  |        |  +**LC192509.1
+|                             |  |  |  |                                |  |  |  |     +**|
+|                             |  |  |  |                                |  |  |  |     |  +--LC192513.1
+|                             |  |  |  |                                |  |  |  |  +--|
+|                             |  |  |  |                                |  |  |  |  |  +--LC192514.1
+|                             |  |  |  |                                |  |  |  +--|
+|                             |  |  |  |                                |  |  |     |  +--LC192517.1
+|                             |  |  |  |                                |  |  |     +**|
+|                             |  |  |  |                                |  |  |        +--LC192518.1
+|                             |  |  |  |                                |  +**|
+|                             |  |  |  |                                |     +--LC192510.1
+|                             |  |  |  |                             +--|
+|                             |  |  |  |                             |  +--LC192500.1
+|                             |  |  |  |                          +--|
+|                             |  |  |  |                          |  +---Peru_IRID034_S119
+|                             |  |  |  |                       +--|
+|                             |  |  |  |                       |  |     +--Peru_IRID003_S27
+|                             |  |  |  |                       |  |  +--|
+|                             |  |  |  |                       |  |  |  +**Peru_IRID074_S334
+|                             |  |  |  |                       |  +--|
+|                             |  |  |  |                       |     |            +**D13784.1
+|                             |  |  |  |                       |     |        +---|
+|                             |  |  |  |                       |     |        |   +**NC_001436.1
+|                             |  |  |  |                       |     |     +--|
+|                             |  |  |  |                       |     |     |  |  +--MN781152.1
+|                             |  |  |  |                       |     |     |  +**|
+|                             |  |  |  |                       |     |     |     +**MN781154.1
+|                             |  |  |  |                       |     |  +--|
+|                             |  |  |  |                       |     |  |  |           +--KX430030.1
+|                             |  |  |  |                       |     |  |  |        +**|
+|                             |  |  |  |                       |     |  |  |        |  |  +--MN781153.1
+|                             |  |  |  |                       |     |  |  |        |  +**|
+|                             |  |  |  |                       |     |  |  |        |     +--MN781155.1
+|                             |  |  |  |                       |     |  |  |     +--|
+|                             |  |  |  |                       |     |  |  |     |  +--KX430031.1
+|                             |  |  |  |                       |     |  |  |  +--|
+|                             |  |  |  |                       |     |  |  |  |  |  +--MN781149.1
+|                             |  |  |  |                       |     |  |  |  |  +--|
+|                             |  |  |  |                       |     |  |  |  |     +--MN781150.1
+|                             |  |  |  |                       |     |  |  +--|
+|                             |  |  |  |                       |     |  |     |   +--MN781151.1
+|                             |  |  |  |                       |     |  |     +---|
+|                             |  |  |  |                       |     |  |         +--MN781156.1
+|                             |  |  |  |                       |     +--|
+|                             |  |  |  |                       |        |                                      +--JX891478.1
+|                             |  |  |  |                       |        |                                   +--|
+|                             |  |  |  |                       |        |                                   |  |     +--JX891479.1
+|                             |  |  |  |                       |        |                                   |  |  +--|
+|                             |  |  |  |                       |        |                                   |  |  |  +**KF242505.1
+|                             |  |  |  |                       |        |                                   |  +--|
+|                             |  |  |  |                       |        |                                   |     +--KF242506.1
+|                             |  |  |  |                       |        |     +-----------------------------|
+|                             |  |  |  |                       |        |     |                             |      +--KX905202.1
+|                             |  |  |  |                       |        |     |                             |   +**|
+|                             |  |  |  |                       |        |     |                             |   |  +--L02534.1
+|                             |  |  |  |                       |        |     |                             +---|
+|                             |  |  |  |                       |        |     |                                 +--KX905203.1
+|                             |  |  |  |                       |        +-----|
+|                             |  |  |  |                       |              +---------KU214243.1
+|                             |  |  |  |                    +**|
+|                             |  |  |  |                    |  +--LC209965.1
+|                             |  |  |  |                 +**|
+|                             |  |  |  |                 |  |  +--LC185240.1
+|                             |  |  |  |                 |  +**|
+|                             |  |  |  |                 |     +--LC210001.1
+|                             |  |  |  |              +**|
+|                             |  |  |  |              |  |        +--KF797859.1
+|                             |  |  |  |              |  |     +--|
+|                             |  |  |  |              |  |     |  +--LC210046.1
+|                             |  |  |  |              |  |  +--|
+|                             |  |  |  |              |  |  |  +**LC209966.1
+|                             |  |  |  |              |  +**|
+|                             |  |  |  |              |     +--LC209958.1
+|                             |  |  |  |           +**|
+|                             |  |  |  |           |  +**LC209992.1
+|                             |  |  |  |        +**|
+|                             |  |  |  |        |  +**LC210034.1
+|                             |  |  |  |     +--|
+|                             |  |  |  |     |  +--LC210019.1
+|                             |  |  |  |  +**|
+|                             |  |  |  |  |  |  +--LC209967.1
+|                             |  |  |  |  |  +--|
+|                             |  |  |  |  |     +--LC210030.1
+|                             |  |  |  +**|
+|                             |  |  |     +--LC210055.1
+|                             |  +**|
+|                             |     |           +--Japan_16_S86
+|                             |     |        +**|
+|                             |     |        |  +**KF797887.1
+|                             |     |     +**|
+|                             |     |     |  |  +--LC209977.1
+|                             |     |     |  +**|
+|                             |     |     |     +--LC210054.1
+|                             |     |  +**|
+|                             |     |  |  |  +--LC209993.1
+|                             |     |  |  +**|
+|                             |     |  |     +--LC210070.1
+|                             |     +**|
+|                             |        |        +--Japan_9_S207
+|                             |        |     +**|
+|                             |        |     |  +--LC183874.1
+|                             |        |  +--|
+|                             |        |  |  +**LC210013.1
+|                             |        +**|
+|                             |           +--LC210047.1
+|                          +**|
+|                          |  |  +**AB513134.1
+|                          |  +**|
+|                          |     |        +--LC192255.1
+|                          |     |     +--|
+|                          |     |     |  +--LC209975.1
+|                          |     |  +**|
+|                          |     |  |  |     +**LC209990.1
+|                          |     |  |  |  +**|
+|                          |     |  |  |  |  +**LC210004.1
+|                          |     |  |  +--|
+|                          |     |  |     +--LC210035.1
+|                          |     +**|
+|                          |        +--LC210009.1
+|                       +**|
+|                       |  |     +**Japan_13_S83
+|                       |  |  +**|
+|                       |  |  |  +--LC209981.1
+|                       |  +**|
+|                       |     |     +--LC192261.1
+|                       |     |  +**|
+|                       |     |  |  +--LC210003.1
+|                       |     +**|
+|                       |        |  +--LC210005.1
+|                       |        +**|
+|                       |           +--LC210015.1
+|                    +**|
+|                    |  |     +**LC185239.1
+|                    |  |  +--|
+|                    |  |  |  +--LC209959.1
+|                    |  +**|
+|                    |     +--LC210038.1
+|                 +--|
+|                 |  +--LC209991.1
+|              +**|
+|              |  +--LC209960.1
+|           +**|
+|           |  +**LC210042.1
+|        +**|
+|        |  +**LC209983.1
+|     +**|
+|     |  +**LC209999.1
+|  +**|
+|  |  |     +--LC209984.1
+|  |  |  +--|
+|  |  |  |  |  +**LC209994.1
+|  |  |  |  +**|
+|  |  |  |     +**LC210071.1
+|  |  +**|
+|  |     +--LC210014.1
++--|
+|  +--LC209973.1
+|
++**LC210036.1
+
+Tree in newick format:
+
+(J02029.1:0.0020094287,((((((((((((((((Japan_10_S208:0.0010028793,LC210063.1:0.0010028061):0.0005039072,LC210041.1:0.0020111652):0.0010013201,LC209974.1:0.0015055029):0.0000021391,(LC209995.1:0.0010026429,LC210020.1:0.0010020635):0.0000010000):0.0000010000,(((LC192264.1:0.0015341923,((LC210006.1:0.0015131702,LC210021.1:0.0015135499):0.0000019914,LC210037.1:0.0020204838):0.0020546682):0.0004730705,LC209988.1:0.0020103510):0.0000022979,LC209971.1:0.0010031078):0.0000010000):0.0000010000,((((((((((Japan_11_S81:0.0000010000,LC210056.1:0.0000010000):0.0000029094,LC210023.1:0.0010019649):0.0002532315,LC210066.1:0.0004878288):0.0002607194,LC192260.1:0.0010023623):0.0000027369,((Japan_14_S84:0.0031800923,((LC209969.1:0.0000010000,LC209970.1:0.0000010000):0.0000010000,LC210040.1:0.0010024250):0.0000025435):0.0010023807,(LC209976.1:0.0000010000,LC209986.1:0.0010021753):0.0010023056):0.0000028344):0.0000029550,LC185237.1:0.0000010000):0.0000010000,((((((KF797837.1:0.0009066284,(LC210011.1:0.0000010000,LC210031.1:0.0000010000):0.0010009342):0.0000029283,LC210002.1:0.0050831906):0.0000023170,(((((LC185242.1:0.0000010000,LC210061.1:0.0000010000):0.0000020356,LC210058.1:0.0004994882):0.0020436560,LC209963.1:0.0025732767):0.0004632799,U19949.1:0.0000028921):0.0005002418,((((LC192257.1:0.0040425127,LC210007.1:0.0020165200):0.0010044350,LC209968.1:0.0010021477):0.0005027101,LC210060.1:0.0020088337):0.0010047891,(LC209961.1:0.0025086072,LC210059.1:0.0000029073):0.0010003081):0.0000024761):0.0000029423):0.0000026015,LC210043.1:0.0000010000):0.0000010000,(((LC209987.1:0.0000010000,LC210039.1:0.0015103328):0.0010031786,LC210033.1:0.0010023861):0.0000026396,LC210068.1:0.0010024798):0.0000010000):0.0000010000,LC185235.1:0.0000010000):0.0000010000):0.0000010000,(((((((Japan_15_S85:0.0000010000,(LC210018.1:0.0000010000,LC210024.1:0.0000010000):0.0000010000):0.0000028188,(LC192501.1:0.0066727276,(LC209989.1:0.0000020741,LC210069.1:0.0000020778):0.0015082030):0.0000022531):0.0000029481,LC210028.1:0.0010032142):0.0010027068,LC209972.1:0.0030208576):0.0000024815,LC209979.1:0.0020179187):0.0000024231,((((KF797891.1:0.0000020467,(LC209980.1:0.0000010000,LC209997.1:0.0010027468):0.0000018577):0.0010001394,LC209985.1:0.0010022500):0.0000028865,LC210026.1:0.0005004561):0.0000010000,((LC192254.1:0.0010023151,LC210053.1:0.0015050326):0.0000010000,(LC210027.1:0.0010019203,LC210065.1:0.0015046129):0.0000027374):0.0000010000):0.0000010000):0.0000010000,Japan_8_S206:0.0000010000):0.0000010000):0.0000010000,((((((((((((((((((((((((((((((Japan_12_S82:0.0059819561,(((((((((((((Peru_IRID001_S25:0.0010134069,(((Peru_IRID012_S131:0.0000010000,Peru_IRID024_S294:0.0000010000):0.0000020106,Peru_IRID030_S116:0.0005240698):0.0020317606,Peru_IRID084_S290:0.0000028679):0.0020337266):0.0000020465,Peru_IRID006_S29:0.0005057837):0.0000010000,(Peru_IRID010_S129:0.0005057826,(Peru_SS08_S5:0.0010127137,KF797846.1:0.0016133577):0.0000022158):0.0000025805):0.0000024299,(Peru_IRID008_S31:0.0000010000,Peru_IRID013_S132:0.0000010000):0.0000010000):0.0000010000,(((Peru_IRID007_S30:0.0000027424,Peru_IRID043_S223:0.0000027424):0.0035815773,((Peru_IRID009_S32:0.0000029529,Peru_SS19_S203:0.0030619224):0.0010172566,Peru_IRID076_S336:0.0000029692):0.0010124729):0.0000022076,(((Peru_IRID062_S231:0.0000010000,Peru_SS02_S1:0.0000010000):0.0000028253,Peru_SS03_S2:0.0000010000):0.0025436221,Peru_IRID069_S331:0.0010136184):0.0000029302):0.0000023043):0.0000010000,((((((Peru_IRID002_S26:0.0000010000,Peru_IRID055_S228:0.0000010000):0.0000029433,Peru_SS18_S202:0.0010100540):0.0010108893,((Peru_IRID027_S113:0.0000010000,Peru_SS16_S8:0.0000010000):0.0000020688,Peru_IRID042_S222:0.0005046640):0.0000025442):0.0010112221,(KF797856.1:0.0000022943,KF797890.1:0.0000026388):0.0000026443):0.0000025642,Peru_SS17_S201:0.0005059565):0.0000027414,(((Peru_IRID048_S225:0.0020331943,KF797862.1:0.0018372705):0.0000010000,KF797855.1:0.0000025865):0.0000021756,(Peru_IRID060_S230:0.0010129767,KF797857.1:0.0000010000):0.0000010000):0.0000025805):0.0000021530):0.0000025197,Peru_IRID023_S235:0.0000010000):0.0000023696,((Peru_IRID041_S221:0.0010121330,KF797838.1:0.0019022448):0.0000026725,(Peru_IRID089_S292:0.0000010000,Peru_SS20_S204:0.0000010000):0.0005059526):0.0000027112):0.0000023835,(((Peru_IRID015_S134:0.0000010000,Peru_SS14_S7:0.0000029010):0.0000029169,Peru_IRID032_S117:0.0000010000):0.0010089175,KY007248.1:0.0000010000):0.0000027337):0.0005034544,((((Peru_IRID020_S136:0.0010157733,((Peru_IRID025_S236:0.0000021110,Peru_IRID026_S237:0.0000021111):0.0046007985,(Peru_IRID039_S123:0.0000029185,Peru_SS04_S3:0.0000029077):0.0005066186):0.0000020004):0.0010156680,Peru_IRID071_S332:0.0010331773):0.0000025349,Peru_IRID086_S291:0.0010156323):0.0000024263,Peru_IRID033_S118:0.0015247837):0.0020345378):0.0000027350,((((((KF797817.1:0.0009147944,(((KF797821.1:0.0000010000,(((((((KF797833.1:0.0000028151,KY007270.1:0.0029838604):0.0007367416,(KF797889.1:0.0000027855,(KY007266.1:0.0000010000,KY007267.1:0.0010390110):0.0027505490):0.0009151078):0.0000022603,(KF797880.1:0.0009149398,KY007258.1:0.0048010607):0.0000022077):0.0000021454,KY007272.1:0.0000010000):0.0000021263,(((KF797848.1:0.0018334424,(KF797868.1:0.0034153858,KF797896.1:0.0000028207):0.0012366604):0.0000027969,((KF797874.1:0.0000025783,KF797883.1:0.0862081688):0.0078163954,KF797878.1:0.0009226295):0.0000034051):0.0000020832,KY007245.1:0.0021020621):0.0000019950):0.0000027695,KF797864.1:0.0000010000):0.0000021471,(KF797836.1:0.0014269360,(KF797858.1:0.0014346896,KF797881.1:0.0009073500):0.0000032490):0.0000010417):0.0000021971):0.0000020228,KF797854.1:0.0000010000):0.0000024262,KF797888.1:0.0018347531):0.0000025581):0.0000023022,KF797845.1:0.0018381261):0.0000023061,((KF797823.1:0.0000010000,KF797842.1:0.0000010000):0.0000027888,KF797895.1:0.0010037895):0.0009157957):0.0000021135,KF797873.1:0.0027605444):0.0010270000,KF797820.1:0.0000010000):0.0000025173,((((KF797832.1:0.0009039617,KY007273.1:0.0000025301):0.0015711176,KY007269.1:0.0000021196):0.0010465379,(KF797851.1:0.0034439528,KY007256.1:0.0006638708):0.0003833610):0.0000025046,KY007257.1:0.0010474290):0.0000026190):0.0015608297):0.0010095235,(((Peru_IRID005_S28:0.0052011439,Peru_IRID036_S120:0.0005053613):0.0000029077,((Peru_IRID050_S227:0.0020291971,Peru_IRID067_S233:0.0030533445):0.0000029511,MT543039.2:0.0000010000):0.0000029680):0.0005055082,((((((((AY563953.1:0.0016348272,KY007274.1:0.0031582915):0.0000020395,KY007271.1:0.0021038192):0.0002724968,(KY007246.1:0.0026233100,(KY007252.1:0.0026058907,KY007263.1:0.0005487022):0.0010546669):0.0005349584):0.0002636303,AY563954.1:0.0058285000):0.0000024493,((((((((KF797816.1:0.0000010000,(((((KF797818.1:0.0018364598,KY007249.1:0.0031458647):0.0000020965,KF797829.1:0.0009175947):0.0000024728,KF797871.1:0.0009175938):0.0000010000,(KF797877.1:0.0036912491,KF797894.1:0.0014221312):0.0000027751):0.0000028802,KF797825.1:0.0000010000):0.0000010000):0.0000010000,KF797849.1:0.0000010000):0.0000028432,KF797863.1:0.0009167782):0.0000010000,(KF797822.1:0.0000010000,KF797898.1:0.0000010000):0.0013215214):0.0000010000,((KF797835.1:0.0009166894,KY007254.1:0.0031656690):0.0000010000,KY007264.1:0.0020995585):0.0000010000):0.0000010000,(KY007261.1:0.0005227594,KY007262.1:0.0010475209):0.0000010000):0.0000010000,KY007250.1:0.0000010000):0.0000010000,KY007259.1:0.0000010000):0.0000010000):0.0000027228,KY007247.1:0.0021042781):0.0005221509,LC192529.1:0.0005332583):0.0000020162,LC183872.1:0.0000022338):0.0010096720):0.0000020925):0.0011316382,KY007255.1:0.0042420193):0.0023172739):0.0006669276,KY007260.1:0.0021703937):0.0006926300,(((((((KF797819.1:0.0018229419,KF797828.1:0.0027448446):0.0000025569,((KF797826.1:0.0018243124,KF797882.1:0.0000010000):0.0009098609,KF797853.1:0.0009107002):0.0000026196):0.0000028514,KF797876.1:0.0000010000):0.0000021169,KF797879.1:0.0027119974):0.0000020355,(KF797844.1:0.0009072884,KF797852.1:0.0009184269):0.0008793135):0.0026704253,KF797893.1:0.0000010000):0.0000020432,(KF797843.1:0.0009110108,(KY007244.1:0.0010432981,KY007268.1:0.0020949701):0.0009704733):0.0000019975):0.0048606047):0.0000028776,((KF797824.1:0.0000010000,KF797869.1:0.0000010000):0.0000027765,KY007253.1:0.0018419672):0.0018420923):0.0000023473,(((((((Japan_1339_S240:0.0000010000,Peru_SS01_S238:0.0000010000):0.0000022641,(Peru_IRID037_S121:0.0010104660,((Peru_IRID068_S330:0.0005048745,(LC192515.1:0.0036400697,LC192527.1:0.0010271661):0.0004853164):0.0005062477,KF797884.1:0.0008772484):0.0000012458):0.0000024678):0.0000020841,Peru_IRID014_S133:0.0020263042):0.0015372438,AF042071.1:0.0059298122):0.0004842145,Peru_IRID080_S289:0.0025522084):0.0015307009,(((Peru_IRID057_S229:0.0025457949,L36905.1:0.0020507709):0.0010107592,AF139170.1:0.0062657987):0.0015216274,(KF797905.1:0.0029329500,LC192533.1:0.0030893435):0.0020449432):0.0000029371):0.0010119705,KF797886.1:0.0000024652):0.0000029474):0.0004895373,(((MH392265.1:0.0000010000,MH399767.1:0.0000010000):0.0000010000,MH399768.1:0.0010132048):0.0000029636,MH395864.1:0.0020360903):0.0041171113):0.0005196599,LC192256.1:0.0020336957):0.0000022579,((((AF259264.1:0.0020296178,KC807984.1:0.0067826337):0.0041336568,(LC192258.1:0.0030658606,LC210064.1:0.0035895572):0.0005042584):0.0000024919,((LC183873.1:0.0005029266,(LC192511.1:0.0065418886,LC192512.1:0.0000024307):0.0031424061):0.0005064998,LC185236.1:0.0030923890):0.0010228210):0.0000029732,(((HQ606137.1:0.0000028666,HQ606138.1:0.0020437131):0.0041070091,LC210048.1:0.0030581428):0.0000021469,LC210050.1:0.0010143998):0.0000029556):0.0000025631):0.0000026748,LC185241.1:0.0046161134):0.0004687133,LC210045.1:0.0020321977):0.0005522640,((Japan_3_S205:0.0030569548,(((((KF797815.1:0.0042444669,KF797901.1:0.0009623696):0.0000026095,KF797866.1:0.0000010000):0.0000024170,(KF797840.1:0.0000027673,KF797841.1:0.0009118466):0.0009193170):0.0000022233,KF797867.1:0.0000010000):0.0000029494,((((KF797839.1:0.0036751746,LC192262.1:0.0000029783):0.0020276364,LC210067.1:0.0010105598):0.0000023305,LC210051.1:0.0000010000):0.0000010000,(LC210044.1:0.0061706259,LC210049.1:0.0010110310):0.0000029737):0.0000010000):0.0010106626):0.0000025887,(LC210010.1:0.0010110194,LC210052.1:0.0010117669):0.0000024887):0.0000029870):0.0010071102,LC192528.1:0.0021310738):0.0000021350,(((LC192504.1:0.0010063532,LC192531.1:0.0015181667):0.0005037115,LC192505.1:0.0015142371):0.0010081360,(LC192523.1:0.0010082080,LC192535.1:0.0000020150):0.0005023219):0.0000027735):0.0000029578,LC192534.1:0.0005130208):0.0010030935,(((((LC192503.1:0.0010093013,LC192536.1:0.0035983094):0.0000027350,LC192520.1:0.0005038502):0.0004486668,LC192530.1:0.0013641791):0.0007156337,LC192525.1:0.0015933100):0.0000020903,(((LC192516.1:0.0000010000,LC192524.1:0.0000010000):0.0000020737,LC192522.1:0.0005049576):0.0000029597,LC192521.1:0.0000010000):0.0000010000):0.0000029313):0.0005019002,LC192519.1:0.0020345469):0.0000020866,(LC192502.1:0.0005055128,LC192532.1:0.0000010000):0.0000025834):0.0000020514,LC192526.1:0.0054190972):0.0005014456,(((LC192506.1:0.0000019749,LC192507.1:0.0015782895):0.0010093014,((((LC192508.1:0.0005418410,LC192509.1:0.0000024518):0.0015632044,LC192513.1:0.0025409681):0.0000020278,LC192514.1:0.0050962052):0.0010090784,(LC192517.1:0.0010072879,LC192518.1:0.0010105223):0.0000029525):0.0005033449):0.0000028217,LC192510.1:0.0010105473):0.0000029430):0.0004988126,LC192500.1:0.0010180210):0.0024863928,Peru_IRID034_S119:0.0094078358):0.0010342595,((Peru_IRID003_S27:0.0005042617,Peru_IRID074_S334:0.0000020972):0.0018764049,((((D13784.1:0.0000029468,NC_001436.1:0.0000028667):0.0081008633,(MN781152.1:0.0010039172,MN781154.1:0.0000022885):0.0000024682):0.0041351970,((((KX430030.1:0.0025512214,(MN781153.1:0.0050921893,MN781155.1:0.0061435168):0.0000029438):0.0000022777,KX430031.1:0.0056358194):0.0056585484,(MN781149.1:0.0015134562,MN781150.1:0.0015180518):0.0015186738):0.0010204003,(MN781151.1:0.0027263786,MN781156.1:0.0008591034):0.0078938706):0.0019722206):0.0018472275,(((JX891478.1:0.0033618553,((JX891479.1:0.0010144273,KF242505.1:0.0000010000):0.0011378531,KF242506.1:0.0014111194):0.0030645287):0.0058245596,((KX905202.1:0.0020442954,L02534.1:0.0072515875):0.0000026971,KX905203.1:0.0041135413):0.0091116086):0.0602052048,KU214243.1:0.0210329806):0.0124877276):0.0014065844):0.0035521742):0.0032078330,LC209965.1:0.0010014137):0.0000020452,(LC185240.1:0.0010019215,LC210001.1:0.0010011305):0.0000029078):0.0000023317,(((KF797859.1:0.0018208236,LC210046.1:0.0010090387):0.0010001447,LC209966.1:0.0000026716):0.0020079530,LC209958.1:0.0010012817):0.0000026318):0.0000010000,LC209992.1:0.0000010000):0.0000010000,LC210034.1:0.0000010000):0.0000025228,LC210019.1:0.0010017477):0.0010018341,(LC209967.1:0.0015069941,LC210030.1:0.0010031433):0.0010027970):0.0000026985,LC210055.1:0.0005004538):0.0000010000):0.0000010000,((((Japan_16_S86:0.0015448853,KF797887.1:0.0000010000):0.0000010000,(LC209977.1:0.0010072057,LC210054.1:0.0020131142):0.0000010000):0.0000010000,(LC209993.1:0.0010018792,LC210070.1:0.0015072049):0.0000010000):0.0000010000,(((Japan_9_S207:0.0030247947,LC183874.1:0.0030241636):0.0000010000,LC210013.1:0.0000010000):0.0010040632,LC210047.1:0.0010031071):0.0000021718):0.0000010000):0.0000010000):0.0000010000,(AB513134.1:0.0000010000,(((LC192255.1:0.0025145382,LC209975.1:0.0010048730):0.0010022819,((LC209990.1:0.0000010000,LC210004.1:0.0000010000):0.0000020375,LC210035.1:0.0025126173):0.0010013018):0.0000027480,LC210009.1:0.0010024001):0.0000026886):0.0000010000):0.0000010000,((Japan_13_S83:0.0000010000,LC209981.1:0.0005004970):0.0000025533,((LC192261.1:0.0010020054,LC210003.1:0.0015054085):0.0000029062,(LC210005.1:0.0010023701,LC210015.1:0.0005006817):0.0000023187):0.0000010000):0.0000010000):0.0000027549,((LC185239.1:0.0000029145,LC209959.1:0.0010013164):0.0010018879,LC210038.1:0.0020090897):0.0000025438):0.0000029336,LC209991.1:0.0015218683):0.0010017823,LC209960.1:0.0015039070):0.0000010000,LC210042.1:0.0005000749):0.0000027756,LC209983.1:0.0000010000):0.0000010000,LC209999.1:0.0000010000):0.0000010000,((LC209984.1:0.0010022130,(LC209994.1:0.0000026435,LC210071.1:0.0000010000):0.0000029350):0.0010032741,LC210014.1:0.0010003385):0.0000029309):0.0000029368,LC209973.1:0.0015041891):0.0010019270,LC210036.1:0.0000029370);
+
+ALISIM COMMAND
+--------------
+To simulate an alignment of the same length as the original alignment, using the tree and model parameters estimated from this analysis, you can use the following command:
+
+--alisim simulated_MSA -t 2602_Final_partitions_LTR_ENV.treefile -p 2602_Final_partitions_LTR_ENV.best_model.nex
+
+To mimic the alignment used to produce this analysis, i.e. simulate an alignment of the same length as the original alignment, using the tree and model parameters estimated from this analysis *and* copying the same gap positions as the original alignment, you can use the following command:
+
+iqtree -s Fastafiles/seqfinalhcg_1003_maffted.fas --alisim mimicked_MSA
+
+To simulate any number of alignments in either of the two commandlines above, use the --num-alignments options, for example mimic 100 alignments you would use the command line:
+
+iqtree -s Fastafiles/seqfinalhcg_1003_maffted.fas --alisim mimicked_MSA --num-alignments 100
+
+For more information on using AliSim, please visit: www.iqtree.org/doc/AliSim
+
+TIME STAMP
+----------
+
+Date and time: Sun Feb 15 12:37:38 2026
+Total CPU time used: 3142.27 seconds (0h:52m:22s)
+Total wall-clock time used: 5544.57 seconds (1h:32m:24s)
+

@@ -1,0 +1,10 @@
+#nexus
+begin sets;
+  charset LTRregion_HBZ_DNA = 1-777 8383-9033  6683-7312;
+  charset gag_pro_pol_DNA_env_DNA_Tax_DNA_rest_DNA = 824-5210  5211-6669  7375-8382  778-823 6670-6682 7313-7374;
+  charset env_CP1 = 5203-6669\3;
+  charpartition mymodels =
+    TIM2+F+I+R2: LTRregion_HBZ_DNA,
+    TIM3+F+I+R3: gag_pro_pol_DNA_env_DNA_Tax_DNA_rest_DNA,
+    TPM3u+F+R3: env_CP1;
+end;

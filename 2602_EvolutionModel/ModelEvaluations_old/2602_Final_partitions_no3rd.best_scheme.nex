@@ -1,0 +1,8 @@
+#nexus
+begin sets;
+  charset 5LTR_3LTR = 1-755  8279-9033;
+  charset env_gp46_gp21_restHTLV = 5181-6647\3  756-5180 6648-8278;
+  charpartition mymodels =
+    TIM2+F+I+G4: 5LTR_3LTR,
+    TN+F+I+G4: env_gp46_gp21_restHTLV;
+end;
