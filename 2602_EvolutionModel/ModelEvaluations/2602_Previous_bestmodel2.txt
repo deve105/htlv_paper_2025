@@ -1,0 +1,6 @@
+#nexus
+begin sets;
+	charset LTRregion_DNA = 1-801 8279-9033;
+	charset gag_pro_pol_env = 802-6647;
+	charset gag_pX_B_HBZ = 6848-8278;
+end;
