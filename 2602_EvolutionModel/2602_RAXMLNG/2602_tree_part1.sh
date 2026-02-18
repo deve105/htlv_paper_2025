@@ -2,18 +2,21 @@
 
 set -eou pipefail
 
-fasta="seqkit_norecomb_1201.fasta"
+fasta="2602_EvolutionModel/2602_htlv_391.fasta"
+model=$1
 
 raxml-ng --all \
-    --threads auto{12} \
+    --threads auto{16} \
     --seed 12345 \
-    --bs-trees autoMRE{1000} \
+    --bs-trees autoMRE{5000} \
     --msa-format FASTA \
     --data-type DNA \
-    --prefix 2602_model_ \
+    --prefix 2602_${model}_ \
     --msa "$fasta" \
-    --model partition.txt \
+    --model ${model} \
     --tree pars{20},rand{20} \
     --bs-cutoff 0.03 \
     --blmin 1e-6 \
-    --outgroup L02534.1,KX905203.1,KX905202.1,KF242506.1,KF242505.1,JX891479.1,JX891478.1
+    --brlen scaled \
+    --bs-metric fbp,tbe \
+    --outgroup L02534.1
