@@ -1,9 +1,8 @@
 #!/bin/bash
 
-set -eouv pipefail
+set -eou pipefail
 
 fasta="2602_htlv_391.fasta"
-threads=$(nproc)
 
 while IFS= read -r line; do
     # Read the fasta and partitions file paths from the line
@@ -14,7 +13,7 @@ while IFS= read -r line; do
     iqtree3 -s $fasta \
     -T AUTO \
     -m MFP+MERGE \
-    -p $partitions \
+    -p $partitions \ 
     --prefix $name \
     -B 1000
-done < "models.txt"
+done < $1
