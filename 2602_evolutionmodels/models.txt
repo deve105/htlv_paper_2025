@@ -1,2 +1,2 @@
-2602_All_partitions.txt
-2602_LTR_ENV3R_Excluding.txt
+2602_partitions_selected_norep.txt
+2602_All_LTR_ENV.txt

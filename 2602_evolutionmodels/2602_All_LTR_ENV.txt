@@ -1,8 +1,11 @@
 #nexus
 begin sets;
 	charset LTRregion_DNA = 1-755 8279-9033;
+	charset gag_DNA = 802-2091;
+	charset pol-pro_DNA = 1938-5189;
+	charset px_DNA = 6831-8360;
 	charset env_DNA_CP1 = 5181-6647\3;
 	charset env_DNA_CP2 = 5182-6645\3;
 	charset env_DNA_CP3 = 5183-6646\3;
-	charset rest_DNA = 756-5180 6648-8279;
+	charset rest_DNA = 756-801 6648-6834;
 end;

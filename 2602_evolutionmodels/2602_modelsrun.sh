@@ -12,7 +12,7 @@ while IFS= read -r line; do
     echo $name
     echo $partitions
     iqtree3 -s $fasta \
-    -T $threads \
+    -T AUTO \
     -m MFP+MERGE \
     -p $partitions \
     --prefix $name \
