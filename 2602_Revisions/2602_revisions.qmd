@@ -4,9 +4,9 @@ format: docx
 
 ### 1. For others to replicate this work, it’s crucial to cite the specific software used (FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST) and also to note the exact versions run. This level of detail is often missing but is essential.
 
-FASTQC (Version 0.12.1), Fastp (Version 0.23.4), MultiQC (Version 1.27.1), BWA-MEM2 (Version 2.2.1), GATK (Version 4.3.0), MAFFT (Version 7.49), IQ-TREE (Version 3.0.1), and BEAST (Version 2.7) were the specific software tools used in our analysis. We have updated the Methods section to include these details, along with the original scripts for variant calling available in our repository, to ensure that others can replicate our work accurately.
-
 We appreciate the importance of citing specific software and their versions for reproducibility. We have updated the Methods section to include the exact versions of all software used in our analysis, including FastQC, Fastp, MultiQC, BWA-MEM2, GATK, MAFFT, IQ-TREE, and BEAST. In addition, the original scripts for variant calling are available in the repository. This information is now clearly stated to ensure that others can replicate our work accurately.
+
+FASTQC (Version 0.12.1), Fastp (Version 0.23.4), MultiQC (Version 1.27.1), BWA-MEM2 (Version 2.2.1), GATK (Version 4.3.0), MAFFT (Version 7.49), IQ-TREE (Version 3.0.1), and BEAST (Version 2.7) were the specific software tools used in our analysis. We have updated the Methods section to include these details, along with the original scripts for variant calling available in our repository, to ensure that others can replicate our work accurately.
 
 ### 2. The authors looked for recombination events the right way, starting with a phi-test and then using several algorithms. However, when I checked the alignments linked to Supplementary Table 3, the evidence for recombination wasn’t convincing in several instances. This part of the analysis, despite secondary, needs more precise support.
 
@@ -79,3 +79,7 @@ We have re-evaluated the alignments linked to Supplementary Table 3 and have inc
 In line with the possibility of pre-ATL cases, the authors should consider whether specific mutations, including non-synonymous mutations, correlate with OCI or early leukemogenic processes.
 
 Participants were included regardless of their proviral load.
+
+### Section 3 (HLA analysis): Which is tool low for the actual detection of HLA protection . The observed HLA differences may reflect underlying population structure rather than HTLV-associated effects. Is there a non-infected Peruvian control population included for comparison? Given the limited number of reported deaths, the robustness of the statistical analyses should be carefully evaluated and discussed. The potential link to oligoclonal expansion (OCI) or pre-ATL status should also be explored.
+
+### Section 4: In line with the possibility of pre-ATL cases, the authors should consider whether specific mutations, including non-synonymous mutations, correlate with OCI or early leukemogenic processes.
