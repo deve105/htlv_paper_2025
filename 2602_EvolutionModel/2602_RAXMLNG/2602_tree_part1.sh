@@ -2,7 +2,7 @@
 
 set -eou pipefail
 
-fasta="2602_EvolutionModel/2602_htlv_391.fasta"
+fasta="2602_htlv_391.fasta"
 model=$1
 
 raxml-ng --all \
