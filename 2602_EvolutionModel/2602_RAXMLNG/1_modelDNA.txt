@@ -1,0 +1,3 @@
+GTR+F+R3, LTRregion_DNA=1-755,8279-9033
+GTR+F+I+R3, gag_pro_pol_env=756-6647
+GTR+F+I+R2, pX_B_HBZ=6648-8278

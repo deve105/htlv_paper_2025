@@ -1,0 +1,10 @@
+#nexus
+begin sets;
+  charset LTRregion_DNA = 1-755 8279-9033;
+  charset env_DNA_CP1 = 5181-6647\3;
+  charset rest_DNA = 756-5180 6648-8278 5182-6645\3 5183-6646\3;
+  charpartition mymodels =
+    GTR+F+R3: LTRregion_DNA,
+    GTR+I+R2: env_DNA_CP1,
+    GTR+F+I+R3: rest_DNA;
+end;
