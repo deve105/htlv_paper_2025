@@ -3,7 +3,7 @@
 set -eou pipefail
 
 fasta="../2602_htlv_391.fasta"
-model=$1
+model="GTR+F+I+R3"
 
 raxml-ng --all \
     --threads auto{16} \
