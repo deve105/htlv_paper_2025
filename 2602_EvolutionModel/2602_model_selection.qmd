@@ -1,11 +1,11 @@
 ---
-format:docx
+format: docx
 ---
 
 ## Model Comparison: Whole-Genome vs. Partitioned Approaches
 
 +--------------------------------------------------------------------------------------------------------------+--------------------------+----------------------------------+------------+------------+---------------+
-| Analysis Approach                                                                                            | Best Fit Model           | Log-likelihood of consensus tree | AIC        | AICc       | BIC           |
+| Partition Approach                                                                                           | Best Fit Model           | Log-likelihood of consensus tree | AIC        | AICc       | BIC           |
 +:=============================================================================================================+:========================:+:================================:+:==========:+:==========:+==============:+
 | **Whole-genome (unpartitioned)**                                                                             | TN+F+I+R3                | -51,363.56                       | 104,305.12 | 104,456.35 | 109,913.84    |
 +--------------------------------------------------------------------------------------------------------------+--------------------------+----------------------------------+------------+------------+---------------+
@@ -57,14 +57,8 @@ format:docx
 | Partition 3: rest of genome (gag, env, px, pro-pol)                                                          |                          |                                  |            |            |               |
 +--------------------------------------------------------------------------------------------------------------+--------------------------+----------------------------------+------------+------------+---------------+
 
-Analyses was performed with IQ-TREE multicore version 2.3.5 for MacOS ARM 64-bit, using the module TESTMERGE on all complete HTLV-1 genomes (NCBI and Peruvian Sequences). AIC: Akaike information criterion scores; AICc: Corrected AIC scores. BIC: Bayesian information criterion scores; and Log-likelihood: Tree log-likelihood. The three-partition model was selected as the best fit due to its significantly lower BIC score and superior log-likelihood compared to the whole-genome approach, indicating substantially improved model fit without overfitting.
-
 ## Methods
 
 To determine the optimal evolutionary model for HTLV-1 phylogenomics, we compared two approaches: (1) whole-genome analysis using a single evolutionary model, and (2) partition-based analysis with partition-specific models. We extracted known gene annotations for HTLV-1 (reference sequence J02029.1) and systematically compared and merged partition schemes using ModelFinder and PartitionFinder algorithms in IQ-TREE (version 2.3.5 for macOS ARM 64-bit). PartitionFinder identified three partitions optimized for model fit that align with HTLV-1 genomic organization: (1) LTR regions, (2) core genes (gag, pro, pol, env), and (3) auxiliary genes (px and HBZ). Model comparisons were based on AIC, AICc, and BIC scores. The three-partition model was selected as the best fit due to its significantly lower BIC score and superior log-likelihood compared to the whole-genome approach, indicating substantially improved model fit without overfitting.
-
-## Methods
-
-To determine the optimal evolutionary model for HTLV-1 phylogenomics, we compared two approaches: (1) whole-genome analysis using a single evolutionary model, and (2) partition-based analysis with partition-specific models. We extracted known gene annotations for HTLV-1 (reference sequence J02029.1) and systematically compared and merged partition schemes using ModelFinder and PartitionFinder algorithms in IQ-TREE (version 2.3.5 for macOS ARM 64-bit). PartitionFinder identified three partitions optimized for model fit that align with HTLV-1 genomic organization: (1) LTR regions, (2) core genes (gag, pro, pol, env), and (3) px and HBZ. Model comparisons were based on AIC, AICc, and BIC scores. The three-partition model was selected as the best fit due to its significantly lower BIC score and superior log-likelihood compared to the whole-genome approach, indicating substantially improved model fit without overfitting.
 
 HTLV-1 is a RNA virus with evolutionary clock models that canonically show stability across nucleotides, most previous phylogenetic studies are based on LTR and env regions. However, Whole genome-wide phylogenomics capture comprehensive evolutionary signal and reduce biases from individual regions pylogenetics (LTR or env putative regions). In contrast, applying a single evolutionary model across the entire genome assumes uniform evolutionary processes, which can oversimplify the complex evolution of viruses and reduce phylogenetic resolution. partition-wise models are generally recommended for genome-wide viral phylogenomics to capture evolutionary rate variation and improve phylogenetic accuracy

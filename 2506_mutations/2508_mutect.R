@@ -1,5 +1,5 @@
 #---1-Loading packages
-pacman::p_load(maftools, tidyverse, data.table, tidyplots, corr)
+pacman::p_load(maftools, tidyverse, data.table, tidyplots)
 pak::pkg_install("maftools")
 library(tidyplots)
 #----------------------------------------------
@@ -46,6 +46,7 @@ metadata = googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/14e
 #---MAF official
 dataset = merge_maf_objects("/Users/denriquez/Library/CloudStorage/OneDrive-KagoshimaUniversity/Project_HTLV1 Peru_2025/2507_HTLVpaper/maf_htlv") 
 
+metadata$status1
 
 #----------------------------------------------
 #---4- Correlation analysis betweenthe number of mutations and PVL
@@ -53,40 +54,41 @@ correlation = dataset@variant.classification.summary |>
     mutate(ID=str_remove(Tumor_Sample_Barcode, "_S[0-9]+.*$")) |>
     mutate(ID=str_remove(ID, "^[0-9]+_")) |>
     mutate(total_nsnv=total-Missense_Mutation) |>
-    right_join(metadata |> dplyr::select(PVLlog, Mean_HE, ID2, disease_2), by = c("ID"="ID2")) 
+    right_join(metadata |> dplyr::select(PVLlog, Mean_HE, gini, ID2, status1), by = c("ID"="ID2")) 
 
 labelx = paste("Spearman rho =", 
-                          round(cor(correlation$total, correlation$PVLlog, 
+                          round(cor(correlation$total, correlation$gini, 
                                     method="spearman", use="complete.obs"), 2),
                           "\np =", 
-                          round(cor.test(correlation$total, correlation$PVLlog, 
+                          round(cor.test(correlation$total, correlation$gini, 
                                         method="spearman")$p.value, 3))
-
+labelx
 
 plot1 = correlation |>
-    tidyplots::tidyplot(x=PVLlog, y=total, color=disease_2) |>
+    tidyplots::tidyplot(x=gini, y=total, color=status1) |>
     tidyplots::add_data_points_beeswarm(size=1.5, preserve="total", alpha=.8) |>
     tidyplots::add(geom_smooth(
       method = "lm", 
       se = FALSE, 
       color = "black", 
       size=.5,
-      inherit.aes=FALSE, aes(x=PVLlog, y=total),
+      inherit.aes=FALSE, aes(x=gini, y=total),
       alpha = 0.4
       )) |>
     tidyplots::add_annotation_text(
-      "Spearman rho = 0.24 \np = 0.046",
-      x = min(correlation$PVLlog, na.rm=TRUE) + 1.5,
-      y = max(correlation$total, na.rm=TRUE) - 1,
+      "Spearman rho = 0.05 \np = 0.708",
+      x = min(correlation$gini, na.rm=TRUE) + 0.5,
+      y = max(correlation$total, na.rm=TRUE) -5,
     ) |>
-    tidyplots::adjust_x_axis("Log(PVL)") |>
+    tidyplots::adjust_x_axis("Oligoclonality (Gini's Index)") |>
     tidyplots::adjust_y_axis("Total Mutations per Case") |>
     tidyplots::adjust_legend_title("Last Disease \nStatus") |>
     tidyplots::adjust_colors(new_colors=c("#377EB8", "#E41A1C", "#a6611a")) |>
-    tidyplots::adjust_font(face="bold") #|>
-    tidyplots::save_plot("output/2508_PVL_vs_total_mutations.png", bg="transparent")
+    tidyplots::adjust_font(face="bold") 
 
-ggsave("output/2508_PVL_vs_total_mutations.tiff",  dpi=600)
+tidyplots::save_plot(plot1, "output/2603_gini_vs_total_mutations.tiff", bg=NULL, dpi=600 )
+plot1
+ggsave(plot1, "output/2603_gini_vs_total_mutations.tiff",  dpi=1200)
 #----------------------------------------------
 #---5-MAF summary
 tiff("2508_summary_maf_barplot.tiff", res = 600)
