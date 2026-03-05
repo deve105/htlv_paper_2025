@@ -74,36 +74,32 @@ xb3
 
 ggsave("2405_treebeast1slides.png", plot = last_plot(),  path="../../output/2405tree", scale=2, dpi=1200, limitsize=FALSE)
 ```
-```{R}
+```{r}
 
 ################TREE WITH AFRICA ONLY (TRANSCONTINENTAL)
 rm(list=ls())
-library(stringr)
-library(dplyr)
-library(tidyverse)
-#0427 allpop coalescent tree
-allx<-read.beast("E:/My Drive/0513_coalescent_LTR373wAfrica.tree")
-#only TC and japanese
-allx<-read.beast("E:/My Drive/finaltree.tree")
-metadata<-as.data.frame(read.csv(file="C:/Rdev/R2401/0224_TreePhylo/data/metadata/finallist_381_csv_1211.csv", header=TRUE)) %>%
-  dplyr::filter(Accession != "KU214243.1")
+#### 0427 allpop coalescent tree
+beast_tree<-read.beast("/Users/denriquez/Documents/Rstats/R-main/data/0422/0520_beasttree_allpop_shortnames_nw")
+metadata<-as.data.frame(read.csv(file="/Users/denriquez/Documents/Rstats/R-main/0224_TreePhylo/data/metadata/finallist_381_csv_1211.csv", header=TRUE))  %>%
+  filter(Accession!= "KU214243.1")
 
-x2<-allx%>%
+
+## Joining with metadata
+beast_tree2<-beast_tree%>%
   as_tibble() %>%
   mutate(label= gsub("\\|.*", "", label)) %>%
   left_join(., metadata, by = c("label"="Accession")) %>%
   mutate(label=gsub("\\.\\d$",'',label)) %>%
   as.treedata() 
 
-#review nodes
-ggtree(x2, layout="rectangular", open.angle=10, color="lightgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
+## review nodes
+ggtree(beast_tree2, layout="rectangular", open.angle=10, color="lightgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
 
-ggsave("2405_beastraw4.pdf", plot = last_plot(),  path=("../../output/2405tree"), scale=1, dpi=300, limitsize=FALSE)
+subset
 
-
-
+best_tree2@
 #basic tree with only main clades
-xb1<-ggtree(x2, 
+xb1<-ggtree(beast_tree2, 
             layout="rectangular",
             size=1,
             mrsd="2020-01-01",
@@ -111,8 +107,8 @@ xb1<-ggtree(x2,
             right=FALSE)+
   scale_color_viridis_c(name="Posterior", direction=-1) +
   new_scale_fill()+new_scale_color()+
-  xlim(-6000, 2020) +
-  scale_x_continuous(breaks=c(-5000, -4000, -3000, -2000, -1000, 0, 1000, 2000)) + #minor_breaks=seq(-5000, 2000, 500)) 
+  xlim(-60000, 2020) +
+  scale_x_continuous(breaks=c(-50000, -40000, -30000, -20000, -10000, 0, 1000, 2000)) + #minor_breaks=seq(-5000, 2000, 500)) 
   theme(panel.grid.major   = element_line(color="black", size=.2),
         panel.grid.minor   = element_line(color="grey", size=.2),
         panel.grid.major.y = element_blank(),
