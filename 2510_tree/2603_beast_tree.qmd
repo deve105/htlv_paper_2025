@@ -1,0 +1,230 @@
+
+###Fig 2. Beast coalescent file
+
+```{R}
+rm(list=ls())
+library(stringr)
+library(dplyr)
+library(tidyverse)
+x1<-read.beast("E:/My Drive/finaltree.tree")
+#0427 allpop coalescent tree
+allx<-read.beast("E:/My Drive/0427_coalescentLTR_allpop")
+metadata<-as.data.frame(read.csv(file="C:/Rdev/R2401/0224_TreePhylo/data/metadata/finallist_381_csv_1211.csv", header=TRUE)) %>%
+  dplyr::filter(Accession != "KU214243.1")
+
+
+
+x2<-allx%>%
+  as_tibble() %>%
+  mutate(label= gsub("\\|.*", "", label)) %>%
+  left_join(., metadata, by = c("label"="Accession")) %>%
+  mutate(label=gsub("\\.\\d$",'',label)) %>%
+  as.treedata() 
+
+#review nodes
+ggtree(x2, layout="rectangular", open.angle=10, color="darkgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
+
+ggsave("2405_beastraw1.pdf", plot = last_plot(),  path=("../../output/2405tree"), scale=1, dpi=300, limitsize=FALSE)
+
+
+
+#basic tree with only main clades
+xb1<-ggtree(x2, 
+            layout="rectangular",
+            size=1.2,
+            mrsd="2020-01-01",
+            aes(color=round(posterior, 2)),
+            right=FALSE)+
+  scale_color_viridis_c(name="Posterior", direction=-1) +
+  new_scale_fill()+new_scale_color()+
+  xlim(-40000, 2020) +
+  scale_x_continuous(breaks=c(-40000, -20000, -10000, -5000, 0, 2000), minor_breaks=seq(-5000, 2000, 500)) +
+  theme(panel.grid.major   = element_line(color="black", size=.2),
+        panel.grid.minor   = element_line(color="grey", size=.2),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(color="black", size=.2)) +
+  theme_tree2() 
+
+xb2<-xb1 %>%
+  scaleClade(754, 0.05) %>% #melaustrian
+  scaleClade(744, 0.05) %>% #african
+  scaleClade(385, 0.05) %>% #Japanese
+  scaleClade(509, 0.05) %>% #TC
+  collapse(754, 'min', fill="transparent") %>% 
+  collapse(744, 'min', fill="transparent") %>% 
+  collapse(385, 'min', fill="transparent") %>% 
+  collapse(509, 'min', fill="transparent") +
+  geom_range("CAheight_0.95_HPD", color='lightblue', size=5, alpha=.5)+
+  geom_tippoint(aes(subset=(grepl('Peru',Country,fixed=TRUE)==TRUE)), color="#E41a1c",size=1.2, shape=16) 
+
+dfclade2<-data.frame(node=c(754,744, 743, 385, 509),
+                     Genotype=c("c-Melanesian","a-Africans","Afro-Peruvian","a-Transcontinental","a-Japanese"),
+                     colourtype=c("#FFFF33", "#FF7F00", "#E31A1C","#984ea3","#1F78B4")) %>%
+  left_join(., xb2$data, by=c("node"="node"))
+
+xb3<-xb2+  new_scale_fill()+new_scale_color()+
+  geom_point2(data=dfclade2, aes(node=node, color=Genotype, shape=Genotype, fill=Genotype), size=5, alpha=0.8) +
+  scale_shape_manual(name="Genotype", values=c(21, 22, 23, 24, 25))+
+  scale_color_manual(name="Genotype", values=dfclade2$colourtype)+
+  scale_fill_manual(name="Genotype", values=dfclade2$colourtype) +
+  geom_nodelab(aes(x=x, label=round(2020-CAheight_median)), vjust=-1, hjust=1.1, size=3, nudge_x = -0.0001) 
+  
+xb3
+
+ggsave("2405_treebeast1slides.png", plot = last_plot(),  path="../../output/2405tree", scale=2, dpi=1200, limitsize=FALSE)
+```
+```{R}
+
+################TREE WITH AFRICA ONLY (TRANSCONTINENTAL)
+rm(list=ls())
+library(stringr)
+library(dplyr)
+library(tidyverse)
+#0427 allpop coalescent tree
+allx<-read.beast("E:/My Drive/0513_coalescent_LTR373wAfrica.tree")
+#only TC and japanese
+allx<-read.beast("E:/My Drive/finaltree.tree")
+metadata<-as.data.frame(read.csv(file="C:/Rdev/R2401/0224_TreePhylo/data/metadata/finallist_381_csv_1211.csv", header=TRUE)) %>%
+  dplyr::filter(Accession != "KU214243.1")
+
+x2<-allx%>%
+  as_tibble() %>%
+  mutate(label= gsub("\\|.*", "", label)) %>%
+  left_join(., metadata, by = c("label"="Accession")) %>%
+  mutate(label=gsub("\\.\\d$",'',label)) %>%
+  as.treedata() 
+
+#review nodes
+ggtree(x2, layout="rectangular", open.angle=10, color="lightgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
+
+ggsave("2405_beastraw4.pdf", plot = last_plot(),  path=("../../output/2405tree"), scale=1, dpi=300, limitsize=FALSE)
+
+
+
+#basic tree with only main clades
+xb1<-ggtree(x2, 
+            layout="rectangular",
+            size=1,
+            mrsd="2020-01-01",
+            aes(color=round(posterior, 2)),
+            right=FALSE)+
+  scale_color_viridis_c(name="Posterior", direction=-1) +
+  new_scale_fill()+new_scale_color()+
+  xlim(-6000, 2020) +
+  scale_x_continuous(breaks=c(-5000, -4000, -3000, -2000, -1000, 0, 1000, 2000)) + #minor_breaks=seq(-5000, 2000, 500)) 
+  theme(panel.grid.major   = element_line(color="black", size=.2),
+        panel.grid.minor   = element_line(color="grey", size=.2),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(color="black", size=.2)) +
+  theme_tree2() 
+xb1
+
+xb2<-xb1 %>%
+  scaleClade(363, 0.05) %>% #a-Jpn
+  scaleClade(521, 0.05) %>% #TC-Jpn
+  collapse(363, 'min', fill="transparent") %>%
+  collapse(521, 'min', fill="transparent") +
+  geom_point2(aes(subset=(node==363)),size=5, fill="#FF7F00", color= "#FF7F00",alpha=0.9, shape=22) +
+  geom_point2(aes(subset=(node==521)),size=5, fill="#FDBF6F", color= "#FDBF6F",alpha=0.9, shape=22) 
+  
+
+
+##modififyin Ca
+xb2$data<-xb2$data %>%
+  mutate(CAheight_0.95_HPD=ifelse(as.numeric(height_median)>1500, CAheight_0.95_HPD, NA))
+
+## plotting with geom_segment()
+xb21<-xb2+
+  geom_range("CAheight_0.95_HPD", color='lightblue', size=3, alpha=.5) +
+  geom_tippoint(aes(shape=Country, subset=grepl("Japan|Chile|Brazil|Peru", Country),
+                  color=Country, fill=Country), size=2, shape=21) +
+  scale_colour_manual(guide="legend", name="Countries", values=c("#4daf4a","#984ea3","#a6761d","#E41a1c"), labels=c("Brazil", "Chile", "Japan", "Peru"), na.value="black")+
+   scale_fill_manual(guide="legend", name="Countries", values=c("#4daf4a","#984ea3","#a6761d","#E41a1c"), labels=c("Brazil", "Chile", "Japan","Peru"), na.value="black") +
+  geom_nodelab(aes(x=x, label=round(2020-CAheight_median), subset=(height_median>1400)), vjust=-1, hjust=1.1, size=3, nudge_x = -0.0001)+
+  new_scale_color() + new_scale_fill()
+  
+
+metadata2<-read_csv("../../data/0422/0502_metadatafinal.csv") %>%
+  mutate(Accession=gsub("\\.\\d$",'',Accession)) 
+xbx2<-data.frame(xbx) %>%
+  dplyr::filter(isTip) %>%
+  left_join(.,metadata2, by=c("label"="Accession"))
+
+rownames(xbx2)=xbx2$label
+
+#heatmap by Continent
+xb22<-gheatmap(xb21,xbx2[,"Continent.x", drop=F],offset = 0, width=0.02, legend_title = "Continent", font.size = 0,  colnames_offset_y = 1) +
+  scale_fill_manual(name="Geographic Region", values=c("#FDBF6F","#CAB2D6","#B2DF8A","#FB9A99")) + new_scale_color() + new_scale_fill() + 
+  coord_cartesian(clip = "off")
+xb22<-xb22 + new_scale_color() + new_scale_fill() 
+
+#heatmap by Continent
+xb23<-gheatmap(xb21,xbx2[,"V2", drop=F],offset = 3, width=0.02, legend_title = "Cluster", font.size = 0, colnames_offset_y = 1) +
+  scale_fill_manual(name="Cluster", values=c( "#E64B35B2","#7E614BB2"), labels=c("TC Andean-Amazonian", "TC-Worldwide")) + new_scale_color() + new_scale_fill()+ 
+  coord_cartesian(clip = "off")
+
+xb23
+#heatmap by Disease
+p4<-gheatmap(p3,df2[,"Type", drop=F],offset= 3.5, width=0.1,colnames_angle = 95,colnames_offset_y = .1, legend_title = "Disease", font.size = 0) +
+  scale_fill_manual(name="Disease Status", values=c("#bdbdbd", "#E64B35B2","#7E6148B2","#f7f7f7"), labels=c("AC", "ATL", "HAM-TSP", "Unknown"))
+p4<-p4+ new_scale_color() + new_scale_fill()
+p4
+
+p5<-p4 + theme( 
+plot.margin=unit(c(5,5,0,5),"mm"),
+legend.title = element_text(size=8),
+legend.position="left",
+legend.direction="vertical",
+legend.justification = "top",
+legend.text=element_text(size=8),
+legend.margin = margin(0.2, unit="cm"),
+legend.spacing.x = unit(0.2, 'cm'),
+legend.key.height=unit(0.5,"cm"),
+legend.key.width=unit(0.5,"cm"))
+p5
+
+xb22
+ggsave("2405_treebeast3slides.png", plot = last_plot(),  path="../../output/2405tree", scale=2, dpi=1200, limitsize=FALSE)
+```
+
+
+```{R}
+fontsize=1, aes(subset=(node==363)), shape=25, size=4, fill="darkgreen", alpha=0.6) +
+  geom_cladelab(data=dfclade2, mapping=aes(node=node, label=Genotype, color=Genotype),fontsize=1, offset=0.3, barsize=10, textcolour="transparent")+scale_colour_manual(name="Genotypes" , values=dfclade2$colourtype) 
+
+xb2
+(aes(subset=(node==363)),size=4, fill="darkgreen", alpha=0.6)
+  
+  
+  
+xb2  
+
+ geom_nodelab(aes(x=branch, label=round(posterior, 2), subset=as.numeric(posterior)> 0.7), vjust=-.5, size=3) 
+
+xb1<-xb1 + 
+  geom_tippoint(aes(subset=(grepl('Brazil',Country,fixed=TRUE)==TRUE)), color="#4daf4a",size=1.2, shape=16) +
+  geom_tippoint(aes(subset=(grepl('Chile',Country,fixed=TRUE)==TRUE)), color="#984ea3",size=1.2, shape=16) +
+  geom_tippoint(aes(subset=(grepl('Japan',Country,fixed=TRUE)==TRUE)), color="#a6761d",size=1.2, shape=16) +
+  geom_tippoint(aes(subset=(grepl('Peru',Country,fixed=TRUE)==TRUE)), color="#E41a1c",size=1.2, shape=16) +
+  geom_tippoint(aes(subset=(!grepl("Japan|Chile|Brazil|Peru", Country))), color="black",size=1.2, shape=16)
+xb1
+
+xb2<- xb1 %>%
+  scaleClade(521, 0.05) %>%
+  scaleClade(363, 0.05) %>%
+  collapse(521, 'min', fill="transparent") %>% 
+  collapse(363, 'min', fill="transparent") +
+  geom_point2(aes(subset=(node==363)), shape=25, size=4, fill="darkgreen", alpha=0.6) +
+  geom_point2(aes(subset=(node==521)), shape=25, size=4, fill="blue", alpha=0.6) +
+  geom_range("CAheight_0.95_HPD", color='lightblue', size=5, alpha=.5, branch.length="height") 
+
+xb2
+scaleClade(xb1, 363, .1)   
+
+
+viewClade(xb2+geom_tiplab(size=2), node=621)
+
+scale_x_continuous(limits=c(-0.018, 0.0005), breaks=seq(0,3,0.5)*(-mu), minor_breaks=seq(0,3,0.25)*(-mu), labels=seq(0,3,0.5))
+```
