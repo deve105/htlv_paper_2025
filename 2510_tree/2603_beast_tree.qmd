@@ -84,39 +84,70 @@ metadata<-as.data.frame(read.csv(file="/Users/denriquez/Documents/Rstats/R-main/
   filter(Accession!= "KU214243.1")
 
 
+
 ## Joining with metadata
 beast_tree2<-beast_tree%>%
   as_tibble() %>%
   mutate(label= gsub("\\|.*", "", label)) %>%
   left_join(., metadata, by = c("label"="Accession")) %>%
-  mutate(label=gsub("\\.\\d$",'',label)) %>%
-  as.treedata() 
+  mutate(label=gsub("\\.\\d$",'',label),
+            label=gsub("_S[0-9]+$",'',label)) %>%
+    as.treedata()
 
 ## review nodes
 ggtree(beast_tree2, layout="rectangular", open.angle=10, color="lightgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
 
-subset
 
-best_tree2@
+tree_subset=tree_subset(beast_tree2, node=382, levels_back=0)
+
+ggtree(tree_subset, layout="rectangular", open.angle=10, color="lightgray", size=1)+geom_text2(aes(subset=!isTip,label=node), hjust=-.3, size=1)+geom_tiplab(size=1)
 #basic tree with only main clades
-xb1<-ggtree(beast_tree2, 
+## Adding tips
+Peru_samples = tree_subset%>%
+  as_tibble() |>
+  filter(grepl("Peru", Country)) |>
+  pull(label)
+
+xb1<-ggtree(tree_subset, 
             layout="rectangular",
-            size=1,
+            size=.5,
             mrsd="2020-01-01",
             aes(color=round(posterior, 2)),
-            right=FALSE)+
+            right=FALSE) +
   scale_color_viridis_c(name="Posterior", direction=-1) +
-  new_scale_fill()+new_scale_color()+
-  xlim(-60000, 2020) +
-  scale_x_continuous(breaks=c(-50000, -40000, -30000, -20000, -10000, 0, 1000, 2000)) + #minor_breaks=seq(-5000, 2000, 500)) 
-  theme(panel.grid.major   = element_line(color="black", size=.2),
-        panel.grid.minor   = element_line(color="grey", size=.2),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        axis.line.x = element_line(color="black", size=.2)) +
   theme_tree2() 
 xb1
+## Collapsing Japanese Clade
+adv_tree_1 = collapse(xb1, node=377) +
+  geom_point2(aes(subset=(node==377)), shape=21, size=5, fill="#FF7F00", color="#FF7F00") 
 
+## Collapsing African
+adv_tree_2 = collapse(adv_tree_1, node=736) +
+  geom_point2(aes(subset=(node==736)), shape=21, size=5, fill="#FFFF33", color="#FFFF33") 
+
+## Collapsing TC-Jpn
+adv_tree_3 = collapse(adv_tree_2, node=523) +
+  geom_point2(aes(subset=(node==523)), shape=21, size=5, fill="#e2a466", color="#e2a466") 
+
+adv_tree_3@data
+treefinal = adv_tree_3 +
+      theme(legend.position = "bottom") +
+    geom_tiplab(
+      geom = "text",
+      aes(label = label, subset = label %in% Peru_samples),
+      color = "red", face = "bold", size = 1.5, angle=0, offset=-100, hjust=-1,  align = TRUE
+    ) +
+    vexpand(-.5) +
+    geom_nodelab(aes(x=x, label=round(height), subset=(height>2000 & posterior>0.8)), vjust=-1, hjust=1.1, size=3, nudge_x = -0.0001)
+treefinal
+
+ggsave(here::here("./2602_TC_tree.svg"), treefinal,  dpi = 600)
+ggsave(here::here("./2602_TC_tree.tiff"), treefinal,  dpi = 600)
+ggsave
+geom_tiplab2(geom = "text",
+      aes(label = label ,subset = label %in% Peru_samples
+      ),
+      color = "red", face = "bold", size = 1.5, offset = 0, angle=0, hjust=0, vjust=0) 
 xb2<-xb1 %>%
   scaleClade(363, 0.05) %>% #a-Jpn
   scaleClade(521, 0.05) %>% #TC-Jpn
