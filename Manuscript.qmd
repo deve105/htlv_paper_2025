@@ -4,6 +4,8 @@ format: docx
 csl: vancouver.csl
 ---
 
+DISPLAY= /opt/google/chrome-remote-desktop/start-host --code="4/0AfrIepAShybcb0bjoE2FUbTWdjd246yQ8zZr3i8R6rld-FAwex4cQvmzqoQ6KI2Sy6wfkQ" --redirect-url="https://remotedesktop.google.com/_/oauthredirect" --name=$(hostname)
+
 # Title: The Viral and Host Genomic Landscape of Human T-cell Leukemia Virus Type I in Peru
 
 ## Abstract
